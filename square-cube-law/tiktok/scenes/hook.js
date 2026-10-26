@@ -44,8 +44,8 @@
         drawAnt(AX, GY, sc, { col, buckle: bk, crack: P(t, tDie + .05, .25, eout) });
       });
       // подписи (экранные координаты)
-      atext('5 мм', 540, 1110, -1, t, { size: 44, w: 600, col: COL.dim, out: tUp - .05, outDur: .3 });
-      const lw = 80 * (1 - P(t, tUp - .05, .3, eio));
+      atext('5 мм', 540, 1110, -1, t, { size: 44, w: 600, col: COL.dim, out: tUp - .2, outDur: .2 });
+      const lw = 80 * (1 - P(t, tUp - .25, .2, eio));
       if (lw > 1) {
         line(540 - lw, 1050, 540 + lw, 1050, COL.dim, .8, 3);
         line(540 - lw, 1040, 540 - lw, 1060, COL.dim, .8, 3);
@@ -146,7 +146,7 @@
         drawWire(c, p0, s, COL.ink, .95, 3);
       });
       // заголовок: слова проявляются синхронно с речью
-      const size = 104, L1 = ['Закон', 'квадрата'], L2 = ['и', 'куба'];
+      const size = 96, L1 = ['Закон', 'квадрата'], L2 = ['и', 'куба'];
       const T1 = [tZ - .05, tQ - .05], T2 = [tI - .05, tK - .05];
       g.save(); g.font = `800 ${size}px ${FONT}`; g.letterSpacing = '-2px';
       const sp_ = g.measureText(' ').width, MW = {}; [...L1, ...L2].forEach(w => MW[w] = g.measureText(w).width); const m = w => MW[w] ?? g.measureText(w).width;

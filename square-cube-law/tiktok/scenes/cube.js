@@ -60,7 +60,7 @@
         if (aS > .002) cubes.push({ p: [-ss / 2, -ss / 2, -ss / 2], s: ss, col: COL.cube, a: aS, ea: .6 });
         // 8 кубиков объёма
         const a8 = P(t, tV - .2, .2) * (1 - P(t, t3 - .1, .3, eio));
-        if (a8 > .002) cubes.push(...drop(2, t, tV + .05, .15, blue, a8));
+        if (a8 > .002) cubes.push(...drop(2, t, tV + .05, .15, blue, a8, 1.0));
         // 27 кубиков
         const a27 = P(t, tV3 - .2, .2);
         if (a27 > .002) cubes.push(...drop(3, t, tV3 + .05, .045, blue, a27, 1.4, .34));
@@ -157,12 +157,22 @@
     withCam(540 - sx, 960 - sy, z, () => {
       atext('Размер', CX - 14, 372, tUv - .05, t, { size: 84, w: 800, align: 'right' });
       atext('×10', CX + 14, 372, t10 - .05, t, { size: 84, w: 800, align: 'left', grad: [COL.area, COL.vol], scale0: 1.3 });
+      // кубик, вырастающий в 10 раз (до появления столбиков)
+      const ca = P(t, tUv - .05, .6, eexp) * (1 - P(t, tPl - .25, .35, eio));
+      if (ca > .002) {
+        const sd = lerp(.32, 2.6, P(t, t10 - .05, 1.2, espr));
+        const cc = cam(.62 + .5 * (t - tUv), .48, CX, 780, U);
+        grp(ca, (1 - ca) * 18, () => {
+          glow(CX, 780, 120 + 150 * sd, COL.vol, .14);
+          drawCubes(cc, [{ p: [-sd / 2, -sd / 2, -sd / 2], s: sd, col: mix(COL.cube, COL.vol, .35), a: 1, ea: .6 }]);
+        });
+      }
       const base = 1130, full = 560, bw = 220, XA = CX - 210, XV = CX + 210;
-      const sa = P(t, tPl - .1, .6, eexp), sv = P(t, tM - .1, .6, eexp);
+      const sa = P(t, tPl - .1, .6, eexp), sv = P(t, tPl + .05, .6, eexp);
       line(XA - 190, base, XV + 190, base, COL.faint, Math.max(sa, sv), 3);
-      const pa = P(t, t100 - .05, .9, eexp), pv = P(t, t1000 - .05, 1.0, eexp);
+      const pa = P(t, t100 - .05, .9, eexp), pv = P(t, tM + .05, .75, eexp);
       for (const [x, s, p, val, col, lab, t0, tl] of [
-        [XA, sa, pa, 100, COL.area, 'площадь', t100, tPl], [XV, sv, pv, 1000, COL.vol, 'масса', t1000, tM]]) {
+        [XA, sa, pa, 100, COL.area, 'площадь', t100, tPl], [XV, sv, pv, 1000, COL.vol, 'масса', tM + .1, tPl + .15]]) {
         if (s <= .002) continue;
         const h = Math.max(8, full * val / 1000 * p);
         grp(s, (1 - s) * 16, () => {
@@ -172,7 +182,7 @@
           g.fillStyle = gr; g.beginPath(); g.roundRect(x - bw / 2, base - h, bw, h, [14, 14, 4, 4]); g.fill();
         });
         atext(lab, x, base + 48, tl - .05, t, { size: 36, w: 700, col: COL.dim, ls: 2 });
-        acount(val, x, base - h - 60, t0 - .05, t, { from: 1, prefix: '×', size: 96, w: 800, col, dur: val > 100 ? 1.0 : .9, scale0: 1.3 });
+        acount(val, x, base - h - 60, t0 - .05, t, { from: 1, prefix: '×', size: 96, w: 800, col, dur: val > 100 ? .7 : .9, scale0: 1.3 });
       }
     });
   }
@@ -212,7 +222,7 @@
       E_(tU2 - .15, 'whoosh', .5, 1, 3);
       E_(t10, 'click', .7, 1, 4);
       E_(tPl2, 'tick', .4, 1, 2);
-      E_(tM, 'tick', .4, 1.2, 2);
+      E_(tM + .05, 'rise', .6, 1.2, 3);
       E_(t100, 'rise', .6, 1, 4);
       E_(t1000 - 1.5, 'riser', .8, 1, 5);
       E_(t1000, 'impact', 1.0, 1, 6);

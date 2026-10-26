@@ -62,17 +62,17 @@
         const tRowOut = o2 - .3;
         if (t > tEach - .5 && t < tRowOut + .6) {
           const q = P(t, tRowOut, .45, eio);
-          const camZ = lerp(1.14, 1, P(t, tEach - .2, 1.8, eio));
-          const GY = 1040;
+          const camZ = lerp(1.06, 1, P(t, tEach - .2, 1.8, eio));
+          const GY = 1010;
           layer(1 - q, q * 26, () => {
-            zoomAt(CX, 900, camZ, () => {
+            zoomAt(CX, GY, camZ, () => {
               const ga = P(t, tEach - .2, .5, eexp);
-              line(100, GY, 940, GY, COL.faint, ga, 3);
+              line(110, GY, 920, GY, COL.faint, ga, 3);
               const items = [
-                { x: 125, f: (x, y, s, o) => drawFlea(x, y, s, o), s: 2.0, name: 'блоха' },
-                { x: 250, f: (x, y, s, o) => drawAnt(x, y, s, o), s: .62, name: 'муравей' },
-                { x: 465, f: (x, y, s, o) => drawMouse(x, y, s, o), s: 1.12, name: 'мышь' },
-                { x: 735, f: (x, y, s, o) => drawElephant(x, y, s, o), s: .88, name: 'слон' },
+                { x: 140, f: (x, y, s, o) => drawFlea(x, y, s, o), s: 2.6, name: 'блоха' },
+                { x: 270, f: (x, y, s, o) => drawAnt(x, y, s, o), s: .8, name: 'муравей' },
+                { x: 495, f: (x, y, s, o) => drawMouse(x, y, s, o), s: 1.2, name: 'мышь' },
+                { x: 728, f: (x, y, s, o) => drawElephant(x, y, s, o), s: .85, name: 'слон' },
               ];
               items.forEach((it, i) => {
                 const t0 = tEach + i * .2;
@@ -85,7 +85,7 @@
                     it.f(it.x, GY - hop, it.s, i === 3 ? { flap: .5 + .5 * Math.sin(t * 5) } : {});
                   });
                 });
-                atext(it.name, it.x + (i === 3 ? 30 : i === 2 ? -20 : 0), GY + 46, t0 + .1, t, { size: 30, w: 600, col: COL.dim, blur: 12, dy: 10 });
+                atext(it.name, it.x + (i === 3 ? 30 : i === 2 ? -20 : 0), GY + 48, t0 + .1, t, { size: 32, w: 600, col: COL.dim, blur: 12, dy: 10 });
               });
             });
             atextWords('Свой идеальный', CX, 540, tOwn - .05, t, { size: 88, w: 800, stagger: .12 });

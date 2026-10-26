@@ -214,7 +214,7 @@
           const GY = 1090;
           const bl = P(t, tBetter, .55, eio); // уход в размытие на «лучше не представлять»
           layer(vAll.a * (1 - .82 * bl), vAll.b + bl * 22, () => {
-            line(110, GY, 930, GY, COL.dim, .7, 3);
+            line(150, GY, 890, GY, COL.dim, .7, 3);
             // ---------- человек ----------
             const hr = 72;
             const shift = P(t, tA - .05, .55, eio);
