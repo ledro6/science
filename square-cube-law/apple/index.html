@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Закон квадрата–куба · Apple</title>
+<style>html,body{margin:0;background:#000}canvas{display:block;height:100vh;width:auto;margin:0 auto}</style>
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="build/timeline.js"></script>
+<script type="module">
+import { boot } from './engine.mjs';
+// ?only=hook,cube — загрузить только часть сцен (быстрые проверки)
+const only = new URLSearchParams(location.search).get('only');
+const ids = ['hook', 'cube', 'strength', 'heat', 'fall', 'outro'].filter(id => !only || only.split(',').includes(id));
+for (const id of ids) {
+  try { await import(`./scenes/${id}.mjs`); } catch (e) { if (!String(e).includes('Failed to fetch')) console.error('scene ' + id + ': ' + e.message); }
+}
+await boot();
+</script>
+</body>
+</html>
