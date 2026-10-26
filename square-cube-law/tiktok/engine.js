@@ -49,7 +49,7 @@ function WdE(k, word, n = 0) {
 function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
 // ---------- 2D-примитивы ----------
-const FONT = '"Inter Display", Inter, "DejaVu Sans", sans-serif';
+let FONT = '"Inter Display", Inter, "DejaVu Sans", sans-serif';
 function txt(s, x, y, o = {}) {
   const { size = 40, col = COL.ink, a = 1, w = 500, align = 'center', base = 'middle', ls = 0 } = o;
   if (a <= .002) return;

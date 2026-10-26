@@ -1,3 +1,7 @@
 square-cube-law/build/
 square-cube-law/tiktok/build/
 __pycache__/
+square-cube-law/tiktok/variants/*/stills/
+square-cube-law/tiktok/variants/*/*.log
+square-cube-law/tiktok/variants/*/parts.txt
+square-cube-law/tiktok/stills/

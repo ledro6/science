@@ -2,7 +2,8 @@
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const fs = require('fs'), path = require('path');
-const url = 'file://' + path.resolve(__dirname, 'index.html');
+const url = 'file://' + path.resolve(__dirname, process.env.PAGE || 'index.html');
+const OUTDIR = path.dirname(path.resolve(__dirname, process.env.PAGE || 'index.html'));
 
 (async () => {
   const [mode, ...args] = process.argv.slice(2);
@@ -19,10 +20,10 @@ const url = 'file://' + path.resolve(__dirname, 'index.html');
   } else if (mode === 'stills') {
     // node capture.js stills 1.5,3,4.2 [префикс] — кадры в build/stills/<префикс>_t<время>.png
     const pre = args[1] || 'still';
-    fs.mkdirSync(path.join(__dirname, 'build/stills'), { recursive: true });
+    fs.mkdirSync(path.join(OUTDIR, 'stills'), { recursive: true });
     for (const t of args[0].split(',').map(Number)) {
       try {
-        fs.writeFileSync(path.join(__dirname, `build/stills/${pre}_t${t.toFixed(2)}.png`), Buffer.from(await frame(t), 'base64'));
+        fs.writeFileSync(path.join(OUTDIR, `stills/${pre}_t${t.toFixed(2)}.png`), Buffer.from(await frame(t), 'base64'));
       } catch (e) { console.error(`RENDER ERROR at t=${t}:`, e.message.split('\n')[0]); }
     }
   } else {
