@@ -681,7 +681,7 @@ def music(tl, N):
             # --- ударные
             if not breakdown or (outro and b == 8):
                 if not lastbeat and not in_break(tb):
-                    place(drums, I.kick(), tb, .95 * en); kicks.append(tb)
+                    place(drums, I.kick(), tb, .8 * en); kicks.append(tb)
             if A["clap"] and pos in (1, 3) and not infill and not in_break(tb) and not breakdown:
                 place(clapbus, I.clap(), tb, .55 * en, pan=0)
             if not breakdown and not infill:
@@ -693,9 +693,9 @@ def music(tl, N):
                     else: v = (.3, .16, .7, .2)[h]
                     v *= .9 + .2 * r.random()
                     if A["ohat"] and pos == 3 and h == sub - 1 + (0 if sub == 2 else -1) and bar % 2 == 1:
-                        place(drums, I.hat(True, b), th, .28 * en, pan=.25)
+                        place(drums, I.hat(True, b), th, .5 * en, pan=.25)
                     else:
-                        place(drums, I.hat(False, b * 4 + h), th, .32 * v * en, pan=.3 if h % 2 else -.15)
+                        place(drums, I.hat(False, b * 4 + h), th, .62 * v * en, pan=.3 if h % 2 else -.15)
             # --- fill: дробь снэпов + шумовой райзер перед сменой сцены
             if infill:
                 k0 = n - fill_b
@@ -754,7 +754,7 @@ def music(tl, N):
         d = .55; u = tt(d) / d
         sw = noise(len(u), 77, 2000, 14000) * u ** 3 * np.minimum(1, (d - u * d) / .02)
         place(fx, np.stack([sw, np.roll(sw, 131)], 1), b0 - d, .3)
-        place(drums, I.boom(), tx_, .9)
+        place(drums, I.boom(), tx_, .6)
         place(fx, I.crash(), b1, .45); place(drums, I.kick(True), b1, .9); kicks.append(b1)
 
     # сайдчейн от kick: «качание» баса/пэда/арпа
@@ -779,7 +779,8 @@ def music(tl, N):
     log("music: stems synthesized")
     send = .25 * arp + .45 * pad + .5 * clapbus + .2 * fx
     wet = reverb_st(send.mean(1), 2.6, 501, predelay=.02, lo=250, dark=5000)
-    mus = (np.stack([bass, bass], 1) * .75 + drums * 1.0 + clapbus + pad * .5 + arp * .8 + fx * .8 + wet * .4)
+    mus = (np.stack([bass, bass], 1) * .42 + drums * 1.0 + clapbus * 1.1 + pad * .6 + arp * 1.15 + fx * .8 + wet * .45)
+    mus = ffilt(mus, lo=32, order=3)
 
     # брейк: глушим всё, кроме удара на «Хруст» (саб) — плавно, 15 мс
     if brk:
@@ -788,7 +789,7 @@ def music(tl, N):
         gate[i0:i1] = 0
         gate[i0 - f_:i0] = np.linspace(1, 0, f_)
         gate[i1:i1 + f_] = np.linspace(0, 1, f_)
-        boom = np.zeros((N, 2)); place(boom, I.boom(), tx_, .9)
+        boom = np.zeros((N, 2)); place(boom, I.boom(), tx_, .6)
         mus = mus * gate[:, None] + boom * (1 - gate[:, None])
     # конец ролика: затухание к total
     tt_ = np.arange(N) / SR
@@ -810,7 +811,7 @@ def voice_track(tl, N):
     # лёгкий «присутствие»-подъём 2–5 кГц (+1.5 дБ) и мягкий срез сверху
     v = ffilt(v, H=lambda f: (1 + .19 * np.exp(-((np.log2(np.maximum(f, 1) / 3200)) ** 2) / .5)) * butter_mag(f, hi=15000))
     v /= np.abs(v).max() + 1e-12
-    v = compressor(v, thr_db=-20, ratio=3.0, att=.004, rel=.09)
+    v = compressor(v, thr_db=-22, ratio=3.0, att=.003, rel=.08)
     v = deesser(v)
     v /= np.abs(v).max() + 1e-12
     room = reverb_st(v, .55, 901, predelay=.012, lo=300, dark=6000)
@@ -824,7 +825,7 @@ def speech_activity(tl, N):
         act[i0:i1] = 1
     bs = 48
     a = block_view(act, bs).max(1)
-    a = follow(a, .08, .45, bs / SR)
+    a = follow(a, .08, .3, bs / SR)
     return blocks_to_samples(a, bs, N)
 
 
@@ -859,7 +860,7 @@ def main():
     # уровни стемов относительно голоса
     Lv = lufs(voice)
     mus *= 10 ** ((Lv - 5.5 - lufs(mus)) / 20)          # без дакинга музыка на ~5.5 LU тише голоса
-    fx *= .62 * np.abs(voice).max() / max(1.0, 1.0)     # SFX «чуть под голосом»: gain=1 → пик ~0.3–0.6 от голоса
+    fx *= .55 * np.abs(voice).max()                      # SFX «чуть под голосом»: пики ~0.2–0.5 от пика голоса
     act = speech_activity(tl, N)
     duck = 10 ** (args.duck * act / 20)
     mus_d = mus * duck[:, None]

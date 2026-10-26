@@ -45,7 +45,7 @@ async def synth(key, text):
 async def main():
     t, tl = 0.35, {"scenes": [], "lines": []}
     for si, (scene, lines) in enumerate(SCENES):
-        start = max(0.0, t - 0.25)
+        start = 0.0 if si == 0 else max(0.0, t - 0.25)
         for key, text in lines:
             d, words = await synth(key, text)
             tl["lines"].append({"key": key, "scene": scene, "start": round(t, 3), "dur": round(d, 3), "text": text,
