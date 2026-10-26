@@ -693,9 +693,9 @@ def music(tl, N):
                     else: v = (.3, .16, .7, .2)[h]
                     v *= .9 + .2 * r.random()
                     if A["ohat"] and pos == 3 and h == sub - 1 + (0 if sub == 2 else -1) and bar % 2 == 1:
-                        place(drums, I.hat(True, b), th, .5 * en, pan=.25)
+                        place(drums, I.hat(True, b), th, .85 * en, pan=.25)
                     else:
-                        place(drums, I.hat(False, b * 4 + h), th, .62 * v * en, pan=.3 if h % 2 else -.15)
+                        place(drums, I.hat(False, b * 4 + h), th, 1.25 * v * en, pan=.3 if h % 2 else -.15)
             # --- fill: дробь снэпов + шумовой райзер перед сменой сцены
             if infill:
                 k0 = n - fill_b
@@ -779,8 +779,9 @@ def music(tl, N):
     log("music: stems synthesized")
     send = .25 * arp + .45 * pad + .5 * clapbus + .2 * fx
     wet = reverb_st(send.mean(1), 2.6, 501, predelay=.02, lo=250, dark=5000)
-    mus = (np.stack([bass, bass], 1) * .42 + drums * 1.0 + clapbus * 1.1 + pad * .6 + arp * 1.15 + fx * .8 + wet * .45)
-    mus = ffilt(mus, lo=32, order=3)
+    mus = (np.stack([bass, bass], 1) * .34 + drums * 1.0 + clapbus * 1.1 + pad * .6 + arp * 1.15 + fx * .8 + wet * .45)
+    # ФВЧ 32 Гц + мягкая «полка» +3 дБ выше ~5 кГц (воздух, читаемость на телефоне)
+    mus = ffilt(mus, H=lambda f: butter_mag(f, lo=32, order=3) * (1 + .41 / (1 + (5000 / np.maximum(f, 1)) ** 2)))
 
     # брейк: глушим всё, кроме удара на «Хруст» (саб) — плавно, 15 мс
     if brk:
@@ -813,6 +814,8 @@ def voice_track(tl, N):
     v /= np.abs(v).max() + 1e-12
     v = compressor(v, thr_db=-22, ratio=3.0, att=.003, rel=.08)
     v = deesser(v)
+    v /= np.abs(v).max() + 1e-12
+    v = limiter(v[:, None], ceil_db=-4.0, rel=.06)[0][:, 0]   # срезать редкие пики (−4 дБ), чтобы мастер не «качал»
     v /= np.abs(v).max() + 1e-12
     room = reverb_st(v, .55, 901, predelay=.012, lo=300, dark=6000)
     return np.stack([v, v], 1) + room * .1, v
@@ -860,7 +863,10 @@ def main():
     # уровни стемов относительно голоса
     Lv = lufs(voice)
     mus *= 10 ** ((Lv - 5.5 - lufs(mus)) / 20)          # без дакинга музыка на ~5.5 LU тише голоса
-    fx *= .55 * np.abs(voice).max()                      # SFX «чуть под голосом»: пики ~0.2–0.5 от пика голоса
+    vpk = np.abs(voice).max()
+    fx *= .55 * vpk                                      # SFX «чуть под голосом»: пики ~0.2–0.5 от пика голоса
+    if np.abs(fx).max() > 0:                             # шина SFX: пики не выше −6 дБ от пика голоса
+        fx, _ = limiter(fx, ceil_db=dbfs(.5 * vpk), rel=.08)
     act = speech_activity(tl, N)
     duck = 10 ** (args.duck * act / 20)
     mus_d = mus * duck[:, None]
@@ -888,7 +894,7 @@ def main():
     rows = []
     for s in range(int(total)):
         a, b = s * SR, (s + 1) * SR
-        if act[a:b].mean() > .8:
+        if act[a:b].mean() > .8 and rms(vs[a:b]) > -35:
             rows.append(rms(vs[a:b]) - rms(ms[a:b]))
     if rows:
         print(f"voice−music RMS during speech: median {np.median(rows):.1f} dB, min {np.min(rows):.1f} dB "
