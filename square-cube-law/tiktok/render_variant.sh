@@ -15,6 +15,6 @@ for p in "${pids[@]}"; do wait "$p"; done
 : > $D/parts.txt; for ((i=0; i<JOBS; i++)); do echo "file 'part$i.mp4'" >> $D/parts.txt; done
 ffmpeg -y -v error -f concat -safe 0 -i $D/parts.txt -i build/mix.wav -i build/subs.srt \
   -map 0:v -map 1:a -map 2:s -c:v copy -c:a aac -b:a 256k -c:s mov_text -metadata:s:s:0 language=rus \
-  -movflags +faststart -shortest square_cube_law_$V.mp4
+  -movflags +faststart -t "$(python3 -c "import json;print(json.load(open('build/timeline.json'))['total'])")" square_cube_law_$V.mp4
 rm -f $D/part*.mp4
 ffprobe -v error -show_entries format=duration,size -of default=nw=1 square_cube_law_$V.mp4
