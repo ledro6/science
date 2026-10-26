@@ -2,7 +2,7 @@
 # Рендер дизайн-варианта: ./render_variant.sh paper|neon|blueprint  (звук и субтитры — общие из build/)
 set -euo pipefail
 cd "$(dirname "$0")"
-V=$1; FPS=${FPS:-30}; JOBS=${JOBS:-2}; D=variants/$V
+V=$1; FPS=${FPS:-30}; JOBS=${JOBS:-4}; D=variants/$V
 [ -f build/mix.wav ] || { node capture.js sfx; python3 audio.py; }
 [ -f build/subs.srt ] || python3 srt.py
 N=$(python3 -c "import json,math;print(math.ceil(json.load(open('build/timeline.json'))['total']*$FPS))")

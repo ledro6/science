@@ -14,6 +14,8 @@ const OUTDIR = path.dirname(path.resolve(__dirname, process.env.PAGE || 'index.h
   await page.goto(url);
   await page.waitForFunction('window.READY === true');
   const frame = t => page.evaluate(t => { render(t); return document.getElementById('c').toDataURL('image/png').slice(22); }, t);
+  // для видео — JPEG 95%: кодирование в ~9 раз быстрее PNG, разница после пережатия платформой не видна
+  const frameJpeg = t => page.evaluate(t => { render(t); return document.getElementById('c').toDataURL('image/jpeg', .95).slice(23); }, t);
 
   if (mode === 'sfx') {
     fs.writeFileSync(path.join(__dirname, 'build/sfx.json'), JSON.stringify(await page.evaluate('SFX'), null, 1));
@@ -28,12 +30,12 @@ const OUTDIR = path.dirname(path.resolve(__dirname, process.env.PAGE || 'index.h
     }
   } else {
     const fps = +mode, from = +args[0], to = +args[1], out = args[2];
-    const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'png', '-i', '-',
-      '-c:v', 'libx264', '-preset', 'slow', '-crf', '14', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-r', String(fps), out],
+    const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'mjpeg', '-i', '-',
+      '-c:v', 'libx264', '-preset', 'fast', '-crf', '17', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-r', String(fps), out],
       { stdio: ['pipe', 'inherit', 'inherit'] });
     const done = new Promise(r => ff.on('close', r));
     for (let i = from; i < to; i++) {
-      const buf = Buffer.from(await frame(i / fps), 'base64');
+      const buf = Buffer.from(await frameJpeg(i / fps), 'base64');
       if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
       if (i % 300 === 0) console.log(out, i);
     }
