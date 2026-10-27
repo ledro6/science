@@ -203,15 +203,16 @@ defineScene('outro', {
       if (p > .003) {
         const dn = P(t, T.press, .14, eStd), up = P(t, T.press + .14, .6, eApple);
         const k = (1 - .055 * dn + .055 * up) * lerp(1.04, 1, p);
-        const W2 = 230, H2 = 56, cx = 540, cy = 1205 + (1 - p) * 34;
+        const W2 = 300, H2 = 56, cx = 540, cy = 1205 + (1 - p) * 34;
         const bl = (1 - P(t, t0, .55, eApple)) * 12;
         g.save(); g.globalAlpha = p; if (bl > .3) g.filter = `blur(${bl.toFixed(1)}px)`;
         g.translate(cx, cy); g.scale(k, k);
-        const shade = Math.round(lerp(255, 222, dn * (1 - up)));
-        g.fillStyle = `rgb(${shade},${shade},${Math.min(255, shade + 4)})`;
+        // пилюля залита акцентом канала; при нажатии темнеет
+        const dk = lerp(1, .82, dn * (1 - up));
+        g.fillStyle = `rgb(${Math.round(255 * dk)},${Math.round(69 * dk)},${Math.round(58 * dk)})`;
         g.beginPath(); g.roundRect(-W2, -H2, W2 * 2, H2 * 2, H2); g.fill();
         g.font = `600 44px ${FONT}`; g.letterSpacing = '-0.4px'; g.textAlign = 'center'; g.textBaseline = 'middle';
-        g.fillStyle = '#1D1D1F'; g.fillText('Подписаться', 0, 2);
+        g.fillStyle = '#FFFFFF'; g.fillText('Подписаться на L³', 0, 2);
         g.restore();
         // мягкая волна от нажатия
         const rp = P(t, T.press + .05, .9, eApple);

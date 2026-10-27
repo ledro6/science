@@ -3,7 +3,7 @@
 // s2: огромные цифры ×1 000 000 / ×10 000 и две тонкие полосы (длинная и в 100 раз короче), муравей-ориентир.
 // s3: гигантский керамический муравей снизу, «Хруст» — лапы подламываются, красные трещины, осколки, пыль.
 // s4: слон на медленной орбите, ноги превращаются в колонны с каннелюрами; тонкая и толстая кость с выносками.
-import {
+import { accent,
   defineScene, makeStage, orbit, project, atext, atextWords, acount, line, dot, callout, measure,
   P, FIO, Wd, WdE, C, E, rng, clamp, lerp, eApple, eIn, eInOut, eEase, eExpo, eSpring, eStd,
   THREE, MAT, roundedBox, shadowsOn, W, H, C_WHITE, C_GRAY, C_RED, g,
@@ -348,7 +348,7 @@ defineScene('strength', {
       atext('×100', 470, 440, T.hund, t, { size: 120, w: 600, col: ink, align: 'left', out, track: -.04 });
       atext('размер', 476, 494, T.hund + .25, t, { size: 38, w: 500, col: C_GRAY, align: 'left', out });
       // вес ×1 000 000
-      acount(1000000, X - 4, 690, T.heavy + .05, t, { size: 150, w: 700, col: ink, align: 'left', prefix: '×', out, dur: 1.1 });
+      acount(1000000, X - 4, 690, T.heavy + .05, t, { size: 150, w: 700, col: accent(), align: 'left', prefix: '×', out, dur: 1.1 });
       atext('вес', X, 752, T.mil + .1, t, { size: 44, w: 500, col: C_GRAY, align: 'left', out });
       const pb = P(t, T.mil + .15, 1.1, eApple), qo = 1 - P(t, out, .35, eIn);
       if (pb > 0) { g.save(); g.globalAlpha = qo; g.fillStyle = ink; roundRect(g, X, 790, (R - X) * pb, 12, 6); g.fill(); g.restore(); }

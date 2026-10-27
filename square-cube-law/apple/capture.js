@@ -24,7 +24,8 @@ server.listen(0, '127.0.0.1', async () => {
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
   page.on('pageerror', e => { console.error('PAGE ERROR', e.message); if (mode !== 'stills') process.exit(1); });
   page.on('console', m => { if (m.type() === 'error') console.error('CONSOLE', m.text()); });
-  await page.goto(`http://127.0.0.1:${server.address().port}/index.html${only ? '?only=' + only : ''}`);
+  const q = new URLSearchParams(); if (only) q.set('only', only); if (process.env.SCALE) q.set('s', process.env.SCALE);
+  await page.goto(`http://127.0.0.1:${server.address().port}/index.html?${q}`);
   await page.waitForFunction('window.READY === true', null, { timeout: 120000 });
   const frame = (t, type, q) => page.evaluate(([t, type, q]) => { render(t); return document.getElementById('c').toDataURL(type, q).split(',')[1]; }, [t, type, q]);
 

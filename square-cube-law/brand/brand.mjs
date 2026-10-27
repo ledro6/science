@@ -7,6 +7,9 @@ import { makeAnt } from '../apple/models.mjs';
 export const NAME = 'L³';                  // имя канала
 export const DESCRIPTOR = 'законы природы';
 const FONT = '"Inter Display", Inter, sans-serif';
+// Масштаб вывода: ассеты описаны в логических пикселях, файл рендерится в K раз крупнее (3D — тоже, без апскейла).
+export const K = +(new URLSearchParams(location.search).get('k') || 2);
+const ACCENT = { dark: '#FF453A', paper: '#D70015' };   // signal-red дизайн-системы
 const C = { black: '#000000', paper: '#f5f5f7', ink: '#1d1d1f', white: '#ffffff', muted: '#86868b', mutedPaper: '#6e6e73', card: '#161617' };
 
 // ---------- 3D: один рендерер на всё ----------
@@ -32,10 +35,12 @@ function camAt(w, h, az, el, dist, target = [0, 0, 0], fov = 22) {
   cam.lookAt(...target); return cam;
 }
 function snap(scene, cam, w, h) {
-  r3.setSize(w, h, false); r3.setClearColor(0x000000, 0); r3.render(scene, cam);
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  r3.setSize(w * K, h * K, false); r3.setClearColor(0x000000, 0); r3.render(scene, cam);
+  const c = document.createElement('canvas'); c.width = w * K; c.height = h * K;
   c.getContext('2d').drawImage(r3.domElement, 0, 0); return c;
 }
+// Вставить 3D-рендер в логических координатах (холст рендера в K раз крупнее)
+function put(g, img, x, y) { g.drawImage(img, x, y, img.width / K, img.height / K); }
 
 // Знак: алюминиевый куб, от передней грани которого отслаивается стеклянная пластина (площадь vs объём).
 function markScene(dark, { gap = .34, tilt = 0 } = {}) {
@@ -71,7 +76,18 @@ function antRender(w, h, dark) {
 // ---------- 2D ----------
 function txt(g, s, x, y, { size = 100, w = 700, col = C.white, align = 'left', track = -.04, base = 'alphabetic' } = {}) {
   g.save(); g.font = `${w} ${size}px ${FONT}`; g.letterSpacing = (track * size).toFixed(2) + 'px';
-  g.fillStyle = col; g.textAlign = align; g.textBaseline = base; g.fillText(s, x, y); g.restore();
+  g.textBaseline = base;
+  if (s.includes('³')) {
+    // «³» — знак канала L³: всегда акцентным цветом
+    const acc = col === C.ink ? ACCENT.paper : ACCENT.dark, total = g.measureText(s).width;
+    let cx = x + (align === 'center' ? -total / 2 : align === 'right' ? -total : 0);
+    g.textAlign = 'left';
+    s.split('³').forEach((part, i) => {
+      if (i) { g.fillStyle = acc; g.fillText('³', cx, y); cx += g.measureText('³').width; }
+      g.fillStyle = col; g.fillText(part, cx, y); cx += g.measureText(part).width;
+    });
+  } else { g.fillStyle = col; g.textAlign = align; g.fillText(s, x, y); }
+  g.restore();
 }
 function measure(g, s, size, w = 700, track = -.04) {
   g.save(); g.font = `${w} ${size}px ${FONT}`; g.letterSpacing = (track * size).toFixed(2) + 'px';
@@ -112,18 +128,18 @@ function avatarL3(g, w, h, dark = true) {
 let PANO = null;
 function panorama() {
   if (PANO) return PANO;
-  const c = document.createElement('canvas'); c.width = 3240; c.height = 1440;
-  const g = c.getContext('2d'); fill(g, 3240, 1440, C.black);
+  const c = document.createElement('canvas'); c.width = 3240 * K; c.height = 1440 * K;
+  const g = c.getContext('2d'); g.scale(K, K); fill(g, 3240, 1440, C.black);
   txt(g, 'L³', 120, 960, { size: 760, col: C.white, track: -.05 });                           // плитка 1
   glowUnder(g, 1620, 760, 560, .07);
-  g.drawImage(markRender(1080, true, { dist: 6.6 }), 1080, 180);                               // плитка 2
+  put(g, markRender(1080, true, { dist: 6.6 }), 1080, 180);                               // плитка 2
   txt(g, 'законы', 2250, 640, { size: 150, col: C.white, track: -.035 });                      // плитка 3
   txt(g, 'природы', 2250, 790, { size: 150, col: C.white, track: -.035 });
   txt(g, 'Новый закон', 2256, 950, { size: 56, w: 500, col: C.muted, track: 0 });
   txt(g, 'каждую неделю', 2256, 1020, { size: 56, w: 500, col: C.muted, track: 0 });
   return PANO = c;
 }
-function pinTile(g, i) { fill(g, 1080, 1920, C.black); g.drawImage(panorama(), i * 1080, 0, 1080, 1440, 0, 240, 1080, 1440); }
+function pinTile(g, i) { fill(g, 1080, 1920, C.black); g.drawImage(panorama(), i * 1080 * K, 0, 1080 * K, 1440 * K, 0, 240, 1080, 1440); }
 
 // ---------- заставки выпусков: TikTok / Shorts (1080×1920) и YouTube (1280×720) ----------
 // Новый выпуск = новая запись здесь; hero — 3D-объект обложки.
@@ -133,16 +149,17 @@ export const EPISODES = [
 const HEROES = { ant: (w, h, dark) => antRender(w, h, dark), cube: (w, h, dark) => markRender(Math.min(w, h), dark) };
 function epTikTok(g, ep) {
   const w = 1080, h = 1920; fill(g, w, h, C.black); glowUnder(g, 540, 1080, 520, .07);
-  g.drawImage(HEROES[ep.hero](1080, 1080, true), 0, 560);
-  txt(g, `L³ · № ${ep.n}`, 94, 330, { size: 44, w: 600, col: C.muted, track: 0 });
-  txt(g, ep.hook[0], 90, 500, { size: 150, col: C.white });
-  txt(g, ep.hook[1], 90, 650, { size: 150, col: C.white });
+  put(g, HEROES[ep.hero](1080, 1080, true), 0, 560);
+  txt(g, 'L³', 90, 360, { size: 110, col: C.white, track: -.05 });
+  txt(g, `№ ${ep.n}`, 250, 352, { size: 44, w: 600, col: C.muted, track: 0 });
+  txt(g, ep.hook[0], 90, 540, { size: 150, col: C.white });
+  txt(g, ep.hook[1], 90, 690, { size: 150, col: C.white });
   txt(g, ep.law, 94, 1580, { size: 48, w: 600, col: C.white, track: -.01 });
 }
 function epYouTube(g, ep) {
   const w = 1280, h = 720; fill(g, w, h, C.black); glowUnder(g, 960, 430, 420, .07);
-  g.drawImage(HEROES[ep.hero](620, 720, true), 680, 0);
-  txt(g, ep.number, 70, 330, { size: 116, col: C.white, track: -.045 });
+  put(g, HEROES[ep.hero](620, 720, true), 680, 0);
+  txt(g, ep.number, 70, 330, { size: 116, col: ep.numberAccent === false ? C.white : ACCENT.dark, track: -.045 });
   txt(g, ep.numberLabel, 76, 400, { size: 40, w: 500, col: C.muted, track: 0 });
   txt(g, 'L³', 70, 660, { size: 64, col: C.white, track: -.05 });
   txt(g, `№ ${ep.n} · ${ep.law}`, 170, 652, { size: 30, w: 600, col: C.white, track: 0 });
@@ -151,25 +168,25 @@ function epYouTube(g, ep) {
 // ---------- ассеты ----------
 export const ASSETS = {
   // Знак
-  'logo-mark-3d-black': { w: 2048, h: 2048, draw(g, w, h) { fill(g, w, h, C.black); glowUnder(g, w / 2, h * .55, w * .45, .06); g.drawImage(markRender(w, true), 0, 0); } },
-  'logo-mark-3d-paper': { w: 2048, h: 2048, draw(g, w, h) { fill(g, w, h, C.paper); g.drawImage(markRender(w, false), 0, 0); } },
-  'logo-mark-3d-transparent': { w: 2048, h: 2048, alpha: true, draw(g, w, h) { g.drawImage(markRender(w, true), 0, 0); } },
+  'logo-mark-3d-black': { w: 2048, h: 2048, draw(g, w, h) { fill(g, w, h, C.black); glowUnder(g, w / 2, h * .55, w * .45, .06); put(g, markRender(w, true), 0, 0); } },
+  'logo-mark-3d-paper': { w: 2048, h: 2048, draw(g, w, h) { fill(g, w, h, C.paper); put(g, markRender(w, false), 0, 0); } },
+  'logo-mark-3d-transparent': { w: 2048, h: 2048, alpha: true, draw(g, w, h) { put(g, markRender(w, true), 0, 0); } },
   'logo-mark-flat-white': { w: 1024, h: 1024, alpha: true, draw(g, w, h) { flatMark(g, w * .47, h * .5, w * .66); } },
   'logo-mark-flat-ink': { w: 1024, h: 1024, alpha: true, draw(g, w, h) { flatMark(g, w * .47, h * .5, w * .66, { ink: C.ink, tone2: '#6e6e73', tone3: '#c9cbcf' }); } },
   // Знак + имя
-  'logo-lockup-black': { w: 3000, h: 1000, draw(g, w, h) { fill(g, w, h, C.black); g.drawImage(markRender(900, true), 60, 50); lockup(g, 1000, 560, 300, true); } },
-  'logo-lockup-paper': { w: 3000, h: 1000, draw(g, w, h) { fill(g, w, h, C.paper); g.drawImage(markRender(900, false), 60, 50); lockup(g, 1000, 560, 300, false); } },
+  'logo-lockup-black': { w: 3000, h: 1000, draw(g, w, h) { fill(g, w, h, C.black); put(g, markRender(900, true), 60, 50); lockup(g, 1000, 560, 300, true); } },
+  'logo-lockup-paper': { w: 3000, h: 1000, draw(g, w, h) { fill(g, w, h, C.paper); put(g, markRender(900, false), 60, 50); lockup(g, 1000, 560, 300, false); } },
   // Аватар: один файл для TikTok, Instagram, YouTube, VK, Telegram (круглая обрезка — знак в центральных 70%)
-  'avatar': { w: 1080, h: 1080, draw(g, w, h) { fill(g, w, h, C.black); glowUnder(g, w / 2, h * .56, w * .42, .07); g.drawImage(markRender(w, true, { dist: 7.4 }), 0, 0); } },
-  'avatar-paper': { w: 1080, h: 1080, draw(g, w, h) { fill(g, w, h, C.paper); g.drawImage(markRender(w, false, { dist: 7.4 }), 0, 0); } },
+  'avatar': { w: 1080, h: 1080, draw(g, w, h) { fill(g, w, h, C.black); glowUnder(g, w / 2, h * .56, w * .42, .07); put(g, markRender(w, true, { dist: 7.4 }), 0, 0); } },
+  'avatar-paper': { w: 1080, h: 1080, draw(g, w, h) { fill(g, w, h, C.paper); put(g, markRender(w, false, { dist: 7.4 }), 0, 0); } },
   // YouTube: шапка канала 2560×1440, безопасная зона для всех устройств — центр 1546×423
   'youtube-banner': { w: 2560, h: 1440, draw(g, w, h) {
     fill(g, w, h, C.black);
     // кубы — справа в безопасной зоне (видны и на телефоне), текст — слева, ничего не пересекается
     const sx = (w - 1546) / 2, sy = (h - 423) / 2;
     const ex = snap(exploded(true, 3, .55), camAt(600, 600, 38, 26, 22), 600, 600);
-    g.drawImage(ex, sx + 1546 - 560, h / 2 - 300);
-    g.drawImage(markRender(400, true), sx - 20, sy + 12);
+    put(g, ex, sx + 1546 - 560, h / 2 - 300);
+    put(g, markRender(400, true), sx - 20, sy + 12);
     lockup(g, sx + 400, sy + 210, 150, true);
     txt(g, 'Новый закон каждую неделю', sx + 404, sy + 380, { size: 40, w: 500, col: C.muted, track: 0 });
   } },
@@ -178,7 +195,7 @@ export const ASSETS = {
   // YouTube: шаблон превью пилота 1280×720
   'youtube-thumbnail-ep1': { w: 1280, h: 720, draw(g, w, h) {
     fill(g, w, h, C.black); glowUnder(g, 900, 430, 420, .07);
-    g.drawImage(antRender(620, 720, true), 680, 0);
+    put(g, antRender(620, 720, true), 680, 0);
     txt(g, '×1 000 000', 70, 330, { size: 116, col: C.white, track: -.045 });
     txt(g, 'вес гигантского муравья', 76, 400, { size: 40, w: 500, col: C.muted, track: 0 });
     txt(g, '№ 1 · Закон квадрата и куба', 76, 650, { size: 30, w: 600, col: C.white, track: 0 });
@@ -187,14 +204,14 @@ export const ASSETS = {
   'vk-cover': { w: 1920, h: 768, draw(g, w, h) {
     fill(g, w, h, C.black);
     const ex = snap(exploded(true, 3, .55), camAt(900, 768, 38, 26, 22), 900, 768);
-    g.globalAlpha = .85; g.drawImage(ex, 1180, 0); g.globalAlpha = 1;
-    g.drawImage(markRender(300, true), 362, 210);
+    g.globalAlpha = .85; put(g, ex, 1180, 0); g.globalAlpha = 1;
+    put(g, markRender(300, true), 362, 210);
     lockup(g, 680, 420, 120, true);
     txt(g, 'Новый закон каждую неделю', 686, 560, { size: 30, w: 500, col: C.muted, track: 0 });
   } },
   // Telegram: заглавный пост канала 1280×720 (у каналов нет шапки — закреплённый пост её заменяет)
   'telegram-header': { w: 1280, h: 720, draw(g, w, h) {
-    fill(g, w, h, C.paper); g.drawImage(markRender(560, false), 680, 80);
+    fill(g, w, h, C.paper); put(g, markRender(560, false), 680, 80);
     lockup(g, 90, 360, 120, false);
     txt(g, 'Каждую неделю — ещё один закон,', 94, 520, { size: 34, w: 500, col: C.ink, track: 0 });
     txt(g, 'показанный как новый продукт.', 94, 566, { size: 34, w: 500, col: C.ink, track: 0 });
@@ -202,7 +219,7 @@ export const ASSETS = {
   // Вертикальная обложка пилота 1080×1920 для TikTok / Reels / VK Клипов (текст в полосе 3:4: y 240–1680)
   'cover-vertical-ep1': { w: 1080, h: 1920, draw(g, w, h) {
     fill(g, w, h, C.black); glowUnder(g, 540, 1080, 520, .07);
-    g.drawImage(antRender(1080, 1080, true), 0, 560);
+    put(g, antRender(1080, 1080, true), 0, 560);
     txt(g, 'Почему', 90, 470, { size: 150, col: C.white });
     txt(g, 'нет гигантов', 90, 620, { size: 150, col: C.white });
     txt(g, '№ 1 · Закон квадрата и куба', 94, 1560, { size: 44, w: 600, col: C.muted, track: 0 });
@@ -211,7 +228,7 @@ export const ASSETS = {
   'ig-highlight-laws': { w: 1080, h: 1920, draw(g, w, h) { fill(g, w, h, C.black); flatMark(g, 530, 960, 420); } },
   'ig-highlight-numbers': { w: 1080, h: 1920, draw(g, w, h) { fill(g, w, h, C.black); txt(g, '×', 540, 1060, { size: 420, col: C.white, align: 'center' }); } },
   // ---------- L³: аватары YouTube и TikTok (чистая типографика — читается и на 40 px) ----------
-  'yt-avatar': { w: 800, h: 800, draw(g, w, h) { avatarL3(g, w, h); } },
+  'yt-avatar': { w: 1080, h: 1080, draw(g, w, h) { avatarL3(g, w, h); } },
   'tt-avatar': { w: 1080, h: 1080, draw(g, w, h) { avatarL3(g, w, h); } },
   'tt-avatar-paper': { w: 1080, h: 1080, draw(g, w, h) { avatarL3(g, w, h, false); } },
   // ---------- L³: шапка YouTube (новая) ----------
@@ -219,7 +236,7 @@ export const ASSETS = {
     fill(g, w, h, C.black);
     const sx = (w - 1546) / 2, sy = (h - 423) / 2;
     const ex = snap(exploded(true, 3, .55), camAt(620, 620, 38, 26, 22), 620, 620);
-    g.drawImage(ex, sx + 1546 - 560, h / 2 - 310);
+    put(g, ex, sx + 1546 - 560, h / 2 - 310);
     txt(g, 'L³', sx + 20, sy + 330, { size: 340, col: C.white, track: -.05 });
     txt(g, 'законы природы', sx + 440, sy + 230, { size: 80, w: 600, col: C.white, track: -.025 });
     txt(g, 'Новый закон каждую неделю', sx + 444, sy + 310, { size: 40, w: 500, col: C.muted, track: 0 });
@@ -228,7 +245,7 @@ export const ASSETS = {
   'tt-pin-1': { w: 1080, h: 1920, draw(g, w, h) { pinTile(g, 0); } },
   'tt-pin-2': { w: 1080, h: 1920, draw(g, w, h) { pinTile(g, 1); } },
   'tt-pin-3': { w: 1080, h: 1920, draw(g, w, h) { pinTile(g, 2); } },
-  'tt-pin-preview': { w: 3240, h: 1440, draw(g, w, h) { g.drawImage(panorama(), 0, 0); } },
+  'tt-pin-preview': { w: 3240, h: 1440, draw(g, w, h) { g.drawImage(panorama(), 0, 0, 3240, 1440); } },
   'ig-highlight-about': { w: 1080, h: 1920, draw(g, w, h) { fill(g, w, h, C.paper); txt(g, 'L³', 540, 1100, { size: 380, col: C.ink, align: 'center' }); } },
 };
 
@@ -239,7 +256,7 @@ for (const ep of EPISODES) {
 
 export async function draw(name) {
   const a = ASSETS[name]; if (!a) throw new Error('нет ассета ' + name);
-  const out = document.getElementById('out'); out.width = a.w; out.height = a.h;
-  const g = out.getContext('2d'); g.clearRect(0, 0, a.w, a.h);
+  const out = document.getElementById('out'); out.width = a.w * K; out.height = a.h * K;
+  const g = out.getContext('2d'); g.setTransform(K, 0, 0, K, 0, 0); g.clearRect(0, 0, a.w, a.h);
   a.draw(g, a.w, a.h);
 }

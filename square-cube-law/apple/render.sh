@@ -2,7 +2,7 @@
 # Сборка Apple-версии: звуковые события → микс (общий микшер ../tiktok/audio.py) → кадры 60 fps → mp4.
 set -euo pipefail
 cd "$(dirname "$0")"
-FPS=${FPS:-60}; JOBS=${JOBS:-4}
+FPS=${FPS:-60}; JOBS=${JOBS:-4}; export SCALE=${SCALE:-1.3333333}   # 1440×2560 (2K)
 node capture.js sfx
 python3 ../tiktok/audio.py --sfx build/sfx.json --out build/mix.wav
 TOT=$(python3 -c "import json;print(json.load(open('build/timeline.json'))['total'])")

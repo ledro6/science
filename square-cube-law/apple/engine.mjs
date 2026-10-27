@@ -5,11 +5,19 @@ import * as THREE from 'three';
 export { THREE };
 
 export const W = 1080, H = 1920;
+// Масштаб рендера: сцены работают в логических координатах 1080×1920, кадр рендерится в W·S × H·S.
+// ?s=1.3333 → 1440×2560 (2K). По умолчанию 1.
+export const S = +(new URLSearchParams(location.search).get('s') || 1);
+const WS = Math.round(W * S), HS = Math.round(H * S);   // размеры холста в пикселях
 export const TL = window.TL;
 
 // ---------- цвета (строгий монохром Apple + один системный акцент) ----------
 export const C_BLACK = '#000000', C_WHITE = '#FFFFFF', C_PAPER = '#F5F5F7', C_INK = '#1D1D1F',
   C_GRAY = '#86868B', C_GRAY2 = '#A1A1A6', C_RED = '#FF453A';
+// Акцент канала L³ (signal-red дизайн-системы): красный = объём и масса, L³. На светлой сцене — тёмный вариант.
+export const C_ACCENT_BLACK = '#FF453A', C_ACCENT_PAPER = '#D70015';
+let ACCENT = C_ACCENT_BLACK;
+export const accent = () => ACCENT;
 
 // ---------- время и кривые ----------
 export const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -65,12 +73,21 @@ export function atext(s, x, y, t0, t, o = {}) {
   const b = (1 - pb) * blur + q * 8;
   g.save();
   g.globalAlpha *= al;
-  if (b > .25) g.filter = `blur(${b.toFixed(2)}px)`;
+  if (b > .25) g.filter = `blur(${(b * S).toFixed(2)}px)`;
   g.translate(x, y + (1 - p) * dy - q * outDy);
   const k = lerp(scale0, 1, p); g.scale(k, k);
-  g.font = `${w} ${size}px ${FONT}`; g.textAlign = align; g.textBaseline = base;
+  g.font = `${w} ${size}px ${FONT}`; g.textBaseline = base;
   g.letterSpacing = (track * size).toFixed(2) + 'px';
-  g.fillStyle = col; g.fillText(s, 0, 0);
+  if (s.includes('³') && !o.plain) {
+    // «³» — знак канала: всегда акцентным цветом
+    const total = g.measureText(s).width;
+    let cx = align === 'center' ? -total / 2 : align === 'right' ? -total : 0;
+    g.textAlign = 'left';
+    s.split('³').forEach((part, i) => {
+      if (i) { g.fillStyle = ACCENT; g.fillText('³', cx, 0); cx += g.measureText('³').width; }
+      g.fillStyle = col; g.fillText(part, cx, 0); cx += g.measureText(part).width;
+    });
+  } else { g.textAlign = align; g.fillStyle = col; g.fillText(s, 0, 0); }
   g.restore();
 }
 export function measure(s, size, w = 600, track = -.025) {
@@ -114,9 +131,9 @@ export const LAYOUT = { cx: 500, left: 96, top: 250, stageY: 800, capY: 1400, bo
 
 // ---------- 3D: рендерер, студийный свет, материалы ----------
 const glCanvas = document.createElement('canvas');
-glCanvas.width = W; glCanvas.height = H;
+glCanvas.width = WS; glCanvas.height = HS;
 export const renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: true, preserveDrawingBuffer: true, alpha: false });
-renderer.setPixelRatio(1); renderer.setSize(W, H, false);
+renderer.setPixelRatio(1); renderer.setSize(WS, HS, false);
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -165,7 +182,8 @@ export function makeStage({ bg = 'black', fov = 26, floorY = 0, shadow = .35 } =
   floor.rotation.x = -Math.PI / 2; floor.position.y = floorY; floor.receiveShadow = true;
   const root = new THREE.Group();
   scene.add(hemi, key, key.target, rimL, rimR, floor, root);
-  return { scene, camera, root, floor, lights: { hemi, key, rimL, rimR }, bg, bgc, ink: bg === 'white' ? C_INK : C_WHITE, sub: bg === 'white' ? '#6E6E73' : C_GRAY };
+  return { scene, camera, root, floor, lights: { hemi, key, rimL, rimR }, bg, bgc, ink: bg === 'white' ? C_INK : C_WHITE, sub: bg === 'white' ? '#6E6E73' : C_GRAY,
+    accent: bg === 'white' ? C_ACCENT_PAPER : C_ACCENT_BLACK };
 }
 // Камера на орбите вокруг цели (углы в градусах).
 export function orbit(camera, target, dist, azDeg, elDeg) {
@@ -224,9 +242,9 @@ function drawCaptions(t, ink) {
 
 // ---------- кадр ----------
 const out = document.getElementById('c');
-out.width = W; out.height = H;
+out.width = WS; out.height = HS;
 const octx = out.getContext('2d');
-const layer = document.createElement('canvas'); layer.width = W; layer.height = H;
+const layer = document.createElement('canvas'); layer.width = WS; layer.height = HS;
 const lctx = layer.getContext('2d');
 const STATE = {};
 
@@ -240,7 +258,7 @@ function sceneAlpha(t, s, i) {
 }
 
 export function render(t) {
-  octx.setTransform(1, 0, 0, 1, 0, 0); octx.filter = 'none'; octx.globalAlpha = 1;
+  octx.setTransform(S, 0, 0, S, 0, 0); octx.filter = 'none'; octx.globalAlpha = 1;
   // фон кадра = фон активной сцены (переходы между чёрным и белым идут «под прикрытием» затухания)
   let capInk = C_WHITE;
   // подложка — фон предыдущей сцены: новая сцена проявляет свой фон поверх него, без провала в чёрный/серый
@@ -260,13 +278,14 @@ export function render(t) {
     if (a <= .003) return;
     def.update && def.update(t, s, st);
     renderer.render(st.stage.scene, st.stage.camera);
-    lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.globalAlpha = 1; lctx.filter = 'none';
-    lctx.drawImage(glCanvas, 0, 0);
+    lctx.setTransform(S, 0, 0, S, 0, 0); lctx.globalAlpha = 1; lctx.filter = 'none';
+    lctx.drawImage(glCanvas, 0, 0, W, H);
+    ACCENT = st.stage.accent;
     g = lctx; def.draw2d && def.draw2d(t, s, st); g = null;
     octx.save(); octx.globalAlpha = a;
-    if (blur > .3) octx.filter = `blur(${blur.toFixed(1)}px)`;
+    if (blur > .3) octx.filter = `blur(${(blur * S).toFixed(1)}px)`;
     octx.translate(W / 2, H / 2); octx.scale(k, k); octx.translate(-W / 2, -H / 2);
-    octx.drawImage(layer, 0, 0); octx.restore();
+    octx.drawImage(layer, 0, 0, W, H); octx.restore();
   });
   g = octx; drawCaptions(t, capInk); g = null;
 }

@@ -149,7 +149,7 @@ defineScene('cube', {
     const { stage, T, big } = st, cam = stage.camera, g = ctx(), ink = stage.ink, sub = stage.sub;
     const bigNum = (txt, cap, t0, tOut, o = {}) => {
       const { x = 540, y = 485, size = 320, align = 'center' } = o;
-      atext(txt, x, y, t0, t, { size, w: 700, col: ink, track: -.045, blur: 20, scale0: 1.12, dur: .9, out: tOut, align });
+      atext(txt, x, y, t0, t, { size, w: 700, col: (cap === 'объём' || cap === 'масса') ? stage.accent : ink, track: -.045, blur: 20, scale0: 1.12, dur: .9, out: tOut, align });
       atext(cap, x + (align === 'left' ? 8 : 0), y + Math.round(size * .26), t0 + .25, t, { size: Math.round(size / 6.6), w: 500, col: sub, track: -.005, out: tOut, align });
     };
 
