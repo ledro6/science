@@ -165,7 +165,7 @@ defineScene('heat', {
 
     if (t < T.H2) {
       atextWords('С теплом', 510, 860, T.title, t, { size: 120, w: 600, col: C_INK, out: T.cubeIn - .5, outDur: .4 });
-      atextWords('то же самое.', 510, 995, T.title + .55, t, { size: 120, w: 600, col: C_INK, out: T.cubeIn - .5, outDur: .4 });
+      atextWords('то же самое', 510, 995, T.title + .55, t, { size: 120, w: 600, col: C_INK, out: T.cubeIn - .5, outDur: .4 });
       const out = T.H2 - .35;
       const [ax, ay] = project(cam, 0, .95, 0);
       callout(ax, ay, 260, 445, T.born, t, C_INK, 1 - P(t, out, .3, eIn));
@@ -211,7 +211,7 @@ defineScene('heat', {
       const o1 = T.eats - .35;
       label(96, 390, 'Землеройка', '≈ 5 граммов', T.shrew + .1, t, { out: o1, size: 60, subSize: 38 });
       acount(100, 92, 470, T.eats - .05, t, { size: 210, w: 700, col: C_INK, align: 'left', prefix: '≈', suffix: '%', out, dur: 1.4 });
-      atext('веса тела — еда за сутки', 96, 538, T.almost + .1, t, { size: 44, w: 500, col: SUB, align: 'left', out });
+      atext('веса тела за сутки', 96, 538, T.almost + .1, t, { size: 44, w: 500, col: SUB, align: 'left', out });
     } else {
       // волны от ушей
       const ramp = P(t, T.fan - .25, .8, eEase);

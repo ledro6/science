@@ -326,7 +326,7 @@ defineScene('strength', {
 
     if (t < T.S2) {
       // заголовок-вдох
-      atextWords('А теперь главное.', 510, 905, T.title, t, { size: 112, w: 600, col: ink, out: T.title + 1.2, outDur: .4 });
+      atextWords('А теперь главное', 510, 905, T.title, t, { size: 112, w: 600, col: ink, out: T.title + 1.2, outDur: .4 });
       // выноска «площадь сечения» во время макро
       const [ax, ay] = project(cam, -.3 * Math.cos(.35), st.H_CUT, .3 * Math.sin(.35));
       const outA = T.sect + .5;

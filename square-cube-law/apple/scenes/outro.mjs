@@ -191,12 +191,12 @@ defineScene('outro', {
         atext(r.name, lx, 760, t0 + .32, t, { size: 30, w: 500, col: sub, track: 0, dy: 16, out: T.out1 - .05 });
       });
       atext('Свой идеальный', 540, 390, T.title, t, { size: 100, w: 600, col: ink, track: -.03, out: T.out1 - .1 });
-      atext('размер.', 540, 500, T.title + .4, t, { size: 100, w: 600, col: ink, track: -.03, out: T.out1 - .1 });
+      atext('размер', 540, 500, T.title + .4, t, { size: 100, w: 600, col: ink, track: -.03, out: T.out1 - .1 });
     }
     // --- финальная карточка ---
     if (t > T.card - .1) {
       atext('Закон', 540, 350, T.card + .05, t, { size: 116, w: 600, col: ink, track: -.035 });
-      atext('квадрата–куба', 540, 474, T.card + .15, t, { size: 116, w: 600, col: ink, track: -.035 });
+      atext('квадрата-куба', 540, 474, T.card + .15, t, { size: 116, w: 600, col: ink, track: -.035 });
       atext('S ∝ L²      V ∝ L³', 540, 580, T.card + .6, t, { size: 54, w: 500, col: sub, track: -.01 });
       // пилюля «Подписаться»
       const t0 = T.card + .65, p = P(t, t0, .8, eApple);

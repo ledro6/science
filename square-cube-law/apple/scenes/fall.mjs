@@ -304,7 +304,7 @@ defineScene('fall', {
     wa = Math.max(wa, P(t, T.white, .55, eEase));
     if (wa > .003) { g.save(); g.globalAlpha = wa; g.fillStyle = C_PAPER; g.fillRect(0, 0, 1080, 1920); g.restore(); }
     atext('…лучше', 540, 880, T.white + .3, t, { size: 92, w: 600, col: C_GRAY, track: -.025 });
-    atext('не представлять.', 540, 990, T.white + .42, t, { size: 92, w: 600, col: C_GRAY, track: -.025 });
+    atext('не представлять', 540, 990, T.white + .42, t, { size: 92, w: 600, col: C_GRAY, track: -.025 });
   },
 
   sfx(add) {

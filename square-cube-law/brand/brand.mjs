@@ -6,8 +6,8 @@ import { makeAnt } from '../apple/models.mjs';
 
 export const NAME = 'L³';                  // имя канала
 export const DESCRIPTOR = 'законы природы';
-export const SLOGAN = 'Законы природы в кубе.';          // слоган канала
-const SLOGAN_LINES = ['Законы', 'природы', 'в кубе.'];
+export const SLOGAN = 'Законы природы в кубе';          // слоган канала
+const SLOGAN_LINES = ['Законы', 'природы', 'в кубе'];
 const FONT = '"Inter Display", Inter, sans-serif';
 // Масштаб вывода: ассеты описаны в логических пикселях, файл рендерится в K раз крупнее (3D — тоже, без апскейла).
 export const K = +(new URLSearchParams(location.search).get('k') || 2);
