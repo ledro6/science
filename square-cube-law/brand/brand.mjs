@@ -6,8 +6,8 @@ import { makeAnt } from '../apple/models.mjs';
 
 export const NAME = 'L³';                  // имя канала
 export const DESCRIPTOR = 'законы природы';
-export const SLOGAN = 'Законы природы в кубе';          // слоган канала
-const SLOGAN_LINES = ['Законы', 'природы', 'в кубе'];
+export const SLOGAN = 'Мир в кубе';          // слоган канала
+const SLOGAN_LINES = ['Мир', 'в кубе'];
 const FONT = '"Inter Display", Inter, sans-serif';
 // Масштаб вывода: ассеты описаны в логических пикселях, файл рендерится в K раз крупнее (3D — тоже, без апскейла).
 export const K = +(new URLSearchParams(location.search).get('k') || 2);
@@ -136,7 +136,7 @@ function panorama() {
   const ls = 1250;
   txt(g, 'L', 1080 / 2 - measure(g, 'L', ls, 700, -.05) / 2, 1160, { size: ls, col: C.white, track: -.05 });
   txt(g, '³', 1080 + 1080 / 2 - measure(g, '³', ls, 700, -.05) / 2, 1160, { size: ls, col: C.white, track: -.05 });
-  SLOGAN_LINES.forEach((l, i) => txt(g, l, 2160 + 110, 600 + i * 165, { size: 150, col: C.white, track: -.035 }));
+  SLOGAN_LINES.forEach((l, i) => txt(g, l, 2160 + 110, 700 + i * 230, { size: 210, col: C.white, track: -.035 }));
   return PANO = c;
 }
 function pinTile(g, i) { fill(g, 1080, 1920, C.black); g.drawImage(panorama(), i * 1080 * K, 0, 1080 * K, 1440 * K, 0, 240, 1080, 1440); }
@@ -246,7 +246,7 @@ export const ASSETS = {
   'yt-banner-l3': { w: 2560, h: 1440, draw(g, w, h) {
     // только знак и слоган, по центру безопасной зоны 1546×423
     fill(g, w, h, C.black);
-    const ls = 300, ss = 84, gap = 90;
+    const ls = 300, ss = 110, gap = 90;
     const lw = measure(g, 'L³', ls, 700, -.05), sw = measure(g, SLOGAN, ss, 600, -.025);
     const x0 = (w - (lw + gap + sw)) / 2, base = h / 2 + ls * .36;
     txt(g, 'L³', x0, base, { size: ls, col: C.white, track: -.05 });
