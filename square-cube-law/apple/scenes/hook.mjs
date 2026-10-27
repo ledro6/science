@@ -180,7 +180,7 @@ defineScene('hook', {
       line(gx1, gy1, gx2, gy2, sub, .45 * P(t, jump + .3, .6) * fade, 2);
       // траектория — тонкая линия, рисуется за блохой
       if (u > 0) {
-        g.save(); g.globalAlpha = .85 * fade; g.strokeStyle = C_WHITE; g.lineWidth = 2.5; g.lineCap = 'round'; g.beginPath();
+        g.save(); g.beginPath(); g.rect(0, 0, W, 1310); g.clip(); g.globalAlpha = .85 * fade; g.strokeStyle = C_WHITE; g.lineWidth = 2.5; g.lineCap = 'round'; g.beginPath();
         const N = 80;
         for (let i = 0; i <= N; i++) {
           const uu = u * i / N, [x, y] = project(cam, XJ * uu, HJ * 4 * uu * (1 - uu) + .3, 0);

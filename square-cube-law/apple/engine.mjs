@@ -57,7 +57,7 @@ export const FONT = '"Inter Display", Inter, sans-serif';
 // out — момент ухода: прозрачность → 0 и лёгкое размытие без сдвига.
 export function atext(s, x, y, t0, t, o = {}) {
   const { size = 96, w = 600, col = C_WHITE, a = 1, align = 'center', base = 'alphabetic', track = -.025,
-    dur = .75, blur = 12, dy = 40, out = null, outDur = .35, scale0 = 1.04 } = o;
+    dur = .75, blur = 12, dy = 40, out = null, outDur = .35, outDy = 0, scale0 = 1.04 } = o;
   const p = P(t, t0, dur, eApple), pb = P(t, t0, dur * .7, eApple);
   const q = out == null ? 0 : P(t, out, outDur, eIn);
   const al = a * p * (1 - q);
@@ -66,7 +66,7 @@ export function atext(s, x, y, t0, t, o = {}) {
   g.save();
   g.globalAlpha *= al;
   if (b > .25) g.filter = `blur(${b.toFixed(2)}px)`;
-  g.translate(x, y + (1 - p) * dy);
+  g.translate(x, y + (1 - p) * dy - q * outDy);
   const k = lerp(scale0, 1, p); g.scale(k, k);
   g.font = `${w} ${size}px ${FONT}`; g.textAlign = align; g.textBaseline = base;
   g.letterSpacing = (track * size).toFixed(2) + 'px';
@@ -205,7 +205,7 @@ function buildCaps() {
   CAPS.forEach((c, i) => {
     c.t0 = c.words[0].t;
     const last = c.words[c.words.length - 1], next = CAPS[i + 1];
-    c.t1 = Math.min(last.t + last.d + .45, next ? next.words[0].t - .02 : 1e9);
+    c.t1 = Math.min(last.t + last.d + .45, next ? next.words[0].t - .1 : 1e9);
   });
 }
 function drawCaptions(t, ink) {
@@ -216,7 +216,7 @@ function drawCaptions(t, ink) {
     const total = ws.reduce((A, B) => A + B, 0) + sp * (ws.length - 1);
     let x = LAYOUT.cx - total / 2;
     c.words.forEach((q, i) => {
-      atext(q.w, x, LAYOUT.capY, q.t - .06, t, { size, w, col: ink, align: 'left', track, dur: .6, dy: 26, blur: 12, out: c.t1, outDur: .3 });
+      atext(q.w, x, LAYOUT.capY, q.t - .06, t, { size, w, col: ink, align: 'left', track, dur: .6, dy: 26, blur: 12, out: c.t1, outDur: .26, outDy: 34 });
       x += ws[i] + sp;
     });
   }
@@ -232,23 +232,32 @@ const STATE = {};
 
 function sceneAlpha(t, s, i) {
   // вход: проявление из размытия с лёгким масштабом; уход: прозрачность + размытие без сдвига (как у Apple)
-  const pin = i === 0 ? 1 : P(t, s.start, .7, eApple);
+  const pin = i === 0 ? 1 : P(t, s.start + .12, .7, eApple);
   const last = i === TL.scenes.length - 1;
   const pout = last ? P(t, TL.total - 1.3, 1.2, eEase) : P(t, s.end - .35, .35, eIn);
-  return { a: pin * (1 - pout), blur: (1 - P(t, s.start, .5, eApple)) * (i === 0 ? 0 : 14) + pout * 10, k: lerp(1.035, 1, pin) };
+  const bgA = i === 0 ? 1 : P(t, s.start, .22, eEase);
+  return { a: pin * (1 - pout), bgA, blur: (1 - P(t, s.start + .12, .5, eApple)) * (i === 0 ? 0 : 14) + pout * 10, k: lerp(1.035, 1, pin) };
 }
 
 export function render(t) {
   octx.setTransform(1, 0, 0, 1, 0, 0); octx.filter = 'none'; octx.globalAlpha = 1;
   // фон кадра = фон активной сцены (переходы между чёрным и белым идут «под прикрытием» затухания)
-  let capInk = C_WHITE, bestA = -1;
-  octx.fillStyle = C_BLACK; octx.fillRect(0, 0, W, H);
+  let capInk = C_WHITE;
+  // подложка — фон предыдущей сцены: новая сцена проявляет свой фон поверх него, без провала в чёрный/серый
+  let cur = 0; TL.scenes.forEach((s, i) => { if (t >= s.start) cur = i; });
+  const prev = TL.scenes[Math.max(0, cur - 1)];
+  octx.fillStyle = STATE[prev.id] ? STATE[prev.id].stage.bgc : C_BLACK; octx.fillRect(0, 0, W, H);
+  if (STATE[prev.id]) capInk = STATE[prev.id].stage.ink;
   TL.scenes.forEach((s, i) => {
     const def = DEFS[s.id];
     if (!def || t < s.start - .01 || t > s.end + .01) return;
-    const { a, blur, k } = sceneAlpha(t, s, i);
-    if (a <= .003) return;
+    const { a, bgA, blur, k } = sceneAlpha(t, s, i);
     const st = STATE[s.id];
+    // фон сцены (последняя сцена в конце уходит в чёрный вместе с содержимым)
+    octx.globalAlpha = i === TL.scenes.length - 1 ? bgA * (1 - P(t, TL.total - 1.3, 1.2, eEase)) : bgA;
+    octx.fillStyle = st.stage.bgc; octx.fillRect(0, 0, W, H); octx.globalAlpha = 1;
+    if (bgA > .5) capInk = st.stage.ink;
+    if (a <= .003) return;
     def.update && def.update(t, s, st);
     renderer.render(st.stage.scene, st.stage.camera);
     lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.globalAlpha = 1; lctx.filter = 'none';
@@ -258,7 +267,6 @@ export function render(t) {
     if (blur > .3) octx.filter = `blur(${blur.toFixed(1)}px)`;
     octx.translate(W / 2, H / 2); octx.scale(k, k); octx.translate(-W / 2, -H / 2);
     octx.drawImage(layer, 0, 0); octx.restore();
-    if (a > bestA) { bestA = a; capInk = st.stage.ink; }
   });
   g = octx; drawCaptions(t, capInk); g = null;
 }
