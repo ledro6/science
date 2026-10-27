@@ -1,4 +1,4 @@
-# Логотип и баннеры
+# Логотип и баннеры канала L³
 
 Рендер: `node capture.js` (все) или `node capture.js avatar,vk-cover` → `out/*.png`. Имя серии — константа `NAME` в `brand.mjs`.
 
@@ -18,3 +18,16 @@
 | `telegram-header.png` | 1280×720 | Закреплённый первый пост канала Telegram |
 | `cover-vertical-ep1.png` | 1080×1920 | Обложка пилота для TikTok, Reels, VK Клипов (текст в полосе 3:4) |
 | `ig-highlight-*.png` | 1080×1920 | Обложки «Актуального» Instagram |
+
+## L³ (актуальное)
+
+| Файл | Размер | Где использовать |
+| --- | --- | --- |
+| `yt-avatar.png` | 800×800 | Аватар YouTube |
+| `tt-avatar.png` / `tt-avatar-paper.png` | 1080×1080 | Аватар TikTok (тёмный / светлый) |
+| `yt-banner-l3.png` | 2560×1440 | Шапка YouTube, важное в зоне 1546×423 |
+| `tt-pin-1..3.png` | 1080×1920 ×3 | Обложки трёх закреплённых роликов TikTok: в сетке профиля складываются в одну шапку (`tt-pin-preview.png`) |
+| `ep<N>-tiktok-cover.png` | 1080×1920 | Заставка выпуска для TikTok и Shorts |
+| `ep<N>-youtube-thumbnail.png` | 1280×720 | Заставка (превью) выпуска для YouTube |
+
+Новый выпуск — запись в `EPISODES` в `brand.mjs`.

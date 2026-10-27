@@ -4,7 +4,7 @@
 import { THREE, MAT, roundedBox, glassEdges, shadowsOn } from '../apple/engine.mjs';
 import { makeAnt } from '../apple/models.mjs';
 
-export const NAME = 'Ещё одно';            // имя серии (рабочее; меняется здесь)
+export const NAME = 'L³';                  // имя канала
 export const DESCRIPTOR = 'законы природы';
 const FONT = '"Inter Display", Inter, sans-serif';
 const C = { black: '#000000', paper: '#f5f5f7', ink: '#1d1d1f', white: '#ffffff', muted: '#86868b', mutedPaper: '#6e6e73', card: '#161617' };
@@ -101,6 +101,53 @@ function lockup(g, x, y, size, dark, { descriptor = true, align = 'left' } = {})
   if (descriptor) txt(g, DESCRIPTOR, x + (align === 'left' ? size * .04 : 0), y + size * .62, { size: size * .3, w: 500, col: mut, align, track: -.005 });
 }
 
+// ---------- L³ ----------
+function avatarL3(g, w, h, dark = true) {
+  fill(g, w, h, dark ? C.black : C.paper);
+  const size = w * .5, tw = measure(g, 'L³', size, 700, -.05);
+  // оптический центр: ³ лёгкий и висит вверху, поэтому блок чуть левее и ниже геометрического центра
+  txt(g, 'L³', (w - tw) / 2 - w * .01, h / 2 + size * .36, { size, col: dark ? C.white : C.ink, track: -.05 });
+}
+// Панорама 3240×1440 для трёх закреплённых роликов TikTok (в сетке профиля видна полоса 3:4 каждого)
+let PANO = null;
+function panorama() {
+  if (PANO) return PANO;
+  const c = document.createElement('canvas'); c.width = 3240; c.height = 1440;
+  const g = c.getContext('2d'); fill(g, 3240, 1440, C.black);
+  txt(g, 'L³', 120, 960, { size: 760, col: C.white, track: -.05 });                           // плитка 1
+  glowUnder(g, 1620, 760, 560, .07);
+  g.drawImage(markRender(1080, true, { dist: 6.6 }), 1080, 180);                               // плитка 2
+  txt(g, 'законы', 2250, 640, { size: 150, col: C.white, track: -.035 });                      // плитка 3
+  txt(g, 'природы', 2250, 790, { size: 150, col: C.white, track: -.035 });
+  txt(g, 'Новый закон', 2256, 950, { size: 56, w: 500, col: C.muted, track: 0 });
+  txt(g, 'каждую неделю', 2256, 1020, { size: 56, w: 500, col: C.muted, track: 0 });
+  return PANO = c;
+}
+function pinTile(g, i) { fill(g, 1080, 1920, C.black); g.drawImage(panorama(), i * 1080, 0, 1080, 1440, 0, 240, 1080, 1440); }
+
+// ---------- заставки выпусков: TikTok / Shorts (1080×1920) и YouTube (1280×720) ----------
+// Новый выпуск = новая запись здесь; hero — 3D-объект обложки.
+export const EPISODES = [
+  { n: 1, law: 'Закон квадрата и куба', hook: ['Почему', 'нет гигантов'], number: '×1 000 000', numberLabel: 'вес гигантского муравья', hero: 'ant' },
+];
+const HEROES = { ant: (w, h, dark) => antRender(w, h, dark), cube: (w, h, dark) => markRender(Math.min(w, h), dark) };
+function epTikTok(g, ep) {
+  const w = 1080, h = 1920; fill(g, w, h, C.black); glowUnder(g, 540, 1080, 520, .07);
+  g.drawImage(HEROES[ep.hero](1080, 1080, true), 0, 560);
+  txt(g, `L³ · № ${ep.n}`, 94, 330, { size: 44, w: 600, col: C.muted, track: 0 });
+  txt(g, ep.hook[0], 90, 500, { size: 150, col: C.white });
+  txt(g, ep.hook[1], 90, 650, { size: 150, col: C.white });
+  txt(g, ep.law, 94, 1580, { size: 48, w: 600, col: C.white, track: -.01 });
+}
+function epYouTube(g, ep) {
+  const w = 1280, h = 720; fill(g, w, h, C.black); glowUnder(g, 960, 430, 420, .07);
+  g.drawImage(HEROES[ep.hero](620, 720, true), 680, 0);
+  txt(g, ep.number, 70, 330, { size: 116, col: C.white, track: -.045 });
+  txt(g, ep.numberLabel, 76, 400, { size: 40, w: 500, col: C.muted, track: 0 });
+  txt(g, 'L³', 70, 660, { size: 64, col: C.white, track: -.05 });
+  txt(g, `№ ${ep.n} · ${ep.law}`, 170, 652, { size: 30, w: 600, col: C.white, track: 0 });
+}
+
 // ---------- ассеты ----------
 export const ASSETS = {
   // Знак
@@ -163,8 +210,32 @@ export const ASSETS = {
   // Instagram: обложки «Актуального» 1080×1920, в круге видна центральная часть
   'ig-highlight-laws': { w: 1080, h: 1920, draw(g, w, h) { fill(g, w, h, C.black); flatMark(g, 530, 960, 420); } },
   'ig-highlight-numbers': { w: 1080, h: 1920, draw(g, w, h) { fill(g, w, h, C.black); txt(g, '×', 540, 1060, { size: 420, col: C.white, align: 'center' }); } },
+  // ---------- L³: аватары YouTube и TikTok (чистая типографика — читается и на 40 px) ----------
+  'yt-avatar': { w: 800, h: 800, draw(g, w, h) { avatarL3(g, w, h); } },
+  'tt-avatar': { w: 1080, h: 1080, draw(g, w, h) { avatarL3(g, w, h); } },
+  'tt-avatar-paper': { w: 1080, h: 1080, draw(g, w, h) { avatarL3(g, w, h, false); } },
+  // ---------- L³: шапка YouTube (новая) ----------
+  'yt-banner-l3': { w: 2560, h: 1440, draw(g, w, h) {
+    fill(g, w, h, C.black);
+    const sx = (w - 1546) / 2, sy = (h - 423) / 2;
+    const ex = snap(exploded(true, 3, .55), camAt(620, 620, 38, 26, 22), 620, 620);
+    g.drawImage(ex, sx + 1546 - 560, h / 2 - 310);
+    txt(g, 'L³', sx + 20, sy + 330, { size: 340, col: C.white, track: -.05 });
+    txt(g, 'законы природы', sx + 440, sy + 230, { size: 80, w: 600, col: C.white, track: -.025 });
+    txt(g, 'Новый закон каждую неделю', sx + 444, sy + 310, { size: 40, w: 500, col: C.muted, track: 0 });
+  } },
+  // ---------- L³: TikTok — триптих из трёх закреплённых роликов (у TikTok нет шапки профиля) ----------
+  'tt-pin-1': { w: 1080, h: 1920, draw(g, w, h) { pinTile(g, 0); } },
+  'tt-pin-2': { w: 1080, h: 1920, draw(g, w, h) { pinTile(g, 1); } },
+  'tt-pin-3': { w: 1080, h: 1920, draw(g, w, h) { pinTile(g, 2); } },
+  'tt-pin-preview': { w: 3240, h: 1440, draw(g, w, h) { g.drawImage(panorama(), 0, 0); } },
   'ig-highlight-about': { w: 1080, h: 1920, draw(g, w, h) { fill(g, w, h, C.paper); txt(g, 'L³', 540, 1100, { size: 380, col: C.ink, align: 'center' }); } },
 };
+
+for (const ep of EPISODES) {
+  ASSETS[`ep${ep.n}-tiktok-cover`] = { w: 1080, h: 1920, draw(g) { epTikTok(g, ep); } };
+  ASSETS[`ep${ep.n}-youtube-thumbnail`] = { w: 1280, h: 720, draw(g) { epYouTube(g, ep); } };
+}
 
 export async function draw(name) {
   const a = ASSETS[name]; if (!a) throw new Error('нет ассета ' + name);
