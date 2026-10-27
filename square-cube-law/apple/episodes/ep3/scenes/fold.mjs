@@ -9,7 +9,7 @@ import {
   eApple, eInOut, eIn, eEase, eStd, W, H, g as _g,
 } from '../../../engine.mjs';
 import * as ENG from '../../../engine.mjs';
-import { frame, smooth } from './_lib.mjs';
+import { frame, smooth, paperTexture, stackMaterials } from './_lib.mjs';
 import { moonGeometry } from './_lib.mjs';
 
 const ctx = () => ENG.g;
@@ -78,13 +78,15 @@ defineScene('fold', {
     const earth = new THREE.Mesh(new THREE.SphereGeometry(1, 64, 48), earthMat);
     const moonMat = new THREE.MeshPhysicalMaterial({ color: '#E2E1DD', roughness: .6, transparent: true });
     const moon = new THREE.Mesh(moonGeometry(THREE, 48, 11), moonMat);
-    stage.root.add(stack, inc, tower, city, earth, moon);
-    return { stage, stack, inc, iMat, tower, city, CITY, earth, earthMat, moon, moonMat };
+    // непрерывный рост: один брусок с полосатым торцом (полоса = лист; mip-карты усредняют тысячи листов)
+    const tex = paperTexture(THREE), col = new THREE.Mesh(geo, stackMaterials(THREE, tex).list); col.castShadow = true;
+    stage.root.add(stack, inc, col, tower, city, earth, moon);
+    return { stage, stack, inc, iMat, col, tex, tower, city, CITY, earth, earthMat, moon, moonMat };
   },
 
   update(t, s, st) {
     const T = TT();
-    const { stage, stack, inc, iMat, tower, city, CITY, earth, earthMat, moon, moonMat } = st, cam = stage.camera;
+    const { stage, stack, inc, iMat, col, tex, tower, city, CITY, earth, earthMat, moon, moonMat } = st, cam = stage.camera;
     const L = stage.lights;
     L.key.position.set(3, 9, 6); L.key.intensity = 2.3; L.hemi.intensity = 1.15; L.rimL.intensity = 1.2; L.rimR.intensity = .9;
     const V = viewV(t), k = VIS / V;
@@ -97,10 +99,9 @@ defineScene('fold', {
     let done = 0, land = null;
     for (const [a, d] of T.lands) { if (t >= a + d) done++; else if (t >= a) { land = clamp((t - a) / d); break; } }
     const cont = t >= T.segs[0][0];
-    let cnt, pitch;
-    if (!cont) { cnt = Math.pow(2, done); pitch = TH; }
-    else { cnt = NL; pitch = Hc / NL; }
-    stack.count = cnt;
+    let cnt = cont ? 0 : Math.pow(2, done), pitch = TH;
+    stack.count = cnt; stack.visible = !cont; col.visible = cont;
+    if (cont) { col.scale.set(fw, Hc, fd); tex.repeat.set(1, Math.min(Math.pow(2, n), 16384)); }
     for (let i = 0; i < cnt; i++) {
       p.set(0, i * pitch, 0); sc.set(fw, pitch * (cont ? .985 : .86), fd); M.compose(p, q, sc); stack.setMatrixAt(i, M);
     }
