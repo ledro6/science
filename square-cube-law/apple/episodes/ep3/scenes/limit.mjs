@@ -95,12 +95,19 @@ defineScene('limit', {
       // ---- рекорд: пачка 12 сгибов (лента 1,2 км → 29 см, толщина 41 см) и лента к горизонту ----
       const pa = P(t, T.B, .9, eApple);
       packet.scale.set(2.93, 4.1 * Math.max(.001, pa), 1.0); packet.position.set(0, 4.1 * pa / 2, 0);
-      const ru = P(t, T.bum - .35, 2.4, eInOut);
+      const ru = P(t, T.dlya, 2.6, eInOut);
       const Lr = Math.pow(12001, ru) - 1;
       ribbon.visible = Lr > .01;
       ribbon.scale.set(Math.max(.001, Lr), .025, 1.0); ribbon.position.set(-1.465, 0, 0);
-      const cm = P(t, T.dlya, 2.4, eInOut);
-      frame(cam, [lerp(0, -9, cm), lerp(2.0, .6, cm), 0], lerp(34, 30, cm), lerp(32 + (t - T.B) * 3, 80, cm), lerp(12, 5.5, cm), lerp(540, 470, cm), lerp(1080, 980, cm));
+      const cm = P(t, T.bum - .1, 1.7, eInOut);
+      frame(cam, [0, 2, 0], 34, 32 + (t - T.B) * 3, 12, 540, 1110);
+      if (cm > 0) {
+        // кран над лентой: камера уходит к пачке и смотрит вдоль ленты к горизонту
+        const p0 = cam.position.clone(), p1 = new THREE.Vector3(-3.5, 3.4, 2.4);
+        const q0 = new THREE.Vector3(0, 2, 0), q1 = new THREE.Vector3(-400, 0, -6);
+        cam.position.lerpVectors(p0, p1, cm); cam.lookAt(q0.lerp(q1, Math.pow(cm, 1.6)));
+        cam.setViewOffset(W, H, 0, 960 - lerp(1110, 760, cm), W, H); cam.updateMatrixWorld();
+      }
     }
   },
 
