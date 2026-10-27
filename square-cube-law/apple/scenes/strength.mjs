@@ -116,7 +116,7 @@ defineScene('strength', {
     const cap = new THREE.Group(); cap.position.y = H_CUT + .0015; cap.rotation.x = -Math.PI / 2;
     const RO = .3, RI = .165;
     const cortex = new THREE.Mesh(new THREE.RingGeometry(RI, RO, 96, 1), new THREE.MeshStandardMaterial({ color: '#FBFAF6', roughness: .55 }));
-    const marrow = new THREE.Mesh(new THREE.CircleGeometry(RI, 96), new THREE.MeshPhysicalMaterial({ color: '#0E0E10', roughness: .25, clearcoat: 1 }));
+    const marrow = new THREE.Mesh(new THREE.CircleGeometry(RI, 96), new THREE.MeshPhysicalMaterial({ color: '#1C1C1E', roughness: .3, clearcoat: 1 }));
     cap.add(cortex, marrow);
     const lamellae = [];
     for (let i = 0; i < 7; i++) {
@@ -158,7 +158,7 @@ defineScene('strength', {
     const NDU = 40, dust = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 12, 8), new THREE.MeshBasicMaterial({ color: '#6E6E73', transparent: true, depthWrite: false, opacity: 0 }), NDU);
     dust.frustumCulled = false; root.add(dust);
     const dustData = []; { const R = rng(5);
-      for (let i = 0; i < NDU; i++) dustData.push({ a: R() * Math.PI * 2, r0: .6 + R() * 1.6, sp: .8 + R() * 1.4, s: .12 + R() * .2, x0: (R() - .5) * 2.4 }); }
+      for (let i = 0; i < NDU; i++) dustData.push({ a: R() * Math.PI * 2, r0: .6 + R() * 1.6, sp: .8 + R() * 1.4, s: .06 + R() * .1, x0: (R() - .5) * 2.4 }); }
 
     // ===== s4: слон, колонны, две кости =====
     const ele = makeElephant(MAT.ceramicWhite()); root.add(ele);
@@ -189,8 +189,8 @@ defineScene('strength', {
 
     if (sub === 1) {
       // ---- кость ----
-      const rise = P(t, T.title + 1.5, 1.6, eApple);
-      lk = P(t, T.title + 1.45, 1.5, eEase);
+      const rise = P(t, T.title + 1.65, 1.6, eApple);
+      lk = P(t, T.title + 1.6, 1.5, eEase);
       st.boneGrp.visible = true;
       st.boneGrp.position.y = lerp(-.25, 0, rise);
       // свет скользит по кости
@@ -206,7 +206,7 @@ defineScene('strength', {
       const lift = P(t, T.strong + .75, 1.3, eInOut);
       st.boneUp.position.y = 1.5 + lift * 1.9;
       st.boneUp.visible = lift < .999;
-      st.boneMatUp.opacity = 1 - P(t, T.strong + 1.15, .8, eEase);
+      st.boneMatUp.opacity = 1 - P(t, T.strong + .95, .6, eEase);
       st.boneMatUp.clippingPlanes[0].constant = -(st.H_CUT + lift * 1.9);
       st.cap.visible = lift > 0;
       st.cap.position.y = st.H_CUT + .0015 + st.boneGrp.position.y;
@@ -215,7 +215,7 @@ defineScene('strength', {
       st.lamellae.forEach((ln, i) => {
         const ph = i < 7 ? i / 6 : .2 + (i - 7) * .1;
         const hit = Math.exp(-Math.pow((wave - ph) * 5, 2));
-        ln.material.opacity = i < 7 ? .22 + .7 * hit * P(t, T.area, .2) : .1 + .35 * hit;
+        ln.material.opacity = i < 7 ? .22 + .7 * hit * P(t, T.area, .2) : .2 + .5 * hit;
         ln.material.color.set(i < 7 ? (hit > .3 ? '#5a5a5e' : '#2a2a2c') : '#FFFFFF');
       });
       st.ost.material.color.setScalar(lerp(.45, .62, Math.exp(-Math.pow((wave - .5) * 2.5, 2))));
@@ -228,14 +228,14 @@ defineScene('strength', {
       st.cube.rotation.y = lerp(.55, .38, fall);
       // камера: герой → макро-проезд над срезом → общий план
       const mIn = P(t, T.strong + .9, 1.45, eInOut), mOut = P(t, T.sect + .55, 1.0, eInOut);
-      const hero = { tg: [0, 1.5, 0], d: 13.5, az: lerp(-28, -12, P(t, T.title + 1.4, 3, eEase)), el: 7 };
-      const macro = { tg: [0, st.H_CUT, 0], d: lerp(3.3, 2.75, P(t, T.strong + 2, 1.8, eEase)), az: lerp(-12, 34, P(t, T.strong + .9, 2.8, eEase)), el: lerp(58, 64, mIn) };
-      const wide = { tg: [0, 1.85, 0], d: 14.5, az: lerp(18, 26, P(t, T.sect + .55, 2.5, eEase)), el: 9 };
+      const hero = { tg: [0, 1.5, 0], d: 15, az: lerp(-28, -12, P(t, T.title + 1.4, 3, eEase)), el: 7 };
+      const macro = { tg: [0, st.H_CUT, 0], d: lerp(4.7, 4.0, P(t, T.strong + 2, 1.8, eEase)), az: lerp(-12, 34, P(t, T.strong + .9, 2.8, eEase)), el: lerp(66, 76, mIn) };
+      const wide = { tg: [0, 1.85, 0], d: 16, az: lerp(18, 26, P(t, T.sect + .55, 2.5, eEase)), el: 15 };
       const A = mOut > 0 ? macro : hero, B = mOut > 0 ? wide : macro, k = mOut > 0 ? mOut : mIn;
       const tg = [0, 1, 2].map(i => lerp(A.tg[i], B.tg[i], k));
       // дистанция — логарифмически (плавный макро-наезд)
       const d = Math.exp(lerp(Math.log(A.d), Math.log(B.d), k));
-      let sy = lerp(mOut > 0 ? 930 : 900, mOut > 0 ? 1000 : 930, k);
+      const SY = { h: 760, m: 720, w: 780 }; let sy = lerp(mOut > 0 ? SY.m : SY.h, mOut > 0 ? SY.w : SY.m, k);
       // микротолчок от массы
       const sh = fall >= 1 ? .06 * Math.exp(-(t - T.weight - .35) * 8) * Math.sin((t - T.weight) * 55) : 0;
       frame(cam, [tg[0], tg[1] + sh, tg[2]], d, lerp(A.az, B.az, k), lerp(A.el, B.el, k), 540, sy);
@@ -277,7 +277,7 @@ defineScene('strength', {
       st.dust.visible = du > 0;
       if (du > 0) {
         const fa = Math.min(P(t, T.own, .2), 1 - P(t, T.own + .5, 1.1, eEase));
-        st.dust.material.opacity = .32 * fa;
+        st.dust.material.opacity = .2 * fa;
         st.dustData.forEach((d, i) => {
           const r = d.r0 + d.sp * eExpo(clamp(du / 1.4)) * 1.2;
           st.v.set(d.x0 * .4 + Math.cos(d.a) * r, .1 + d.s * .6 + du * .18, Math.sin(d.a) * r * .8);
@@ -290,14 +290,14 @@ defineScene('strength', {
       const tr = t - T.crunch, amp = tr > 0 ? Math.exp(-tr * 6) * .09 : 0;
       const tr2 = t - T.own, amp2 = tr2 > 0 ? Math.exp(-tr2 * 7) * .05 : 0;
       const shx = amp * Math.sin(tr * 71) + amp2 * Math.sin(tr2 * 63), shy = amp * Math.sin(tr * 53 + 1) + amp2 * Math.sin(tr2 * 47 + 2);
-      frame(cam, [.25 + shx, 1.05 + shy, 0], lerp(33, 29, P(t, T.S3, 3.5, eEase)), lerp(32, 38, P(t, T.S3, 3.5, eEase)), 1.5, 540, 860, 19);
+      frame(cam, [.25 + shx, 1.05 + shy, 0], lerp(41, 37.5, P(t, T.S3, 3.5, eEase)), lerp(32, 38, P(t, T.S3, 3.5, eEase)), 1.5, 515, 860, 19);
     } else {
       // ---- слон, колонны, кости ----
       lk = P(t, T.S4 + .02, .7, eEase);
       st.ele.visible = true; st.ele.position.set(0, 0, 0); st.ele.rotation.y = 0;
       st.ele.pose({ trunk: Math.sin((t - T.S4) * 1.3) * .3 });
       const az = lerp(24, 46, P(t, T.S4, 3.4, eEase));
-      frame(cam, [.15, 1.55, 0], 22.5, az, 6, 520, 1000);
+      frame(cam, [.15, 1.55, 0], 22.5, az, 6, 520, 950);
       // колонны «вырастают» из пола (clipping)
       const gr = P(t, T.cols - .2, 1.0, eInOut);
       st.colPlane.constant = gr * 1.47;
@@ -326,19 +326,19 @@ defineScene('strength', {
 
     if (t < T.S2) {
       // заголовок-вдох
-      atextWords('А теперь главное.', 510, 905, T.title, t, { size: 112, w: 600, col: ink, out: T.title + 1.45, outDur: .4 });
+      atextWords('А теперь главное.', 510, 905, T.title, t, { size: 112, w: 600, col: ink, out: T.title + 1.2, outDur: .4 });
       // выноска «площадь сечения» во время макро
       const [ax, ay] = project(cam, -.3 * Math.cos(.35), st.H_CUT, .3 * Math.sin(.35));
       const outA = T.sect + .5;
       if (t < outA + .5) {
-        callout(ax, ay, 300, 520, T.area + .15, t, ink, 1 - P(t, outA, .35, eIn));
-        label(96, 470, 'Площадь сечения', 'прочность ∝ L²', T.area + .4, t, { out: outA });
+        callout(ax, ay, 250, 395, T.area + .15, t, ink, 1 - P(t, outA, .35, eIn));
+        label(96, 335, 'Площадь сечения', 'прочность ∝ L²', T.area + .4, t, { out: outA });
       }
       // общий план: обе выноски
       const [bx, by] = project(cam, .3 * Math.cos(-.6), st.H_CUT - .25, .3 * Math.sin(.6));
       const fo = E('s1') - .3;
-      callout(bx, by, 700, 1150, T.weight - .05, t, ink, 1 - P(t, fo, .3, eIn));
-      label(700, 1150 + 44, 'Площадь сечения', 'прочность ∝ L²', T.weight + .1, t, { out: fo });
+      callout(bx, by, 630, 1100, T.weight - .05, t, ink, 1 - P(t, fo, .3, eIn));
+      label(630, 1100 + 44, 'Площадь сечения', 'прочность ∝ L²', T.weight + .1, t, { out: fo, size: 40 });
       const [cx, cy] = project(cam, -.4, st.H_CUT + .9, .4);
       callout(cx, cy, 300, 520, T.volume - .2, t, ink, 1 - P(t, fo, .3, eIn));
       label(96, 470, 'Объём', 'вес ∝ L³', T.volume, t, { out: fo });
@@ -391,8 +391,8 @@ defineScene('strength', {
         // выноска к излому передней лапы
         const k0 = kn[0];
         const [x0, y0] = project(cam, k0.x, k0.y, k0.z);
-        callout(x0, y0, 760, 470, T.breaks + .15, t, ink, fade);
-        label(760, 430, 'Предел', 'прочности превышен', T.breaks + .35, t, { out: E('s3') - .1, align: 'left' });
+        callout(x0, y0, 600, 470, T.breaks + .15, t, ink, fade);
+        label(600, 430, 'Предел', 'прочности превышен', T.breaks + .35, t, { out: E('s3') - .1, align: 'left' });
       }
     } else {
       // кости над слоном

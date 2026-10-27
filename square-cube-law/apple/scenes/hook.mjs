@@ -70,10 +70,10 @@ defineScene('hook', {
     if (ph === 1) {
       // ---- муравей: макро → рост до слона → гибель ----
       const grow = eSpring(clamp((t - T.en) / 1.7));
-      const lag = eInOut(clamp((t - T.en - .2) / 1.9));
+      const lag = eSpring(clamp((t - T.en - .12) / 2.0));
       const pull = eInOut(clamp((t - T.sl + .5) / 1.5));
       const move = eInOut(clamp((t - T.en) / 2.4));
-      const k = lerp(1, 3.4, grow);
+      const k = lerp(1, 3.1, grow);
       ant.scale.setScalar(k);
       ant.position.set(lerp(.1, -1.5, move), 0, lerp(0, 1.3, move));
       ant.rotation.y = lerp(-.18, .1, move);
@@ -83,7 +83,7 @@ defineScene('hook', {
       ele.position.set(2.0, 0, -2.6); ele.rotation.y = Math.PI - .3; ele.scale.setScalar(1);
       ele.pose({ flap: .12 * Math.sin(t * 1.7), trunk: .2 * Math.sin(t * 1.1) });
       const eLit = P(t, T.sl - .45, 1.1) * (1 - .55 * P(t, T.die + .1, .8));
-      setLit(st.eleM, eLit);
+      setLit(st.eleM, eLit); ele.visible = eLit > .01;
       setLit(st.antM, 1);
       // свет: скользящий ключ, затем «гаснет» на «погибнет», контровой становится красным
       const fadeIn = lerp(.62, 1, P(t, 0, 1.2));
@@ -99,7 +99,7 @@ defineScene('hook', {
       rimL.intensity = (3.2 + red * 4.5) * fadeIn * out;
       rimL.position.set(-6, 3, -5);
       // камера: макро (fov 26, близко) → экспоненциальный отъезд
-      const d = 8.2 * lerp(1, 3.4, lag) * lerp(1, 1.5, pull);
+      const d = 8.2 * lerp(1, 3.1, lag) * lerp(1, 1.42, pull);
       const tg = lerp3(lerp3([.05, .36, 0], [-1.3, 1.2, 1.3], lag), [-.3, 1.55, -.2], pull);
       orbit(cam, tg, d, lerp(26, 12, lag) + (1 - lag) * t * 3, lerp(7, 8, lag));
     } else if (ph === 2) {
@@ -117,9 +117,9 @@ defineScene('hook', {
       key.position.set(lerp(-6, 3, P(t, C('k2'), 1.2)), 8, 6);
       key.intensity = 3 * lit; hemi.intensity = .6 * lit; rimL.intensity = 4 * lit; rimR.intensity = 3 * lit;
       rimL.position.set(-6, 3, -5);
-      const pull = eInOut(clamp((t - jump + .05) / 1.25));
-      const d = 3.6 * Math.pow(400 / 3.6, pull);
-      orbit(cam, lerp3([.05, .26, 0], [XJ * .5, HJ * .37, 0], pull), d, lerp(22, 0, pull) + (1 - pull) * (t - C('k2')) * 4, lerp(5, 1.5, pull));
+      const pull = eInOut(clamp((t - jump + .05) / 1.05));
+      const d = 4.1 * Math.pow(400 / 4.1, pull);
+      orbit(cam, lerp3([-.38, .26, 0], [XJ * .5, HJ * .55, 0], pull), d, lerp(22, 0, pull) + (1 - pull) * (t - C('k2')) * 4, lerp(5, 1.5, pull));
     } else if (ph === 3) {
       // ---- слон приседает, но не отрывается ни на сантиметр ----
       ele.position.set(0, 0, 0); ele.rotation.y = 0; ele.scale.setScalar(1);
@@ -143,11 +143,11 @@ defineScene('hook', {
       rimR.intensity = 2.6 * appear;
       // стеклянная грань = площадь: проявляется и отслаивается по нормали
       const gIn = P(t, T.kv - .15, .5), gOut = P(t, T.kv, 1.1, eInOut);
-      gGrp.position.set(0, .85, .85 + .03 + gOut * .62);
+      gGrp.position.set(0, .85, .85 + .03 + gOut * .45);
       glass.material.opacity = .17 * gIn; gEdge.material.opacity = .9 * gIn;
       gGrp.visible = gIn > .003;
       const p = clamp((t - T.cutD) / (s.end - T.cutD));
-      orbit(cam, [0, .62, 0], lerp(15.5, 16.5, p), lerp(-22, 34, p), lerp(25, 19, p));
+      orbit(cam, [0, .5, 0], lerp(20.5, 21.5, p), lerp(-22, 34, p), lerp(25, 19, p));
     }
   },
 
@@ -216,8 +216,8 @@ defineScene('hook', {
         ws.forEach((q, i) => { atext(q, x, y, ts[i] - .05, t, { size, w: wgt, col: ink, align: 'left', track: tr }); x += wd[i] + sp; });
       };
       row(L1, L1t, 420); row(L2, L2t, 545);
-      atext('S ∝ L²', 540, 1190, T.kv + .15, t, { size: 64, w: 500, col: ink, track: -.01 });
-      atext('V ∝ L³', 540, 1272, T.kub + .05, t, { size: 64, w: 500, col: sub, track: -.01 });
+      atext('S ∝ L²', 330, 1268, T.kv + .15, t, { size: 58, w: 500, col: ink, track: -.01 });
+      atext('V ∝ L³', 750, 1268, T.kub + .05, t, { size: 58, w: 500, col: sub, track: -.01 });
     }
     // короткие «вдохи» в чёрный на монтажных стыках (под ними меняется объект)
     const dip = Math.max(bump(t, T.cutC, .2), bump(t, T.cutD, .22));

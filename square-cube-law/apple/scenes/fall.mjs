@@ -65,13 +65,13 @@ function makeShaft() {
 function makeFigure(mat) {
   const grp = new THREE.Group();
   const parts = [
-    [[.14, .09, 0], [.13, .86, 0], .13], [[-.14, .09, 0], [-.13, .86, 0], .13],   // ноги
-    [[0, 1.0, 0], [0, 1.36, 0], .3],                                            // корпус
+    [[.17, .09, 0], [.16, .86, 0], .13], [[-.17, .09, 0], [-.16, .86, 0], .13],   // ноги
     [[.42, 1.42, 0], [.52, .86, 0], .1], [[-.42, 1.42, 0], [-.52, .86, 0], .1],  // руки
-    [[0, 1.5, 0], [0, 1.62, 0], .09],                                           // шея
   ];
   for (const [a, b, r] of parts) { const R = rod(mat, r, 24); R.set(a, b); grp.add(R); }
-  const head = new THREE.Mesh(new THREE.SphereGeometry(.2, 32, 22), mat); head.position.set(0, 1.76, 0); grp.add(head);
+  // корпус — цельная капсула (без внутренних граней, чтобы срез был чистым)
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(.3, .36, 12, 32), mat); torso.position.set(0, 1.18, 0); grp.add(torso);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.2, 32, 22), mat); head.position.set(0, 1.87, 0); grp.add(head);
   return grp;
 }
 
@@ -159,10 +159,10 @@ defineScene('fall', {
     const R = rng(7), crack = [];
     for (const sd of [-1, 1]) {
       const pts = [[0, 0, .05]]; let z = .05;
-      for (let i = 1; i <= 14; i++) { z += (R() - .5) * .22; z = clamp(z, -.35, .45); pts.push([sd * i * .21, 0, z]); }
+      for (let i = 1; i <= 11; i++) { z += (R() - .5) * .2; z = clamp(z, -.3, .2); pts.push([sd * i * .19, 0, z]); }
       crack.push(pts);
       const k = 4 + Math.floor(R() * 4), bp = pts[k];
-      crack.push([bp, [bp[0] + sd * .25, 0, bp[2] + .3], [bp[0] + sd * .45, 0, bp[2] + .42]]);
+      crack.push([bp, [bp[0] + sd * .25, 0, bp[2] - .28], [bp[0] + sd * .42, 0, bp[2] - .4]]);
     }
     // D: «лошадь» — огромная графитовая сфера
     const heavy = new THREE.Mesh(new THREE.SphereGeometry(1.7, 48, 32), MAT.graphite());
@@ -206,11 +206,11 @@ defineScene('fall', {
       const roll = u > 0 && u < .8 ? Math.sin(u * Math.PI * 2 * 7.5) * .3 * clamp(1 - u / .8) * clamp(u / .06) : 0;
       // убегает: поворот к камере и рывок вперёд
       const turn = P(t, T.run - .2, .4, eInOut);
-      ry += -.95 * turn;
+      ry += .55 * turn;
       const r = eIn(clamp((t - T.run) / .75));
-      const dir = [Math.cos(.95), 0, Math.sin(.95)];
+      const dir = [Math.cos(.55), 0, -Math.sin(.55)];
       const ru = Math.max(0, t - T.run);
-      mouse.position.set(dir[0] * 5.2 * r, my + (ru > 0 ? .05 * Math.abs(Math.sin(ru * 20)) : 0), dir[2] * 5.2 * r);
+      mouse.position.set(dir[0] * 4.2 * r, my + (ru > 0 ? .05 * Math.abs(Math.sin(ru * 20)) : 0), dir[2] * 4.2 * r);
       mouse.rotation.set(roll, ry, rz);
       // приземление: короткий squash без отскока
       const ul = t - T.land;
@@ -240,8 +240,9 @@ defineScene('fall', {
       const sy = 60 - 34 * (t - T.dip3);
       heavy.position.set(0, sy, 0);
       heavy.rotation.set(t * .2, t * .35, 0);
-      const arrive = P(t, T.horse - .15, 1.0, eApple);
-      orbit(cam, [0, sy + .3 - 7 * (1 - arrive), 0], 26, 22, 10);
+      // огромная сфера: камера начинает вплотную и отъезжает; центр сферы в кадре 860 → 1020 px, низ всегда выше субтитров
+      const back = P(t, T.dip3 - .05, 1.1, eApple), d = lerp(16, 27, back), cyPx = lerp(860, 1020, back);
+      orbit(cam, [0, sy + (cyPx - 960) * d / 4158, 0], d, lerp(30, 20, back), 10);
       stage.lights.key.position.set(3, sy + 9, 6); stage.lights.key.target.position.set(0, sy, 0);
     }
   },
@@ -294,7 +295,7 @@ defineScene('fall', {
         g.restore();
       }
     } else {
-      speedo(t, T.dip3 + .08, st, 'Лошадь', 90 * (1 - Math.exp(-Math.max(0, t - T.dip3) / .3)), 90);
+      speedo(t, T.horse + .2, st, 'Лошадь', 90 * (1 - Math.exp(-Math.max(0, t - T.dip3) / .2)), 90);
     }
     // склейки-«вдохи» в чистый фон
     const dip = c => t < c ? eEase(clamp((t - (c - .2)) / .2)) : 1 - eEase(clamp((t - c) / .32));
