@@ -100,7 +100,7 @@ defineScene('limit', {
       ribbon.visible = Lr > .01;
       ribbon.scale.set(Math.max(.001, Lr), .025, 1.0); ribbon.position.set(-1.465, 0, 0);
       const cm = P(t, T.dlya, 2.4, eInOut);
-      frame(cam, [lerp(0, -3, cm), lerp(2.0, 1.2, cm), 0], lerp(21, 17, cm), lerp(32 + (t - T.B) * 3, 66, cm), lerp(14, 7, cm), 540, lerp(1020, 1060, cm));
+      frame(cam, [lerp(0, -9, cm), lerp(2.0, .6, cm), 0], lerp(34, 30, cm), lerp(32 + (t - T.B) * 3, 80, cm), lerp(12, 5.5, cm), lerp(540, 470, cm), lerp(1080, 980, cm));
     }
   },
 
@@ -111,8 +111,7 @@ defineScene('limit', {
       const t0 = T.F[k] + T.FD * .6, nx = k < 6 ? T.F[k + 1] + T.FD * .6 - .12 : T.B - .3;
       atext(String(k + 1), 540, 560, t0, t, { size: 300, w: 700, col: ink, track: -.045, blur: 8, scale0: 1.05, dur: .3, dy: 18, out: nx, outDur: .12 });
     }
-    atext('сгибов руками', 540, 640, T.sem, t, { size: 46, w: 500, col: sub, track: -.005, out: T.B - .3 });
-    atext('предел', 540, 330, T.ne, t, { size: 52, w: 600, col: ink, track: -.01, out: T.B - .3 });
+    atext('предел руками', 540, 640, T.sem, t, { size: 46, w: 500, col: sub, track: -.005, out: T.B - .3 });
     // рекорд
     atext('12', 540, 560, T.dven - .05, t, { size: 300, w: 700, col: ink, track: -.045, blur: 20, scale0: 1.12, dur: .9, out: T.bol - .3 });
     atext('сгибов, рекорд', 540, 640, T.sgib, t, { size: 46, w: 500, col: sub, track: -.005, out: T.bol - .3 });
