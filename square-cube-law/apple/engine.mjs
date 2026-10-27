@@ -214,7 +214,7 @@ function buildCaps() {
     l.words.forEach((w, i) => {
       const at = text.indexOf(w.w, pos); pos = at >= 0 ? at + w.w.length : pos;
       const after = text.slice(pos, pos + 2);
-      grp.push({ ...w, w: w.w + (/^[,!?:]/.test(after) ? after[0] : '') });   // точки не ставим
+      grp.push({ ...w, w: w.w.replace(/[.…—]+$/, '') + (/^[,!?:]/.test(after) ? after[0] : '') });   // точки и тире не ставим
       const chars = grp.reduce((A, q) => A + q.w.length + 1, 0);
       const brk = /[,.!?:—]/.test(after) || /^ —/.test(text.slice(pos, pos + 3));
       if (brk || chars > 16 || grp.length >= 3 || i === l.words.length - 1) { CAPS.push({ words: grp }); grp = []; }

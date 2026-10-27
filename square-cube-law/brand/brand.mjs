@@ -153,8 +153,10 @@ function epTikTok(g, ep) {
   put(g, HEROES[ep.hero](1080, 1080, true), 0, 560);
   txt(g, 'L³', 90, 360, { size: 110, col: C.white, track: -.05 });
   txt(g, `№ ${ep.n}`, 250, 352, { size: 44, w: 600, col: C.muted, track: 0 });
-  txt(g, ep.hook[0], 90, 540, { size: 150, col: C.white });
-  txt(g, ep.hook[1], 90, 690, { size: 150, col: C.white });
+  // кегль хука подбирается так, чтобы самая длинная строка уместилась в 900 px
+  const hs = Math.min(150, ...ep.hook.map(l => 150 * 900 / measure(g, l, 150, 700, -.04)));
+  txt(g, ep.hook[0], 90, 540, { size: hs, col: C.white });
+  txt(g, ep.hook[1], 90, 540 + hs, { size: hs, col: C.white });
   txt(g, ep.law, 94, 1580, { size: 48, w: 600, col: C.white, track: -.01 });
 }
 // YouTube Shorts: вертикальная обложка. В ленте Shorts низ карточки закрыт названием ролика,

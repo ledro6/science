@@ -82,7 +82,7 @@ defineScene('hook', {
       if (done < 1) trail(cam, RN, a, .5, { lw: 5, a: .5 * (1 - done), occ });
     }
     // --- тексты ---
-    atextWords('Год на Нептуне', 540, 330, T.god, t, { size: 64, w: 600, col: ink, track: -.02, out: T.end1 - .05, stagger: .1 });
+    atextWords('Год на Нептуне', 540, 270, T.god, t, { size: 64, w: 600, col: ink, track: -.02, out: T.end1 - .05, stagger: .1 });
     atext('165', 540, 600, T.sto, t, { size: 360, w: 700, col: stage.accent, track: -.045, blur: 20, scale0: 1.12, dur: .9, out: T.end1 - .05 });
     atext('земных лет', 540, 680, T.zem, t, { size: 54, w: 500, col: sub, track: -.005, out: T.end1 - .05 });
 
