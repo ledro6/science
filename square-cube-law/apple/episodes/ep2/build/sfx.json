@@ -1,0 +1,320 @@
+[
+ {
+  "t": 0.05,
+  "type": "bloom",
+  "gain": 0.3,
+  "pitch": 0.8
+ },
+ {
+  "t": 0.24,
+  "type": "thud",
+  "gain": 0.3,
+  "pitch": 1.2
+ },
+ {
+  "t": 1.366,
+  "type": "click",
+  "gain": 0.22,
+  "pitch": 1
+ },
+ {
+  "t": 1.791,
+  "type": "thud",
+  "gain": 0.5,
+  "pitch": 0.7
+ },
+ {
+  "t": 2.693,
+  "type": "swell",
+  "gain": 0.25,
+  "pitch": 0.9
+ },
+ {
+  "t": 4.103,
+  "type": "tick",
+  "gain": 0.2,
+  "pitch": 1
+ },
+ {
+  "t": 5.253,
+  "type": "riser",
+  "gain": 0.3,
+  "pitch": 1
+ },
+ {
+  "t": 6.753,
+  "type": "impact",
+  "gain": 0.55,
+  "pitch": 0.8
+ },
+ {
+  "t": 6.803,
+  "type": "chime",
+  "gain": 0.3,
+  "pitch": 1
+ },
+ {
+  "t": 7.944,
+  "type": "whoosh",
+  "gain": 0.25,
+  "pitch": 0.7
+ },
+ {
+  "t": 9.65,
+  "type": "bloom",
+  "gain": 0.35,
+  "pitch": 0.8
+ },
+ {
+  "t": 10.093,
+  "type": "chime",
+  "gain": 0.25,
+  "pitch": 0.9
+ },
+ {
+  "t": 11.251,
+  "type": "whoosh",
+  "gain": 0.5,
+  "pitch": 1
+ },
+ {
+  "t": 11.491,
+  "type": "thud",
+  "gain": 0.3,
+  "pitch": 1.2
+ },
+ {
+  "t": 12.675,
+  "type": "chime",
+  "gain": 0.25,
+  "pitch": 1.1
+ },
+ {
+  "t": 14.652,
+  "type": "whoosh",
+  "gain": 0.3,
+  "pitch": 0.8
+ },
+ {
+  "t": 16.241,
+  "type": "thud",
+  "gain": 0.4,
+  "pitch": 0.6
+ },
+ {
+  "t": 17.037,
+  "type": "whoosh",
+  "gain": 0.25,
+  "pitch": 1.1
+ },
+ {
+  "t": 18.241,
+  "type": "thud",
+  "gain": 0.3,
+  "pitch": 0.6
+ },
+ {
+  "t": 19.012,
+  "type": "shimmer",
+  "gain": 0.3,
+  "pitch": 1
+ },
+ {
+  "t": 19.452,
+  "type": "chime",
+  "gain": 0.3,
+  "pitch": 1
+ },
+ {
+  "t": 21.419,
+  "type": "whoosh",
+  "gain": 0.5,
+  "pitch": 1
+ },
+ {
+  "t": 21.836,
+  "type": "chime",
+  "gain": 0.25,
+  "pitch": 0.9
+ },
+ {
+  "t": 24.209,
+  "type": "whoosh",
+  "gain": 0.25,
+  "pitch": 0.8
+ },
+ {
+  "t": 25.108,
+  "type": "click",
+  "gain": 0.16,
+  "pitch": 1
+ },
+ {
+  "t": 25.22,
+  "type": "click",
+  "gain": 0.16,
+  "pitch": 1.06
+ },
+ {
+  "t": 25.333,
+  "type": "click",
+  "gain": 0.16,
+  "pitch": 1.12
+ },
+ {
+  "t": 25.445,
+  "type": "click",
+  "gain": 0.16,
+  "pitch": 1.18
+ },
+ {
+  "t": 25.557,
+  "type": "click",
+  "gain": 0.16,
+  "pitch": 1.24
+ },
+ {
+  "t": 26.107,
+  "type": "swell",
+  "gain": 0.25,
+  "pitch": 1
+ },
+ {
+  "t": 28.641,
+  "type": "tick",
+  "gain": 0.2,
+  "pitch": 1
+ },
+ {
+  "t": 31.106,
+  "type": "chime",
+  "gain": 0.3,
+  "pitch": 1
+ },
+ {
+  "t": 32.962,
+  "type": "click",
+  "gain": 0.25,
+  "pitch": 1
+ },
+ {
+  "t": 33.793,
+  "type": "riser",
+  "gain": 0.3,
+  "pitch": 1
+ },
+ {
+  "t": 35.293,
+  "type": "impact",
+  "gain": 0.5,
+  "pitch": 0.8
+ },
+ {
+  "t": 36.8,
+  "type": "thud",
+  "gain": 0.3,
+  "pitch": 0.8
+ },
+ {
+  "t": 36.81,
+  "type": "whoosh",
+  "gain": 0.5,
+  "pitch": 1
+ },
+ {
+  "t": 37.887,
+  "type": "tick",
+  "gain": 0.2,
+  "pitch": 1
+ },
+ {
+  "t": 41.385,
+  "type": "rise",
+  "gain": 0.3,
+  "pitch": 0.9
+ },
+ {
+  "t": 41.385,
+  "type": "click",
+  "gain": 0.115,
+  "pitch": 1.07
+ },
+ {
+  "t": 41.785,
+  "type": "click",
+  "gain": 0.13,
+  "pitch": 1.1400000000000001
+ },
+ {
+  "t": 42.185,
+  "type": "click",
+  "gain": 0.14500000000000002,
+  "pitch": 1.21
+ },
+ {
+  "t": 42.585,
+  "type": "click",
+  "gain": 0.16,
+  "pitch": 1.28
+ },
+ {
+  "t": 42.985,
+  "type": "click",
+  "gain": 0.175,
+  "pitch": 1.35
+ },
+ {
+  "t": 43.385,
+  "type": "click",
+  "gain": 0.19,
+  "pitch": 1.42
+ },
+ {
+  "t": 43.614,
+  "type": "swell",
+  "gain": 0.3,
+  "pitch": 1
+ },
+ {
+  "t": 44.841,
+  "type": "shimmer",
+  "gain": 0.3,
+  "pitch": 1
+ },
+ {
+  "t": 45.802,
+  "type": "whoosh",
+  "gain": 0.5,
+  "pitch": 1
+ },
+ {
+  "t": 45.852,
+  "type": "swell",
+  "gain": 0.3,
+  "pitch": 0.6
+ },
+ {
+  "t": 47.377,
+  "type": "whoosh",
+  "gain": 0.2,
+  "pitch": 0.7
+ },
+ {
+  "t": 49.618,
+  "type": "bloom",
+  "gain": 0.25,
+  "pitch": 0.8
+ },
+ {
+  "t": 50.654,
+  "type": "thud",
+  "gain": 0.22,
+  "pitch": 0.8
+ },
+ {
+  "t": 53.181,
+  "type": "click",
+  "gain": 0.45,
+  "pitch": 0.9
+ }
+]
