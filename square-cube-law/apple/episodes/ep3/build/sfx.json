@@ -1,0 +1,338 @@
+[
+ {
+  "t": 0.05,
+  "type": "bloom",
+  "gain": 0.35,
+  "pitch": 0.8
+ },
+ {
+  "t": 1.32,
+  "type": "shimmer",
+  "gain": 0.25,
+  "pitch": 1
+ },
+ {
+  "t": 2.513,
+  "type": "riser",
+  "gain": 0.28,
+  "pitch": 1
+ },
+ {
+  "t": 3.11,
+  "type": "whoosh",
+  "gain": 0.45,
+  "pitch": 0.7
+ },
+ {
+  "t": 4.013,
+  "type": "impact",
+  "gain": 0.4,
+  "pitch": 0.8
+ },
+ {
+  "t": 4.851,
+  "type": "click",
+  "gain": 0.2,
+  "pitch": 1
+ },
+ {
+  "t": 7.571,
+  "type": "chime",
+  "gain": 0.32,
+  "pitch": 0.9
+ },
+ {
+  "t": 8.891,
+  "type": "whoosh",
+  "gain": 0.5,
+  "pitch": 1
+ },
+ {
+  "t": 9.181,
+  "type": "shimmer",
+  "gain": 0.22,
+  "pitch": 1
+ },
+ {
+  "t": 12.9,
+  "type": "thud",
+  "gain": 0.3,
+  "pitch": 1
+ },
+ {
+  "t": 15.517,
+  "type": "thud",
+  "gain": 0.3,
+  "pitch": 1.06
+ },
+ {
+  "t": 17.892,
+  "type": "click",
+  "gain": 0.2,
+  "pitch": 1.12
+ },
+ {
+  "t": 18.412,
+  "type": "click",
+  "gain": 0.2,
+  "pitch": 1.18
+ },
+ {
+  "t": 18.932,
+  "type": "click",
+  "gain": 0.2,
+  "pitch": 1.24
+ },
+ {
+  "t": 19.452,
+  "type": "click",
+  "gain": 0.2,
+  "pitch": 1.3
+ },
+ {
+  "t": 20.997,
+  "type": "chime",
+  "gain": 0.26,
+  "pitch": 1
+ },
+ {
+  "t": 22.774,
+  "type": "whoosh",
+  "gain": 0.35,
+  "pitch": 0.9
+ },
+ {
+  "t": 24.61,
+  "type": "thud",
+  "gain": 0.3,
+  "pitch": 0.7
+ },
+ {
+  "t": 26.3,
+  "type": "whoosh",
+  "gain": 0.35,
+  "pitch": 0.8
+ },
+ {
+  "t": 28.476,
+  "type": "shimmer",
+  "gain": 0.25,
+  "pitch": 1
+ },
+ {
+  "t": 29.169,
+  "type": "riser",
+  "gain": 0.3,
+  "pitch": 1
+ },
+ {
+  "t": 29.947,
+  "type": "whoosh",
+  "gain": 0.4,
+  "pitch": 0.6
+ },
+ {
+  "t": 30.669,
+  "type": "impact",
+  "gain": 0.38,
+  "pitch": 0.8
+ },
+ {
+  "t": 33.269,
+  "type": "chime",
+  "gain": 0.3,
+  "pitch": 0.9
+ },
+ {
+  "t": 34.659,
+  "type": "whoosh",
+  "gain": 0.5,
+  "pitch": 1
+ },
+ {
+  "t": 35.921,
+  "type": "tick",
+  "gain": 0.15,
+  "pitch": 1
+ },
+ {
+  "t": 36.465,
+  "type": "chime",
+  "gain": 0.22,
+  "pitch": 0.8
+ },
+ {
+  "t": 39.252,
+  "type": "swell",
+  "gain": 0.3,
+  "pitch": 1
+ },
+ {
+  "t": 39.65,
+  "type": "riser",
+  "gain": 0.25,
+  "pitch": 1
+ },
+ {
+  "t": 41.15,
+  "type": "impact",
+  "gain": 0.3,
+  "pitch": 0.9
+ },
+ {
+  "t": 43.288,
+  "type": "whoosh",
+  "gain": 0.3,
+  "pitch": 0.8
+ },
+ {
+  "t": 43.843,
+  "type": "thud",
+  "gain": 0.25,
+  "pitch": 0.9
+ },
+ {
+  "t": 44.561,
+  "type": "click",
+  "gain": 0.25,
+  "pitch": 1
+ },
+ {
+  "t": 45.209,
+  "type": "click",
+  "gain": 0.25,
+  "pitch": 1.1
+ },
+ {
+  "t": 46.668,
+  "type": "whoosh",
+  "gain": 0.5,
+  "pitch": 1
+ },
+ {
+  "t": 47.252,
+  "type": "click",
+  "gain": 0.16,
+  "pitch": 1
+ },
+ {
+  "t": 47.622,
+  "type": "click",
+  "gain": 0.18,
+  "pitch": 1.05
+ },
+ {
+  "t": 47.992,
+  "type": "click",
+  "gain": 0.2,
+  "pitch": 1.1
+ },
+ {
+  "t": 48.362,
+  "type": "click",
+  "gain": 0.22,
+  "pitch": 1.15
+ },
+ {
+  "t": 48.732,
+  "type": "click",
+  "gain": 0.24,
+  "pitch": 1.2
+ },
+ {
+  "t": 49.102,
+  "type": "click",
+  "gain": 0.26,
+  "pitch": 1.25
+ },
+ {
+  "t": 49.472,
+  "type": "click",
+  "gain": 0.28,
+  "pitch": 1.3
+ },
+ {
+  "t": 49.74,
+  "type": "thud",
+  "gain": 0.3,
+  "pitch": 0.6
+ },
+ {
+  "t": 50.397,
+  "type": "whoosh",
+  "gain": 0.3,
+  "pitch": 0.8
+ },
+ {
+  "t": 50.891,
+  "type": "chime",
+  "gain": 0.26,
+  "pitch": 1
+ },
+ {
+  "t": 53.218,
+  "type": "riser",
+  "gain": 0.22,
+  "pitch": 1
+ },
+ {
+  "t": 53.631,
+  "type": "swell",
+  "gain": 0.3,
+  "pitch": 0.8
+ },
+ {
+  "t": 54.718,
+  "type": "impact",
+  "gain": 0.28,
+  "pitch": 0.9
+ },
+ {
+  "t": 56.188,
+  "type": "whoosh",
+  "gain": 0.5,
+  "pitch": 1
+ },
+ {
+  "t": 56.288,
+  "type": "swell",
+  "gain": 0.3,
+  "pitch": 0.6
+ },
+ {
+  "t": 57.196,
+  "type": "bloom",
+  "gain": 0.2,
+  "pitch": 0.8
+ },
+ {
+  "t": 60.34,
+  "type": "chime",
+  "gain": 0.22,
+  "pitch": 0.9
+ },
+ {
+  "t": 60.915,
+  "type": "whoosh",
+  "gain": 0.3,
+  "pitch": 0.6
+ },
+ {
+  "t": 61.715,
+  "type": "click",
+  "gain": 0.25,
+  "pitch": 1
+ },
+ {
+  "t": 62.115,
+  "type": "thud",
+  "gain": 0.22,
+  "pitch": 0.8
+ },
+ {
+  "t": 64.042,
+  "type": "click",
+  "gain": 0.45,
+  "pitch": 0.9
+ }
+]
