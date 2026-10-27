@@ -11,3 +11,4 @@ square-cube-law/apple/episodes/*/stills/
 square-cube-law/apple/episodes/*/build/part*.mp4
 square-cube-law/apple/episodes/*/build/*.log
 square-cube-law/apple/episodes/*/__pycache__/
+square-cube-law/apple/episodes/*/build/render_all.log

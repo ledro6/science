@@ -44,9 +44,9 @@ defineScene('heart', {
     const kB = P(t, T.ele - .35, 1.2, eInOut), kC = P(t, T.small - .1, 1.2, eInOut);
     // сердце мыши
     const inM = P(t, s.start + .15, 1.1, eApple);
-    const xm = lerp(lerp(0, -1.3, kB), 0, kC), sm = lerp(lerp(.82, .42, kB), .62, kC);
+    const xm = lerp(lerp(0, -.86, kB), 0, kC), sm = lerp(lerp(.82, .3, kB), .62, kC);
     const bm = beat(t * HZ_M) * smooth(T.mouse - .2, T.mouse + .2, t);
-    hm.position.set(xm, lerp(1.0, 1.25, inM) + lerp(0, -.15, kB) * (1 - kC), 0);
+    hm.position.set(xm, lerp(1.0, 1.25, inM) + lerp(0, -.15, kB) * (1 - kC) - .3 * kC, 0);
     hm.scale.setScalar(sm * (1 + .075 * bm) * lerp(.9, 1, inM));
     hm.rotation.set(.08, .45 * Math.sin((t - 11) * .55) - .15, .05 * Math.sin(t * .7));
     hm.material.opacity = inM;
@@ -54,8 +54,8 @@ defineScene('heart', {
     const inE = P(t, T.ele - .1, 1.1, eApple), outE = P(t, T.small - .1, .9, eInOut);
     he.visible = inE > .003 && outE < .999;
     const be = beat((t - T.b30 + .12) * HZ_E);
-    he.position.set(lerp(1.15, 1.35, outE) + 2.2 * outE, lerp(.95, 1.1, inE), 0);
-    he.scale.setScalar(1.02 * (1 + .1 * be) * lerp(.9, 1, inE));
+    he.position.set(.86 + 2.4 * outE, lerp(.95, 1.1, inE), 0);
+    he.scale.setScalar(.64 * (1 + .1 * be) * lerp(.9, 1, inE));
     he.rotation.set(.08, .4 * Math.sin((t - 14) * .45) + .2, -.04);
     he.material.opacity = inE * (1 - outE);
     // свет: ключ слегка «дышит» вместе с ударом слона
@@ -68,7 +68,7 @@ defineScene('heart', {
       pd.forEach((p, i) => {
         const age = ((t - T.burn) / life * p.sp + p.o) % 1;
         const a = age < 0 ? age + 1 : age;
-        const r = .55 + a * 2.6;
+        const r = .5 + a * 1.7;
         st.v.copy(p.d).multiplyScalar(r * sm / .62).add(hm.position);
         const sc = p.s * pk * Math.sin(Math.PI * a) * 1.2;
         st.m4.compose(st.v, st.q, st.sv.setScalar(Math.max(sc, 1e-4)));
@@ -126,7 +126,7 @@ defineScene('heart', {
     if (he.visible) {
       const [ex, ey] = project(cam, he.position.x, he.position.y, 0);
       const ph = ((t - T.b30 + .12) * HZ_E) % 1, a = he.material.opacity * (1 - ph) * .5 * P(t, T.b30 - .2, .4);
-      if (ph > 0 && a > .003) { g.save(); g.globalAlpha = a; g.strokeStyle = ink; g.lineWidth = 2; g.beginPath(); g.arc(ex, ey, 150 + ph * 160, 0, 7); g.stroke(); g.restore(); }
+      if (ph > 0 && a > .003) { g.save(); g.globalAlpha = a; g.strokeStyle = ink; g.lineWidth = 2; g.beginPath(); g.arc(ex, ey, 110 + ph * 120, 0, 7); g.stroke(); g.restore(); }
     }
 
     // ---- h2: «живёт быстро» → «×20 энергии на килограмм» ----
