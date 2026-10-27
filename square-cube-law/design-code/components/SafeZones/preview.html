@@ -1,0 +1,16 @@
+<!-- @dsCard group="Раскладка" height=420 subtitle="Интерфейс площадок поверх кадра 1080×1920 (масштаб 1:5)" -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap">
+<style>
+  body{margin:0;background:var(--surface-card);font-family:var(--font-text)}
+  .grid{display:flex;gap:20px;justify-content:center;padding:16px;flex-wrap:wrap}
+  figure{margin:0;display:flex;flex-direction:column;gap:8px;align-items:center}
+  svg{width:216px;height:384px;display:block}
+  .stage{fill:var(--stage)}.ui{fill:var(--ink-muted);opacity:.35}.safe{fill:none;stroke:var(--ink);stroke-width:2}.crop{fill:none;stroke:var(--signal-red);stroke-width:1.5;stroke-dasharray:4 4}
+  figcaption{font-size:13px;color:var(--ink);font-weight:600}
+</style>
+<div class="grid">
+  <figure><svg viewBox="0 0 1080 1920" role="img" aria-label="TikTok"><rect class="stage" width="1080" height="1920"/><rect class="ui" width="1080" height="200"/><rect class="ui" y="1480" width="1080" height="440"/><rect class="ui" x="940" y="700" width="140" height="780"/><rect class="crop" x="0" y="240" width="1080" height="1440"/><rect class="safe" x="80" y="250" width="860" height="1190"/></svg><figcaption>TikTok</figcaption></figure>
+  <figure><svg viewBox="0 0 1080 1920" role="img" aria-label="Instagram Reels"><rect class="stage" width="1080" height="1920"/><rect class="ui" width="1080" height="220"/><rect class="ui" y="1520" width="1080" height="400"/><rect class="ui" x="940" y="900" width="140" height="620"/><rect class="crop" x="0" y="240" width="1080" height="1440"/><rect class="safe" x="80" y="250" width="860" height="1190"/></svg><figcaption>Reels</figcaption></figure>
+  <figure><svg viewBox="0 0 1080 1920" role="img" aria-label="YouTube Shorts"><rect class="stage" width="1080" height="1920"/><rect class="ui" width="1080" height="180"/><rect class="ui" y="1440" width="1080" height="480"/><rect class="ui" x="920" y="760" width="160" height="680"/><rect class="safe" x="80" y="250" width="860" height="1190"/></svg><figcaption>Shorts</figcaption></figure>
+  <figure><svg viewBox="0 0 1080 1920" role="img" aria-label="VK Клипы"><rect class="stage" width="1080" height="1920"/><rect class="ui" width="1080" height="200"/><rect class="ui" y="1500" width="1080" height="420"/><rect class="ui" x="940" y="820" width="140" height="680"/><rect class="safe" x="80" y="250" width="860" height="1190"/></svg><figcaption>VK Клипы</figcaption></figure>
+</div>

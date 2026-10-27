@@ -1,0 +1,11 @@
+<!-- @dsCard group="Финал" height=180 subtitle="Пилюля в обеих сценах" -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap">
+<style>
+  body{margin:0;background:var(--stage);font-family:var(--font-display)}
+  .wrap{display:flex;gap:32px;justify-content:center;align-items:center;padding-block:48px;flex-wrap:wrap}
+  .pill{background:var(--ink);color:var(--on-pill);font-size:22px;font-weight:600;border-radius:var(--radius-pill);padding:20px 40px;animation:pulse 1.6s ease-in-out infinite}
+  .ring{box-shadow:0 0 0 6px var(--stage),0 0 0 8px var(--hairline);animation:none;transform:scale(.96)}
+  @keyframes pulse{50%{transform:scale(1.02)}}
+  @media (prefers-reduced-motion:reduce){.pill{animation:none}}
+</style>
+<div class="wrap"><span class="pill">Подписаться</span><span class="pill ring">Подписаться</span></div>

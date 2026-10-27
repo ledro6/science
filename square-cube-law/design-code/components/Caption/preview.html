@@ -1,0 +1,11 @@
+<!-- @dsCard group="Текст" height=200 subtitle="Пословный blur-rise, как у заголовков" -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap">
+<style>
+  body{margin:0;background:var(--stage);font-family:var(--font-display)}
+  .row{display:flex;gap:18px;justify-content:center;align-items:baseline;padding-block:64px}
+  .w{font-size:44px;font-weight:600;letter-spacing:-0.02em;color:var(--ink);opacity:0;animation:rise 4s cubic-bezier(.28,.11,.32,1) infinite}
+  .w:nth-child(2){animation-delay:.35s}.w:nth-child(3){animation-delay:.7s}
+  @keyframes rise{0%{opacity:0;transform:translateY(18px) scale(1.04);filter:blur(10px)}15%{opacity:1;transform:none;filter:blur(0)}80%{opacity:1;transform:none;filter:blur(0)}90%,100%{opacity:0;transform:translateY(-22px)}}
+  @media (prefers-reduced-motion:reduce){.w{animation:none;opacity:1}}
+</style>
+<div class="row"><span class="w">Площадь</span><span class="w">выросла</span><span class="w">вчетверо.</span></div>

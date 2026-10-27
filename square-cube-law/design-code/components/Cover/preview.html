@@ -1,0 +1,29 @@
+<!-- @dsCard height=288 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap">
+<style>
+  html,body{margin:0}
+  body{background:var(--stage);width:960px;height:288px;position:relative;overflow:hidden;font-family:var(--font-display)}
+  svg{position:absolute;inset:0;width:960px;height:288px}
+  .ink{fill:var(--ink)}.alu{fill:var(--mat-aluminium)}.gra{fill:var(--mat-graphite)}.mut{fill:var(--ink-muted)}.sig{fill:var(--signal-red)}
+  .cut{fill:var(--stage);font-family:var(--font-display);font-weight:700;font-size:360px;letter-spacing:-0.045em}
+  .text{position:absolute;left:48px;bottom:40px;width:440px;display:flex;flex-direction:column;gap:12px}
+  .name{margin:0;font-size:64px;line-height:.92;font-weight:700;letter-spacing:-0.04em;color:var(--ink)}
+  .tag{margin:0;font-size:14px;line-height:1.3;color:var(--ink-muted);font-family:var(--font-text)}
+</style>
+<svg viewBox="0 0 960 288" aria-hidden="true">
+  <!-- blocks: ink 192×288 (2×space-4 by full height), graphite 144×144 (space-5), aluminium 96×192 and ink-muted 96×96 (space-4), signal-red 24×24 (space-2); radius-none everywhere: the cube is square
+       arrangement: one tall ink slab with satellites, slab and aluminium bleeding off top, bottom and right edge, all right of x=528
+       pattern: "distinctive numerals face → one oversized glyph used as a shape": the ³ of L³ is the series' whole idea (volume outruns area), so it is cut out of the ink slab in the stage colour
+       steps: space-2 24, space-4 96, space-5 144; radius-none -->
+  <defs><clipPath id="slab"><rect x="672" y="0" width="192" height="288"/></clipPath></defs>
+  <rect class="gra" x="528" y="144" width="144" height="144"/>
+  <rect class="sig" x="600" y="96" width="24" height="24"/>
+  <rect class="ink" x="672" y="0" width="192" height="288"/>
+  <text class="cut" x="660" y="300" clip-path="url(#slab)">³</text>
+  <rect class="alu" x="864" y="0" width="96" height="192"/>
+  <rect class="mut" x="864" y="192" width="96" height="96"/>
+</svg>
+<div class="text">
+  <h1 class="name">Квадрат–куб</h1>
+  <p class="tag">Законы природы языком презентаций Apple.</p>
+</div>
