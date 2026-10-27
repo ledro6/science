@@ -1,6 +1,6 @@
 """Субтитры .srt: фразы по таймингам слов (WordBoundary), без точек в конце и без длинных тире."""
-import json, os, re
-HERE = os.path.dirname(os.path.abspath(__file__))
+import json, os, re, sys
+HERE = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else os.path.dirname(os.path.abspath(__file__))
 tl = json.load(open(os.path.join(HERE, "build", "timeline.json")))
 ts = lambda s: f"{int(s // 3600):02}:{int(s % 3600 // 60):02}:{int(s % 60):02},{int(round(s % 1 * 1000)) % 1000:03}"
 

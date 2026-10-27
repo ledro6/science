@@ -6,7 +6,8 @@
 <canvas id="c"></canvas><canvas id="out"></canvas>
 <script>window.TL = { lines: [], scenes: [], total: 1 };</script>
 <script type="module">
-import { draw, ASSETS } from './brand.mjs';
+import { draw, ASSETS, init } from './brand.mjs';
+await init();
 await Promise.all(['700 40px "Inter Display"', '600 40px "Inter Display"', '500 40px "Inter Display"'].map(f => document.fonts.load(f)));
 window.ASSET_NAMES = Object.keys(ASSETS);
 window.drawAsset = async n => { await draw(n); return document.getElementById('out').toDataURL('image/png').split(',')[1]; };

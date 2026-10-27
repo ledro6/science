@@ -2,7 +2,8 @@
 // 3D-рендер знака (Three.js, те же материалы и свет, что в ролике) + типографика Apple.
 // brand.html?a=<имя ассета> рисует его в #out; capture.js сохраняет PNG.
 import { THREE, MAT, roundedBox, glassEdges, shadowsOn } from '../apple/engine.mjs';
-import { makeAnt } from '../apple/models.mjs';
+import * as MODELS from '../apple/models.mjs';
+const { makeAnt } = MODELS;
 
 export const NAME = 'L³';                  // имя канала
 export const DESCRIPTOR = 'законы природы';
@@ -260,6 +261,29 @@ export const ASSETS = {
   'ig-highlight-about': { w: 1080, h: 1920, draw(g, w, h) { fill(g, w, h, C.paper); txt(g, 'L³', 540, 1100, { size: 380, col: C.ink, align: 'center' }); } },
 };
 
+// Выпуски 2+: apple/episodes/index.json → для каждого cover.json (тексты) и hero.mjs (3D-герой обложки)
+export async function init() {
+  let list = [];
+  try { list = await (await fetch('/apple/episodes/index.json')).json(); } catch (e) { return; }
+  for (const id of list) {
+    try {
+      const ep = await (await fetch(`/apple/episodes/${id}/cover.json`)).json();
+      const mod = await import(`/apple/episodes/${id}/hero.mjs`);
+      HEROES[id] = (w, h, dark) => {
+        const scene = studio(dark), { object, cam } = mod.default(THREE, { MAT, roundedBox, glassEdges, shadowsOn, models: MODELS });
+        scene.add(object);
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.ShadowMaterial({ opacity: dark ? .45 : .16 }));
+        floor.rotation.x = -Math.PI / 2; floor.position.y = cam.floorY ?? 0; floor.receiveShadow = true; if (cam.floor !== false) scene.add(floor);
+        return snap(scene, camAt(w, h, cam.az ?? 35, cam.el ?? 15, cam.dist ?? 6, cam.target ?? [0, .5, 0], cam.fov ?? 24), w, h);
+      };
+      ep.hero = id; EPISODES.push(ep); registerEpisode(ep);
+    } catch (e) { console.error('episode ' + id + ': ' + e.message); }
+  }
+}
+function registerEpisode(ep) {
+  ASSETS[`ep${ep.n}-tiktok-cover`] = { w: 1080, h: 1920, draw(g) { epTikTok(g, ep); } };
+  ASSETS[`ep${ep.n}-shorts-cover`] = { w: 1080, h: 1920, draw(g) { epShorts(g, ep); } };
+}
 for (const ep of EPISODES) {
   ASSETS[`ep${ep.n}-tiktok-cover`] = { w: 1080, h: 1920, draw(g) { epTikTok(g, ep); } };
   ASSETS[`ep${ep.n}-shorts-cover`] = { w: 1080, h: 1920, draw(g) { epShorts(g, ep); } };   // YouTube — только Shorts

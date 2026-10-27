@@ -3,10 +3,15 @@ import asyncio, json, os, subprocess, sys
 import certifi
 certifi.where = lambda: "/root/.ccr/ca-bundle.crt"  # агентный прокси
 import edge_tts
-from script import SCENES
+import importlib.util
+
+# python3 tts.py [папка выпуска]  — в папке лежит script.py со SCENES; результат в <папка>/build/
+HERE = os.path.abspath(sys.argv[1]) if len(sys.argv) > 1 else os.path.dirname(os.path.abspath(__file__))
+_spec = importlib.util.spec_from_file_location("script", os.path.join(HERE, "script.py"))
+_mod = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_mod)
+SCENES = _mod.SCENES
 
 VOICE, RATE = "ru-RU-SvetlanaNeural", "+8%"
-HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(HERE, "build", "voice")
 os.makedirs(OUT, exist_ok=True)
 
@@ -58,6 +63,10 @@ async def main():
     tl["total"] = round(t, 3)
     json.dump(tl, open(os.path.join(HERE, "build", "timeline.json"), "w"), ensure_ascii=False, indent=1)
     open(os.path.join(HERE, "build", "timeline.js"), "w").write("window.TL=" + json.dumps(tl, ensure_ascii=False) + ";")
+    with open(os.path.join(HERE, "build", "timeline_readable.txt"), "w") as f:
+        for l in tl["lines"]:
+            f.write(f"{l['scene']} {l['key']} {l['start']} → {round(l['start'] + l['dur'], 2)}  |  " + " ".join(f"{w['w']}@{w['t']}" for w in l["words"]) + "\n")
+        for s in tl["scenes"]: f.write(str(s) + "\n")
     print("total", t)
 
 asyncio.run(main())

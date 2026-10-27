@@ -8,14 +8,16 @@
 </head>
 <body>
 <canvas id="c"></canvas>
-<script src="build/timeline.js"></script>
 <script type="module">
-import { boot } from './engine.mjs';
-// ?only=hook,cube — загрузить только часть сцен (быстрые проверки)
-const only = new URLSearchParams(location.search).get('only');
-const ids = ['hook', 'cube', 'strength', 'heat', 'fall', 'outro'].filter(id => !only || only.split(',').includes(id));
-for (const id of ids) {
-  try { await import(`./scenes/${id}.mjs`); } catch (e) { if (!String(e).includes('Failed to fetch')) console.error('scene ' + id + ': ' + e.message); }
+// ?ep=ep2 — выпуск из episodes/ep2 (timeline + список сцен); без параметра — пилот (build/, scenes/)
+const Q = new URLSearchParams(location.search), ep = Q.get('ep');
+const base = ep ? `./episodes/${ep}/` : './';
+await new Promise((ok, fail) => { const s = document.createElement('script'); s.src = base + 'build/timeline.js'; s.onload = ok; s.onerror = fail; document.head.appendChild(s); });
+const { boot } = await import('./engine.mjs');
+const list = ep ? await (await fetch(base + 'scenes.json')).json() : ['hook', 'cube', 'strength', 'heat', 'fall', 'outro'];
+const only = Q.get('only');
+for (const id of list.filter(id => !only || only.split(',').includes(id))) {
+  try { await import(`${base}scenes/${id}.mjs`); } catch (e) { if (!String(e).includes('Failed to fetch')) console.error('scene ' + id + ': ' + e.message); }
 }
 await boot();
 </script>

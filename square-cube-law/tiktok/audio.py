@@ -835,12 +835,17 @@ def speech_activity(tl, N):
 # ============================================================ main
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--sfx", default=os.path.join(B, "sfx.json"))
-    ap.add_argument("--out", default=os.path.join(B, "mix.wav"))
+    ap.add_argument("--build", default=None, help="папка выпуска с timeline.json и voice/ (по умолчанию build/ рядом)")
+    ap.add_argument("--sfx", default=None)
+    ap.add_argument("--out", default=None)
     ap.add_argument("--stems", default=None, help="папка для стемов voice/music/sfx (для проверки)")
     ap.add_argument("--lufs", type=float, default=-14.0)
     ap.add_argument("--duck", type=float, default=-9.0, help="дакинг музыки под голос, дБ")
     args = ap.parse_args()
+    global B
+    if args.build: B = os.path.abspath(args.build)
+    args.sfx = args.sfx or os.path.join(B, "sfx.json")
+    args.out = args.out or os.path.join(B, "mix.wav")
 
     tl = json.load(open(os.path.join(B, "timeline.json")))
     total = tl["total"]; N = int(round(total * SR))

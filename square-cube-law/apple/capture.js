@@ -6,6 +6,8 @@ const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const http = require('http'), fs = require('fs'), path = require('path');
 const ROOT = __dirname;
+// EP=ep2 — выпуск из episodes/ep2 (sfx.json и stills/ пишутся туда); без EP — пилот
+const EPDIR = process.env.EP ? path.join(ROOT, 'episodes', process.env.EP) : ROOT;
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.json': 'application/json' };
 
 const server = http.createServer((q, s) => {
@@ -24,18 +26,18 @@ server.listen(0, '127.0.0.1', async () => {
   const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
   page.on('pageerror', e => { console.error('PAGE ERROR', e.message); if (mode !== 'stills') process.exit(1); });
   page.on('console', m => { if (m.type() === 'error') console.error('CONSOLE', m.text()); });
-  const q = new URLSearchParams(); if (only) q.set('only', only); if (process.env.SCALE) q.set('s', process.env.SCALE);
+  const q = new URLSearchParams(); if (only) q.set('only', only); if (process.env.SCALE) q.set('s', process.env.SCALE); if (process.env.EP) q.set('ep', process.env.EP);
   await page.goto(`http://127.0.0.1:${server.address().port}/index.html?${q}`);
   await page.waitForFunction('window.READY === true', null, { timeout: 120000 });
   const frame = (t, type, q) => page.evaluate(([t, type, q]) => { render(t); return document.getElementById('c').toDataURL(type, q).split(',')[1]; }, [t, type, q]);
 
   if (mode === 'sfx') {
-    fs.writeFileSync(path.join(ROOT, 'build/sfx.json'), JSON.stringify(await page.evaluate('SFX'), null, 1));
+    fs.writeFileSync(path.join(EPDIR, 'build/sfx.json'), JSON.stringify(await page.evaluate('SFX'), null, 1));
   } else if (mode === 'stills') {
     const pre = args[1] && !args[1].startsWith('only=') ? args[1] : 'still';
-    fs.mkdirSync(path.join(ROOT, 'stills'), { recursive: true });
+    fs.mkdirSync(path.join(EPDIR, 'stills'), { recursive: true });
     for (const t of args[0].split(',').map(Number)) {
-      try { fs.writeFileSync(path.join(ROOT, `stills/${pre}_t${t.toFixed(2)}.png`), Buffer.from(await frame(t, 'image/png'), 'base64')); }
+      try { fs.writeFileSync(path.join(EPDIR, `stills/${pre}_t${t.toFixed(2)}.png`), Buffer.from(await frame(t, 'image/png'), 'base64')); }
       catch (e) { console.error(`RENDER ERROR at t=${t}:`, e.message.split('\n')[0]); }
     }
   } else {

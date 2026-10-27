@@ -7,3 +7,6 @@ square-cube-law/tiktok/variants/*/parts.txt
 square-cube-law/tiktok/stills/
 square-cube-law/tiktok/variants/*/part*.mp4
 square-cube-law/brand/node_modules
+square-cube-law/apple/episodes/*/stills/
+square-cube-law/apple/episodes/*/build/part*.mp4
+square-cube-law/apple/episodes/*/build/*.log
