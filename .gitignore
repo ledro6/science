@@ -12,4 +12,5 @@ square-cube-law/apple/episodes/*/build/part*.mp4
 square-cube-law/apple/episodes/*/build/*.log
 square-cube-law/apple/episodes/*/__pycache__/
 square-cube-law/apple/episodes/*/build/render_all.log
-square-cube-law/apple/episodes/*/l3_ep*.mp4   # копия ролика лежит в videos/
+# копии роликов выпусков лежат в videos/
+square-cube-law/apple/episodes/*/l3_ep*.mp4
