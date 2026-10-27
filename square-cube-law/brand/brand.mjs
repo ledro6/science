@@ -1,0 +1,174 @@
+// Логотип и баннеры серии. Каждый ассет — функция, рисующая один холст нужного размера:
+// 3D-рендер знака (Three.js, те же материалы и свет, что в ролике) + типографика Apple.
+// brand.html?a=<имя ассета> рисует его в #out; capture.js сохраняет PNG.
+import { THREE, MAT, roundedBox, glassEdges, shadowsOn } from '../apple/engine.mjs';
+import { makeAnt } from '../apple/models.mjs';
+
+export const NAME = 'Ещё одно';            // имя серии (рабочее; меняется здесь)
+export const DESCRIPTOR = 'законы природы';
+const FONT = '"Inter Display", Inter, sans-serif';
+const C = { black: '#000000', paper: '#f5f5f7', ink: '#1d1d1f', white: '#ffffff', muted: '#86868b', mutedPaper: '#6e6e73', card: '#161617' };
+
+// ---------- 3D: один рендерер на всё ----------
+const r3 = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+r3.setPixelRatio(1); r3.toneMapping = THREE.ACESFilmicToneMapping; r3.outputColorSpace = THREE.SRGBColorSpace;
+r3.shadowMap.enabled = true; r3.shadowMap.type = THREE.PCFSoftShadowMap;
+
+function studio(dark) {
+  const scene = new THREE.Scene();
+  scene.add(new THREE.HemisphereLight('#ffffff', dark ? '#0b0b0c' : '#d0d0d4', dark ? .55 : 1.1));
+  const key = new THREE.DirectionalLight('#ffffff', dark ? 2.6 : 2.1); key.position.set(3, 9, 6);
+  key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.radius = 8;
+  Object.assign(key.shadow.camera, { left: -4, right: 4, top: 4, bottom: -4 });
+  const rimL = new THREE.DirectionalLight('#ffffff', dark ? 3.4 : 1.3); rimL.position.set(-6, 3, -5);
+  const rimR = new THREE.DirectionalLight('#ffffff', dark ? 2.4 : 1); rimR.position.set(6, 2, -4);
+  scene.add(key, rimL, rimR);
+  return scene;
+}
+function camAt(w, h, az, el, dist, target = [0, 0, 0], fov = 22) {
+  const cam = new THREE.PerspectiveCamera(fov, w / h, .1, 100);
+  const a = az * Math.PI / 180, e = el * Math.PI / 180;
+  cam.position.set(target[0] + dist * Math.cos(e) * Math.sin(a), target[1] + dist * Math.sin(e), target[2] + dist * Math.cos(e) * Math.cos(a));
+  cam.lookAt(...target); return cam;
+}
+function snap(scene, cam, w, h) {
+  r3.setSize(w, h, false); r3.setClearColor(0x000000, 0); r3.render(scene, cam);
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  c.getContext('2d').drawImage(r3.domElement, 0, 0); return c;
+}
+
+// Знак: алюминиевый куб, от передней грани которого отслаивается стеклянная пластина (площадь vs объём).
+function markScene(dark, { gap = .34, tilt = 0 } = {}) {
+  const scene = studio(dark);
+  const g = new THREE.Group();
+  const cube = new THREE.Mesh(roundedBox(1, .06, 4), MAT.aluminium()); cube.castShadow = true; g.add(cube);
+  const paneGeo = new THREE.BoxGeometry(.98, .98, .012);
+  const pane = new THREE.Mesh(paneGeo, MAT.glass(dark ? .2 : .32)); pane.position.z = .5 + gap;
+  const edges = glassEdges(paneGeo, dark ? '#ffffff' : '#1d1d1f', dark ? .9 : .75); edges.position.copy(pane.position);
+  g.add(pane, edges); g.rotation.y = tilt;
+  scene.add(g);
+  return scene;
+}
+export function markRender(size, dark, o = {}) {
+  const sc = markScene(dark, o);
+  return snap(sc, camAt(size, size, o.az ?? 38, o.el ?? 24, o.dist ?? 6.1, [0, 0, .14]), size, size);
+}
+function exploded(dark, n = 3, spread = .5) {
+  const scene = studio(dark), g = new THREE.Group(), geo = roundedBox(1, .06, 3), m = MAT.aluminium();
+  const h = (n - 1) / 2;
+  for (let x = 0; x < n; x++) for (let y = 0; y < n; y++) for (let z = 0; z < n; z++) {
+    const b = new THREE.Mesh(geo, m); b.position.set((x - h) * (1 + spread), (y - h) * (1 + spread), (z - h) * (1 + spread)); g.add(b);
+  }
+  scene.add(g); return scene;
+}
+function antRender(w, h, dark) {
+  const scene = studio(dark), ant = makeAnt(); ant.pose({}); scene.add(ant);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: dark ? .45 : .16 }));
+  floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+  return snap(scene, camAt(w, h, 62, 12, 4.6, [.05, .32, 0], 24), w, h);
+}
+
+// ---------- 2D ----------
+function txt(g, s, x, y, { size = 100, w = 700, col = C.white, align = 'left', track = -.04, base = 'alphabetic' } = {}) {
+  g.save(); g.font = `${w} ${size}px ${FONT}`; g.letterSpacing = (track * size).toFixed(2) + 'px';
+  g.fillStyle = col; g.textAlign = align; g.textBaseline = base; g.fillText(s, x, y); g.restore();
+}
+function measure(g, s, size, w = 700, track = -.04) {
+  g.save(); g.font = `${w} ${size}px ${FONT}`; g.letterSpacing = (track * size).toFixed(2) + 'px';
+  const m = g.measureText(s).width; g.restore(); return m;
+}
+function fill(g, w, h, col) { g.fillStyle = col; g.fillRect(0, 0, w, h); }
+function glowUnder(g, x, y, r, a = .12) {
+  const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, `rgba(255,255,255,${a})`); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(x - r, y - r, 2 * r, 2 * r);
+}
+// Плоский знак (для мелких размеров): изометрический куб из двух тонов + контур отслоившейся грани.
+export function flatMark(g, cx, cy, s, { ink = C.white, tone2 = '#86868b', tone3 = '#3a3a3c', line = null } = {}) {
+  const k = s / 2, ix = Math.cos(Math.PI / 6) * k, iy = Math.sin(Math.PI / 6) * k;
+  const top = [[cx, cy - k], [cx + ix, cy - k + iy], [cx, cy - k + 2 * iy], [cx - ix, cy - k + iy]];
+  const left = [[cx - ix, cy - k + iy], [cx, cy - k + 2 * iy], [cx, cy + k], [cx - ix, cy + k - iy]];
+  const right = [[cx, cy - k + 2 * iy], [cx + ix, cy - k + iy], [cx + ix, cy + k - iy], [cx, cy + k]];
+  const poly = (p, col) => { g.beginPath(); p.forEach(([x, y], i) => i ? g.lineTo(x, y) : g.moveTo(x, y)); g.closePath(); g.fillStyle = col; g.fill(); };
+  poly(top, ink); poly(left, tone2); poly(right, tone3);
+  // «стеклянная» передняя-правая грань, отслоившаяся по нормали
+  const off = [ix * .32, iy * .32];
+  g.save(); g.strokeStyle = line || ink; g.lineWidth = Math.max(1.5, s * .022); g.lineJoin = 'round';
+  g.beginPath(); right.forEach(([x, y], i) => { const p = [x + off[0], y + off[1]]; i ? g.lineTo(...p) : g.moveTo(...p); }); g.closePath(); g.stroke(); g.restore();
+}
+function lockup(g, x, y, size, dark, { descriptor = true, align = 'left' } = {}) {
+  const ink = dark ? C.white : C.ink, mut = dark ? C.muted : C.mutedPaper;
+  txt(g, NAME, x, y, { size, col: ink, align });
+  if (descriptor) txt(g, DESCRIPTOR, x + (align === 'left' ? size * .04 : 0), y + size * .62, { size: size * .3, w: 500, col: mut, align, track: -.005 });
+}
+
+// ---------- ассеты ----------
+export const ASSETS = {
+  // Знак
+  'logo-mark-3d-black': { w: 2048, h: 2048, draw(g, w, h) { fill(g, w, h, C.black); glowUnder(g, w / 2, h * .55, w * .45, .06); g.drawImage(markRender(w, true), 0, 0); } },
+  'logo-mark-3d-paper': { w: 2048, h: 2048, draw(g, w, h) { fill(g, w, h, C.paper); g.drawImage(markRender(w, false), 0, 0); } },
+  'logo-mark-3d-transparent': { w: 2048, h: 2048, alpha: true, draw(g, w, h) { g.drawImage(markRender(w, true), 0, 0); } },
+  'logo-mark-flat-white': { w: 1024, h: 1024, alpha: true, draw(g, w, h) { flatMark(g, w * .47, h * .5, w * .66); } },
+  'logo-mark-flat-ink': { w: 1024, h: 1024, alpha: true, draw(g, w, h) { flatMark(g, w * .47, h * .5, w * .66, { ink: C.ink, tone2: '#6e6e73', tone3: '#c9cbcf' }); } },
+  // Знак + имя
+  'logo-lockup-black': { w: 3000, h: 1000, draw(g, w, h) { fill(g, w, h, C.black); g.drawImage(markRender(900, true), 60, 50); lockup(g, 1000, 560, 300, true); } },
+  'logo-lockup-paper': { w: 3000, h: 1000, draw(g, w, h) { fill(g, w, h, C.paper); g.drawImage(markRender(900, false), 60, 50); lockup(g, 1000, 560, 300, false); } },
+  // Аватар: один файл для TikTok, Instagram, YouTube, VK, Telegram (круглая обрезка — знак в центральных 70%)
+  'avatar': { w: 1080, h: 1080, draw(g, w, h) { fill(g, w, h, C.black); glowUnder(g, w / 2, h * .56, w * .42, .07); g.drawImage(markRender(w, true, { dist: 7.4 }), 0, 0); } },
+  'avatar-paper': { w: 1080, h: 1080, draw(g, w, h) { fill(g, w, h, C.paper); g.drawImage(markRender(w, false, { dist: 7.4 }), 0, 0); } },
+  // YouTube: шапка канала 2560×1440, безопасная зона для всех устройств — центр 1546×423
+  'youtube-banner': { w: 2560, h: 1440, draw(g, w, h) {
+    fill(g, w, h, C.black);
+    // кубы — справа в безопасной зоне (видны и на телефоне), текст — слева, ничего не пересекается
+    const sx = (w - 1546) / 2, sy = (h - 423) / 2;
+    const ex = snap(exploded(true, 3, .55), camAt(600, 600, 38, 26, 22), 600, 600);
+    g.drawImage(ex, sx + 1546 - 560, h / 2 - 300);
+    g.drawImage(markRender(400, true), sx - 20, sy + 12);
+    lockup(g, sx + 400, sy + 210, 150, true);
+    txt(g, 'Новый закон каждую неделю', sx + 404, sy + 380, { size: 40, w: 500, col: C.muted, track: 0 });
+  } },
+  // YouTube: водяной знак 150×150 (плоский, белый)
+  'youtube-watermark': { w: 150, h: 150, alpha: true, draw(g, w, h) { flatMark(g, w * .47, h * .5, w * .7); } },
+  // YouTube: шаблон превью пилота 1280×720
+  'youtube-thumbnail-ep1': { w: 1280, h: 720, draw(g, w, h) {
+    fill(g, w, h, C.black); glowUnder(g, 900, 430, 420, .07);
+    g.drawImage(antRender(620, 720, true), 680, 0);
+    txt(g, '×1 000 000', 70, 330, { size: 116, col: C.white, track: -.045 });
+    txt(g, 'вес гигантского муравья', 76, 400, { size: 40, w: 500, col: C.muted, track: 0 });
+    txt(g, '№ 1 · Закон квадрата и куба', 76, 650, { size: 30, w: 600, col: C.white, track: 0 });
+  } },
+  // VK: обложка сообщества 1920×768 (на телефоне видна центральная часть ~1196 px)
+  'vk-cover': { w: 1920, h: 768, draw(g, w, h) {
+    fill(g, w, h, C.black);
+    const ex = snap(exploded(true, 3, .55), camAt(900, 768, 38, 26, 22), 900, 768);
+    g.globalAlpha = .85; g.drawImage(ex, 1180, 0); g.globalAlpha = 1;
+    g.drawImage(markRender(300, true), 362, 210);
+    lockup(g, 680, 420, 120, true);
+    txt(g, 'Новый закон каждую неделю', 686, 560, { size: 30, w: 500, col: C.muted, track: 0 });
+  } },
+  // Telegram: заглавный пост канала 1280×720 (у каналов нет шапки — закреплённый пост её заменяет)
+  'telegram-header': { w: 1280, h: 720, draw(g, w, h) {
+    fill(g, w, h, C.paper); g.drawImage(markRender(560, false), 680, 80);
+    lockup(g, 90, 360, 120, false);
+    txt(g, 'Каждую неделю — ещё один закон,', 94, 520, { size: 34, w: 500, col: C.ink, track: 0 });
+    txt(g, 'показанный как новый продукт.', 94, 566, { size: 34, w: 500, col: C.ink, track: 0 });
+  } },
+  // Вертикальная обложка пилота 1080×1920 для TikTok / Reels / VK Клипов (текст в полосе 3:4: y 240–1680)
+  'cover-vertical-ep1': { w: 1080, h: 1920, draw(g, w, h) {
+    fill(g, w, h, C.black); glowUnder(g, 540, 1080, 520, .07);
+    g.drawImage(antRender(1080, 1080, true), 0, 560);
+    txt(g, 'Почему', 90, 470, { size: 150, col: C.white });
+    txt(g, 'нет гигантов', 90, 620, { size: 150, col: C.white });
+    txt(g, '№ 1 · Закон квадрата и куба', 94, 1560, { size: 44, w: 600, col: C.muted, track: 0 });
+  } },
+  // Instagram: обложки «Актуального» 1080×1920, в круге видна центральная часть
+  'ig-highlight-laws': { w: 1080, h: 1920, draw(g, w, h) { fill(g, w, h, C.black); flatMark(g, 530, 960, 420); } },
+  'ig-highlight-numbers': { w: 1080, h: 1920, draw(g, w, h) { fill(g, w, h, C.black); txt(g, '×', 540, 1060, { size: 420, col: C.white, align: 'center' }); } },
+  'ig-highlight-about': { w: 1080, h: 1920, draw(g, w, h) { fill(g, w, h, C.paper); txt(g, 'L³', 540, 1100, { size: 380, col: C.ink, align: 'center' }); } },
+};
+
+export async function draw(name) {
+  const a = ASSETS[name]; if (!a) throw new Error('нет ассета ' + name);
+  const out = document.getElementById('out'); out.width = a.w; out.height = a.h;
+  const g = out.getContext('2d'); g.clearRect(0, 0, a.w, a.h);
+  a.draw(g, a.w, a.h);
+}
