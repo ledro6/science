@@ -6,6 +6,8 @@ import { makeAnt } from '../apple/models.mjs';
 
 export const NAME = 'L³';                  // имя канала
 export const DESCRIPTOR = 'законы природы';
+export const SLOGAN = 'Законы природы в кубе.';          // слоган канала
+const SLOGAN_LINES = ['Законы', 'природы', 'в кубе.'];
 const FONT = '"Inter Display", Inter, sans-serif';
 // Масштаб вывода: ассеты описаны в логических пикселях, файл рендерится в K раз крупнее (3D — тоже, без апскейла).
 export const K = +(new URLSearchParams(location.search).get('k') || 2);
@@ -130,13 +132,11 @@ function panorama() {
   if (PANO) return PANO;
   const c = document.createElement('canvas'); c.width = 3240 * K; c.height = 1440 * K;
   const g = c.getContext('2d'); g.scale(K, K); fill(g, 3240, 1440, C.black);
-  txt(g, 'L³', 120, 960, { size: 760, col: C.white, track: -.05 });                           // плитка 1
-  glowUnder(g, 1620, 760, 560, .07);
-  put(g, markRender(1080, true, { dist: 6.6 }), 1080, 180);                               // плитка 2
-  txt(g, 'законы', 2250, 640, { size: 150, col: C.white, track: -.035 });                      // плитка 3
-  txt(g, 'природы', 2250, 790, { size: 150, col: C.white, track: -.035 });
-  txt(g, 'Новый закон', 2256, 950, { size: 56, w: 500, col: C.muted, track: 0 });
-  txt(g, 'каждую неделю', 2256, 1020, { size: 56, w: 500, col: C.muted, track: 0 });
+  // плитка 1 — «L», плитка 2 — красная «³», плитка 3 — слоган
+  const ls = 1250;
+  txt(g, 'L', 1080 / 2 - measure(g, 'L', ls, 700, -.05) / 2, 1160, { size: ls, col: C.white, track: -.05 });
+  txt(g, '³', 1080 + 1080 / 2 - measure(g, '³', ls, 700, -.05) / 2, 1160, { size: ls, col: C.white, track: -.05 });
+  SLOGAN_LINES.forEach((l, i) => txt(g, l, 2160 + 110, 600 + i * 165, { size: 150, col: C.white, track: -.035 }));
   return PANO = c;
 }
 function pinTile(g, i) { fill(g, 1080, 1920, C.black); g.drawImage(panorama(), i * 1080 * K, 0, 1080 * K, 1440 * K, 0, 240, 1080, 1440); }
@@ -244,13 +244,13 @@ export const ASSETS = {
   'tt-avatar-paper': { w: 1080, h: 1080, draw(g, w, h) { avatarL3(g, w, h, false); } },
   // ---------- L³: шапка YouTube (новая) ----------
   'yt-banner-l3': { w: 2560, h: 1440, draw(g, w, h) {
+    // только знак и слоган, по центру безопасной зоны 1546×423
     fill(g, w, h, C.black);
-    const sx = (w - 1546) / 2, sy = (h - 423) / 2;
-    const ex = snap(exploded(true, 3, .55), camAt(620, 620, 38, 26, 22), 620, 620);
-    put(g, ex, sx + 1546 - 560, h / 2 - 310);
-    txt(g, 'L³', sx + 20, sy + 330, { size: 340, col: C.white, track: -.05 });
-    txt(g, 'законы природы', sx + 440, sy + 230, { size: 80, w: 600, col: C.white, track: -.025 });
-    txt(g, 'Новый закон каждую неделю', sx + 444, sy + 310, { size: 40, w: 500, col: C.muted, track: 0 });
+    const ls = 300, ss = 84, gap = 90;
+    const lw = measure(g, 'L³', ls, 700, -.05), sw = measure(g, SLOGAN, ss, 600, -.025);
+    const x0 = (w - (lw + gap + sw)) / 2, base = h / 2 + ls * .36;
+    txt(g, 'L³', x0, base, { size: ls, col: C.white, track: -.05 });
+    txt(g, SLOGAN, x0 + lw + gap, base - 6, { size: ss, w: 600, col: C.white, track: -.025 });
   } },
   // ---------- L³: TikTok — триптих из трёх закреплённых роликов (у TikTok нет шапки профиля) ----------
   'tt-pin-1': { w: 1080, h: 1920, draw(g, w, h) { pinTile(g, 0); } },
