@@ -10,3 +10,4 @@ square-cube-law/brand/node_modules
 square-cube-law/apple/episodes/*/stills/
 square-cube-law/apple/episodes/*/build/part*.mp4
 square-cube-law/apple/episodes/*/build/*.log
+square-cube-law/apple/episodes/*/__pycache__/
