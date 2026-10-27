@@ -217,13 +217,21 @@ function buildCaps() {
       grp.push({ ...w, w: w.w.replace(/[.…—]+$/, '') + (/^[,!?:]/.test(after) ? after[0] : '') });   // точки и тире не ставим
       const chars = grp.reduce((A, q) => A + q.w.length + 1, 0);
       const brk = /[,.!?:—]/.test(after) || /^ —/.test(text.slice(pos, pos + 3));
-      if (brk || chars > 16 || grp.length >= 3 || i === l.words.length - 1) { CAPS.push({ words: grp }); grp = []; }
+      if (brk || chars > 16 || grp.length >= 3 || i === l.words.length - 1) {
+        // короткий предлог/союз не висит в конце группы — переносим его в следующую
+        const tail = grp[grp.length - 1];
+        if (!brk && i < l.words.length - 1 && grp.length > 1 && tail.w.length <= 2) { grp.pop(); CAPS.push({ words: grp }); grp = [tail]; }
+        else { CAPS.push({ words: grp }); grp = []; }
+      }
     });
   }
   CAPS.forEach((c, i) => {
     c.t0 = c.words[0].t;
     const last = c.words[c.words.length - 1], next = CAPS[i + 1];
-    c.t1 = Math.min(last.t + last.d + .45, next ? next.words[0].t - .1 : 1e9);
+    // уходящая группа исчезает до появления следующей (но не раньше, чем договорено её последнее слово)
+    c.t1 = Math.min(last.t + last.d + .45, next ? Math.max(next.words[0].t - .34, last.t + last.d - .04) : 1e9);
+    // без паузы перед следующей группой — уходим быстро, чтобы не наложиться
+    c.outDur = next ? clamp(next.words[0].t - .06 - c.t1, .12, .26) : .26;
   });
 }
 function drawCaptions(t, ink) {
@@ -234,7 +242,7 @@ function drawCaptions(t, ink) {
     const total = ws.reduce((A, B) => A + B, 0) + sp * (ws.length - 1);
     let x = LAYOUT.cx - total / 2;
     c.words.forEach((q, i) => {
-      atext(q.w, x, LAYOUT.capY, q.t - .06, t, { size, w, col: ink, align: 'left', track, dur: .6, dy: 26, blur: 12, out: c.t1, outDur: .26, outDy: 34 });
+      atext(q.w, x, LAYOUT.capY, q.t - .06, t, { size, w, col: ink, align: 'left', track, dur: .6, dy: 26, blur: 12, out: c.t1, outDur: c.outDur, outDy: 34 });
       x += ws[i] + sp;
     });
   }
