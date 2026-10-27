@@ -27,7 +27,9 @@
 | `tt-avatar.png` / `tt-avatar-paper.png` | 1080×1080 | Аватар TikTok (тёмный / светлый) |
 | `yt-banner-l3.png` | 2560×1440 | Шапка YouTube, важное в зоне 1546×423 |
 | `tt-pin-1..3.png` | 1080×1920 ×3 | Обложки трёх закреплённых роликов TikTok: в сетке профиля складываются в одну шапку (`tt-pin-preview.png`) |
-| `ep<N>-tiktok-cover.png` | 1080×1920 | Заставка выпуска для TikTok и Shorts |
-| `ep<N>-youtube-thumbnail.png` | 1280×720 | Заставка (превью) выпуска для YouTube |
+| `ep<N>-tiktok-cover.png` | 1080×1920 (файл 2160×3840) | Обложка выпуска для TikTok |
+| `ep<N>-shorts-cover.png` | 1080×1920 (файл 2160×3840) | Обложка выпуска для YouTube Shorts |
 
 Новый выпуск — запись в `EPISODES` в `brand.mjs`.
+
+YouTube — только Shorts: горизонтальные ассеты (`youtube-thumbnail-ep1.png`) остались от ранней версии и больше не используются.
