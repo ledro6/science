@@ -37,16 +37,16 @@ export function mirrorFloor(stage, opacity = .84) {
 
 // Геометрия фигурки: капсула-тело + сфера-голова, стоит на y = 0, высота ≈ 0.94
 export const FIG_H = .94;
-export function figureGeos(k = 1) {
-  const body = new THREE.CapsuleGeometry(.155 * k, .36 * k, 8, 28); body.translate(0, (.155 + .18) * k, 0);
-  const head = new THREE.SphereGeometry(.118 * k, 28, 18); head.translate(0, .82 * k, 0);
+export function figureGeos(k = 1, lo = false) {
+  const body = new THREE.CapsuleGeometry(.155 * k, .36 * k, lo ? 3 : 8, lo ? 10 : 28); body.translate(0, (.155 + .18) * k, 0);
+  const head = new THREE.SphereGeometry(.118 * k, lo ? 10 : 28, lo ? 7 : 18); head.translate(0, .82 * k, 0);
   return [body, head];
 }
 // Толпа фигурок: InstancedMesh (тело и голова) + опционально зеркальная копия.
 // set(i, x, y, z, s, c) — позиция, масштаб, яркость (множитель цвета инстанса); commit() — после всех set.
-export function makeCrowd(count, mat, { mirror = true, k = 1 } = {}) {
+export function makeCrowd(count, mat, { mirror = true, k = 1, lo = false } = {}) {
   const grp = new THREE.Group();
-  const geos = figureGeos(k);
+  const geos = figureGeos(k, lo);
   const mk = () => geos.map(gg => {
     const m = new THREE.InstancedMesh(gg, mat, count);
     m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);

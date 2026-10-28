@@ -22,6 +22,7 @@ defineScene('outro', {
     }
     const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
     const lines = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ color: '#FFFFFF', transparent: true, opacity: 0, depthWrite: false }));
+    lines.renderOrder = 3;
     stage.root.add(crowd.grp, lines);
     return { stage, crowd, lines, T: TT() };
   },
@@ -36,12 +37,12 @@ defineScene('outro', {
       crowd.set(i, x, 0, z, Math.max(1e-3, .82 * lerp(.6, 1, k)), lit * (pair ? 1 : .62), Math.atan2(-x, -z) + Math.PI);
     }
     crowd.commit();
-    lines.material.opacity = .1 * P(t, s.start + .6, 1.4, eApple) + .22 * bump(t, T.pary + .3, .7);
+    lines.material.opacity = .24 * P(t, s.start + .6, 1.4, eApple) + .4 * bump(t, T.pary + .3, .7);
     const lit = P(t, s.start, 1.2, eApple);
     L.key.position.set(3, 9, 6); L.key.intensity = 2.4 * lit; L.hemi.intensity = .45 * lit;
     L.rimL.position.set(-6, 3, -5); L.rimL.intensity = 3.2 * lit; L.rimR.intensity = 2.4 * lit;
     const card = P(t, T.card - .3, 1.2, eInOut);
-    frame(stage.camera, [0, .4, 0], lerp(30, 32, card), 10 + (t - s.start) * 3, lerp(30, 26, card), 540, lerp(900, 890, card));
+    frame(stage.camera, [0, .4, 0], lerp(30, 34, card), 10 + (t - s.start) * 3, lerp(30, 30, card), 540, lerp(900, 850, card));
   },
 
   draw2d(t, s, st) {

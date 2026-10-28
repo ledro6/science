@@ -46,9 +46,9 @@ defineScene('hook', {
     const stage = makeStage({ bg: 'black' });
     mirrorFloor(stage);
     const crowd = makeCrowd(N, MAT.ceramicWhite());
-    const gm = new THREE.MeshPhysicalMaterial({ color: '#F2F2F0', roughness: .45, clearcoat: .3, transparent: true, opacity: .55, depthWrite: false });
-    const ghosts = makeCrowd(NG, gm, { mirror: false });
-    ghosts.up.forEach(m => { m.castShadow = false; });
+    const gm = new THREE.MeshLambertMaterial({ color: '#F2F2F0', transparent: true, opacity: .55, depthWrite: false });
+    const ghosts = makeCrowd(NG, gm, { mirror: false, lo: true });
+    ghosts.up.forEach(m => { m.castShadow = false; m.receiveShadow = false; });
     stage.root.add(crowd.grp, ghosts.grp);
     return { stage, crowd, ghosts, gm, T: TT() };
   },
@@ -71,7 +71,7 @@ defineScene('hook', {
       for (let i = 0; i < NG; i++) {
         const [x, z] = ringPos(i, RG, NG);
         const o = Math.min(i, NG - i) / (NG / 2);
-        const kin = eSpring(clamp((t - T.sto + .1 - o * 1.0) / .7));
+        const kin = eSpring(clamp((t - T.sto - .35 - o * .9) / .7));
         const kout = P(t, T.net + o * .5, .5, eIn);
         ghosts.set(i, x, -kout * .45, z, Math.max(1e-3, .65 * kin * (1 - kout)), .85);
       }

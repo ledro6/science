@@ -89,13 +89,13 @@ export function graticule(R, op = .3) {
 
 // Земля: tilt (наклон оси) → spin (суточное вращение) → шар + штрихи ветра.
 // nG штрихов по всей сфере и nC — в «шапке» вокруг глаза циклона (видны на наезде).
-export function makeEarth({ R = 1, nG = 2600, nC = 1300, cap = .5, seed = 9 } = {}) {
+export function makeEarth({ R = 1, nG = 2600, nC = 2200, cap = .72, seed = 9 } = {}) {
   const tilt = new THREE.Group(), spin = new THREE.Group(); tilt.add(spin);
   const tex = earthTexture();
-  const mat = new THREE.MeshPhysicalMaterial({ color: '#FFFFFF', map: tex, roughness: .42, clearcoat: .5, clearcoatRoughness: .32 });
+  const mat = new THREE.MeshPhysicalMaterial({ color: '#FFFFFF', map: tex, roughness: .5, clearcoat: .3, clearcoatRoughness: .4 });
   const sphere = new THREE.Mesh(new THREE.SphereGeometry(R, 48, 36), mat);
   // «математический» шар без материков поверх (проявляется прозрачностью)
-  const plainMat = new THREE.MeshPhysicalMaterial({ color: '#2A2A2D', roughness: .42, clearcoat: .5, clearcoatRoughness: .32, transparent: true, opacity: 0 });
+  const plainMat = new THREE.MeshPhysicalMaterial({ color: '#2A2A2D', roughness: .5, clearcoat: .3, clearcoatRoughness: .4, transparent: true, opacity: 0 });
   const plain = new THREE.Mesh(new THREE.SphereGeometry(R * 1.002, 48, 36), plainMat);
   const grid = graticule(R * 1.004, 0); grid.material.opacity = 0;
   spin.add(sphere, plain, grid);
@@ -110,7 +110,8 @@ export function makeEarth({ R = 1, nG = 2600, nC = 1300, cap = .5, seed = 9 } = 
   const S = [...fibSphere(nG, seed), ...capPoints(nC, EYE, cap, seed + 1)].map((p, i) => {
     const v = windAt(p), L = len3(v);
     const vh = L > 1e-6 ? norm3(v) : norm3(cross3(EYE, [0, 1, 0]));
-    return { p, vh, L, cap: i >= nG, ph: Rn(), rate: .55 + .5 * Rn(), b: .55 + .45 * Rn() };
+    const dE = Math.acos(Math.max(-1, Math.min(1, dot3(p, EYE))));
+    return { p, vh, L, cap: i >= nG, ph: Rn(), rate: .55 + .5 * Rn(), b: .55 + .45 * Rn(), ce: 1 - smooth(cap * .55, cap, dE) };
   });
   return { tilt, spin, sphere, mat, plain, plainMat, grid, strokes, S, R };
 }
@@ -119,7 +120,7 @@ const _M = new THREE.Matrix4(), _Q = new THREE.Quaternion(), _P = new THREE.Vect
 // Выставить штрихи на момент t.
 // g — яркость глобальных штрихов, c — штрихов шапки, w — толщина (≈ 1 на общем плане), spike 0..1 — штрихи встают
 // иглами по нормали («ёж»), arrow 0..1 — замереть ровными стрелками «поле направлений», calm — сила «тишины» у глаза.
-export function setStrokes(E, t, { g = 1, c = 0, w = 1, spike = 0, arrow = 0, lenK = 1 } = {}) {
+export function setStrokes(E, t, { g = 1, c = 0, w = 1, spike = 0, arrow = 0, lenK = 1, capLen = 1, capW = 1 } = {}) {
   const { strokes, S, R } = E;
   S.forEach((s, i) => {
     const K = s.cap ? c : g;
@@ -129,15 +130,15 @@ export function setStrokes(E, t, { g = 1, c = 0, w = 1, spike = 0, arrow = 0, le
     const travel = (s.cap ? .06 : .1) * sp * u;
     let p = norm3(add3(s.p, s.vh, travel));
     let len = clamp(s.L * (s.cap ? .085 : .085), s.cap ? .004 : .01, s.cap ? .045 : .085);
-    len = lerp(len, .05, arrow * (s.cap ? 0 : 1)) * lenK;
+    len = lerp(len, .05, arrow * (s.cap ? 0 : 1)) * lenK * (s.cap ? capLen : 1);
     let dir = s.vh;
     if (spike > 0) { dir = norm3(add3(scl3(s.vh, 1 - spike), p, spike * 1.4)); len = lerp(len, .1 + .04 * s.b, spike); p = norm3([lerp(p[0], s.p[0], spike), lerp(p[1], s.p[1], spike), lerp(p[2], s.p[2], spike)]); }
     const life = lerp(Math.sin(Math.PI * u0), 1, Math.max(arrow, spike));
-    const bright = K * s.b * life * (s.cap ? clamp(s.L * 6) : clamp(.35 + s.L * 1.5));
+    const bright = K * s.b * life * (s.cap ? clamp(s.L * 6) * s.ce : clamp(.35 + s.L * 1.5));
     _D.set(dir[0], dir[1], dir[2]); _Q.setFromUnitVectors(_UP, _D);
     const r = R * 1.008;
     _P.set(p[0] * r, p[1] * r, p[2] * r);
-    const th = .0042 * w * (s.cap ? .55 : 1);
+    const th = .0042 * w * (s.cap ? .55 * capW : 1);
     _S.set(th, len * R, th);
     _M.compose(_P, _Q, _S); strokes.setMatrixAt(i, _M);
     strokes.setColorAt(i, _C.setRGB(bright, bright, bright));
