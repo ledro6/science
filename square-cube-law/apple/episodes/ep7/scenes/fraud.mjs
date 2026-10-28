@@ -6,7 +6,7 @@
 import { defineScene, makeStage, project, atext, atextWords, line, P, Wd, E, THREE, MAT, clamp, lerp, eApple, eInOut, eIn, eSpring, FONT } from '../../../engine.mjs';
 import { ctx, BEN, makeBar, rbox, frame, keys, polyline, smoothPts, bump } from './kit.mjs';
 
-const PW = 1.85, PH = 2.45, PX = 1.06, TILT = -.07;
+const PW = 1.78, PH = 2.4, PX = 1.0, TILT = -.07;
 const FAKE = [.118, .104, .113, .108, .116, .106, .112, .103, .12];
 const HK = 4.3, BASE = -.78, BXL = j => (j - 4) * .182;     // столбики в координатах панели
 
@@ -22,12 +22,12 @@ defineScene('fraud', {
     const stage = makeStage({ bg: 'white', shadow: .55 });
     stage.camera.far = 200; stage.camera.updateProjectionMatrix();
     const T = TT();
-    const paper = MAT.ceramicWhite();
+    const paper = MAT.ceramicWhite(); paper.emissive = new THREE.Color('#FFFFFF'); paper.emissiveIntensity = .22;
     const ink = new THREE.MeshPhysicalMaterial({ color: '#2C2C2E', roughness: .35, clearcoat: .6, clearcoatRoughness: .2 });
     const lineMat = new THREE.MeshPhysicalMaterial({ color: '#C7C7CC', roughness: .5 });
     const panels = [0, 1].map(k => {
       const g = new THREE.Group();
-      const slab = new THREE.Mesh(rbox(PW, PH, .06, .05, 2), paper); slab.castShadow = slab.receiveShadow = true;
+      const slab = new THREE.Mesh(rbox(PW, PH, .06, .028, 2), paper); slab.castShadow = slab.receiveShadow = true;
       g.add(slab);
       // строки «текста» отчёта
       [[.9, .95], [.76, .6], [.62, .75]].forEach(([y, w], i) => {
@@ -76,10 +76,10 @@ defineScene('fraud', {
     lupa.rotation.set(lerp(-.2, -.05, la), lerp(.5, -.12, la), 0);
     // камера
     const [tx, ty, d, az, el, sy] = keys([
-      [s.start, 0, 1.25, 16.8, -6, 7, 930],
-      [T.prid, 0, 1.25, 16.4, 0, 7, 930],
-      [T.rov, .35, 1.2, 15.6, 6, 6, 930],
-      [s.end, .45, 1.2, 15.2, 9, 6, 930],
+      [s.start, 0, 1.25, 17, -6, 8, 830],
+      [T.prid, 0, 1.25, 16.6, 0, 8, 830],
+      [T.rov, .06, 1.22, 16.4, 2, 7, 830],
+      [s.end, .08, 1.22, 16.2, 4, 7, 830],
     ], t, eInOut);
     frame(cam, [tx, ty, 0], d, az, el, 540, sy);
   },

@@ -38,7 +38,7 @@ export function makeBar(w, d, mat, r = .045) {
     const hh = Math.max(h, 2 * r + .002);
     if (Math.abs(hh - cur) < 1e-5) return; cur = hh;
     const a = geo.attributes.position.array;
-    for (let i = 0; i < a.length; i += 3) { const y = base[i + 1]; a[i + 1] = y > .5 ? y + hh - 1 : y; }
+    for (let i = 0; i < a.length; i += 3) { const y = base[i + 1]; a[i + 1] = y <= r ? y : y >= 1 - r ? y - 1 + hh : r + (y - r) / (1 - 2 * r) * (hh - 2 * r); }
     geo.attributes.position.needsUpdate = true;
   };
   m.setH(1);
