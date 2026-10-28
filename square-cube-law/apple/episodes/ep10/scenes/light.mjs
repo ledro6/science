@@ -70,7 +70,7 @@ defineScene('light', {
     const spMat = MAT.aluminium();
     const sp1 = rod(spMat, .03, 16), sp2 = rod(spMat, .03, 16);
     const bowl = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 20), spMat); bowl.scale.set(.15, .05, .1);
-    cup.add(sp1, sp2, bowl, base, wall, water, surf, rim);
+    cup.add(sp1, sp2, bowl, wall, water, surf, rim);
     [sp1, sp2, bowl].forEach(r => r.traverse(o => { if (o.isMesh) o.castShadow = true; }));
     stage.root.add(blk, lamp, r1, r2, plight, cup);
     return { stage, T, blk, glass, edges, top, lamp, r1, r2, plight, cup, sp1, sp2, bowl, spMat };
@@ -170,13 +170,13 @@ defineScene('light', {
         line(b1[0], b1[1], b2[0], b2[1], ink, .35 * na, 2);
         const up = Math.atan2(n1[1] - pC[1], n1[0] - pC[0]), dn = Math.atan2(n2[1] - pC[1], n2[0] - pC[0]);
         const ia = Math.atan2(pA[1] - pC[1], pA[0] - pC[0]), ra = Math.atan2(pB[1] - pC[1], pB[0] - pC[0]);
-        const pa1 = P(t, T.luch, .6, eInOut), pa2 = P(t, T.izg + .1, .6, eInOut);
+        const pa1 = P(t, T.luch, .6, eInOut), pa2 = P(t, T.izg - .15, .6, eInOut);
         const R1 = 150, R2 = 190;
         arc(pC[0], pC[1], R1, up, ia, pa1, ink, na);
         arc(pC[0], pC[1], R2, dn, ra, pa2, ink, na);
         const m1 = (up + ia) / 2, m2 = dn + ((ra - dn) / 2);
         atext('α', pC[0] + Math.cos(m1) * (R1 + 44), pC[1] + Math.sin(m1) * (R1 + 44) + 18, T.luch + .2, t, { size: 54, w: 500, col: ink, a: na, track: 0, dy: 12 });
-        atext('β', pC[0] + Math.cos(m2) * (R2 + 44), pC[1] + Math.sin(m2) * (R2 + 44) + 18, T.izg + .3, t, { size: 54, w: 500, col: ink, a: na, track: 0, dy: 12 });
+        atext('β', pC[0] + Math.cos(m2) * (R2 + 44), pC[1] + Math.sin(m2) * (R2 + 44) + 18, T.izg - .05, t, { size: 54, w: 500, col: ink, a: na, track: 0, dy: 12 });
       }
     } else {
       // стакан: без подписей — ложка говорит сама
