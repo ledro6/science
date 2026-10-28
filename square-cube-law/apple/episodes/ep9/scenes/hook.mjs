@@ -50,14 +50,14 @@ defineScene('hook', {
     const Ew = earthWorld(earth, EYE, 1);
     const C0 = [0, 0, 0];
     const nN = norm3(add3([0, 1, 0], Ew, -Ew[1]));                     // «север» в точке глаза
-    const tau = 56 * RAD;
+    const tau = 47 * RAD;
     const posZ = add3(Ew, norm3(add3(scl3(Ew, Math.cos(tau)), nN, -Math.sin(tau))), 2.35);
     const tgZ = add3(Ew, nN, .0);
     const k2 = P(t, T.ne - .2, 3.2, eApple);                            // на k2/k3 — отъезд и подъём кадра под заголовок
-    const az = (-4 + 1.4 * t) * RAD, el = (7 + 3 * k2) * RAD, dist = lerp(10.4, 12.2, k2) - .1 * t;
+    const az = (-4 + 1.4 * t) * RAD, el = (7 + 3 * k2) * RAD, dist = lerp(10.4, 12.9, k2) - .1 * t;
     const posA = [dist * Math.cos(el) * Math.sin(az), dist * Math.sin(el), dist * Math.cos(el) * Math.cos(az)];
     const pos = posA.map((v, i) => lerp(v, posZ[i], z)), tg = C0.map((v, i) => lerp(v, tgZ[i], z));
-    lookFrom(cam, pos, tg, 540, lerp(lerp(920, 1000, k2), 1000, z));
+    lookFrom(cam, pos, tg, 540, lerp(lerp(920, 950, k2), 1060, z));
     st.Ew = Ew; st.z = z;
   },
 
