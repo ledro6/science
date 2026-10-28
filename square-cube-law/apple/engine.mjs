@@ -271,8 +271,10 @@ export function render(t) {
   let capInk = C_WHITE;
   // подложка — фон предыдущей сцены: новая сцена проявляет свой фон поверх него, без провала в чёрный/серый
   let cur = 0; TL.scenes.forEach((s, i) => { if (t >= s.start) cur = i; });
+  // подложка: фон предыдущей сцены — только пока фон новой проявляется; в конце ролика — чёрный
   const prev = TL.scenes[Math.max(0, cur - 1)];
-  octx.fillStyle = STATE[prev.id] ? STATE[prev.id].stage.bgc : C_BLACK; octx.fillRect(0, 0, W, H);
+  const atEnd = cur === TL.scenes.length - 1 && t > TL.total - 1.3;
+  octx.fillStyle = atEnd ? C_BLACK : STATE[prev.id] ? STATE[prev.id].stage.bgc : C_BLACK; octx.fillRect(0, 0, W, H);
   if (STATE[prev.id]) capInk = STATE[prev.id].stage.ink;
   TL.scenes.forEach((s, i) => {
     const def = DEFS[s.id];
