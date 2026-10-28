@@ -77,7 +77,7 @@ defineScene('hook', {
     const out1 = T.end1 + .1;
     scrim(240, 680, .75 * P(t, T.vet - .3, .5) * (1 - P(t, out1, .35, eIn)));
     atext('0 м/с', 540, 500, T.vet, t, { size: 260, w: 700, col: red, track: -.045, blur: 20, scale0: 1.12, dur: .9, out: out1 });
-    atext('ветер в центре циклона', 540, 580, T.vet + .3, t, { size: 46, w: 500, col: sub, track: -.005, out: out1 });
+    atext('где-то на Земле всегда', 540, 580, T.vet + .3, t, { size: 46, w: 500, col: sub, track: -.005, out: out1 });
     // k2: «не прогноз погоды» → «математика»
     const o2 = T.mat - .15;
     atext('Не прогноз погоды', 540, 430, T.ne, t, { size: 72, w: 600, col: sub, track: -.02, out: o2 });

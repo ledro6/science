@@ -27,7 +27,7 @@ function TT() {
     lozh: Wd('l3', 'ложка'), stak: Wd('l3', 'стакане'), slom: Wd('l3', 'сломанной'),
   };
   T.beam = T.sam - .05;                       // загорается луч
-  T.cut = (Wd('l3', 'изгибается') + 0.9 + T.lozh) / 2 - .05;   // блок → стакан (через вдох в чёрный)
+  T.cut = T.lozh - .25;                     // блок → стакан (через вдох в чёрный)
   return T;
 }
 // путь луча по времени: доля длины при равномерном времени (в воде медленнее)
@@ -71,7 +71,7 @@ defineScene('light', {
     const sp1 = rod(spMat, .03, 16), sp2 = rod(spMat, .03, 16);
     const bowl = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 20), spMat); bowl.scale.set(.15, .05, .1);
     cup.add(sp1, sp2, bowl, base, wall, water, surf, rim);
-    cup.traverse(o => { if (o.isMesh) o.castShadow = true; });
+    [sp1, sp2, bowl].forEach(r => r.traverse(o => { if (o.isMesh) o.castShadow = true; }));
     stage.root.add(blk, lamp, r1, r2, plight, cup);
     return { stage, T, blk, glass, edges, top, lamp, r1, r2, plight, cup, sp1, sp2, bowl, spMat };
   },
@@ -98,7 +98,7 @@ defineScene('light', {
       // камера: общий план → наезд на точку преломления
       const z = P(t, T.gran - .2, 1.4, eInOut) * (1 - P(t, T.cut - .5, .5, eIn) * 0);
       const az = lerp(-8, 6, clamp((t - s.start) / 11));
-      frame(cam, lerp3([0, .1, 0], [XC, .05, 0], z), lerp(20, 11.5, z), lerp(az, 10, z), lerp(5, 3, z), 540, lerp(870, 860, z));
+      frame(cam, lerp3([0, .1, 0], [XC, -.1, 0], z), lerp(20, 14.5, z), lerp(az, 10, z), lerp(5, 3, z), 540, lerp(870, 800, z));
     } else {
       r1.visible = r2.visible = false; plight.intensity = 0;
       // ложка «ломается»: подводная часть смещается и приподнимается
@@ -179,16 +179,7 @@ defineScene('light', {
         atext('β', pC[0] + Math.cos(m2) * (R2 + 44), pC[1] + Math.sin(m2) * (R2 + 44) + 18, T.izg + .3, t, { size: 54, w: 500, col: ink, a: na, track: 0, dy: 12 });
       }
     } else {
-      // поверхность воды: выноска к излому ложки
-      const k = P(t, T.slom, .6);
-      const [sx, sy] = project(cam, SP_S[0] + .09, WL, SP_S[2] + .3);
-      const pd = P(t, T.slom + .35, .3), pl = P(t, T.slom + .45, .45);
-      if (pd > 0) {
-        g.save(); g.globalAlpha = pd; g.fillStyle = ink; g.beginPath(); g.arc(sx, sy, 5, 0, TAU); g.fill(); g.restore();
-        line(sx, sy, lerp(sx, 860, pl), sy, ink, .7, 2);
-      }
-      atext('граница сред', 870, sy + 14, T.slom + .55, t, { size: 40, w: 500, col: sub, align: 'left', track: 0, dy: 14 });
-      void k;
+      // стакан: без подписей — ложка говорит сама
     }
     // вдох в чёрный на смене блока на стакан
     const dip = bump(t, T.cut, .28);
