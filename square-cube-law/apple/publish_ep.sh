@@ -15,6 +15,14 @@ else
   cp "$E/build/subs.srt" "$D/L3_ep$NN.srt"
   git add -f "$E/scenes" "$E"/*.json "$E"/*.mjs "$E/script.py" "$E/build/timeline.json" "$E/build/sfx.json" 2>/dev/null || true
 fi
+# GitHub не принимает файлы > 100 МБ: пережимаем копию до ~90 МБ (битрейт из длительности)
+V="$D/L3_ep$NN.mp4"
+if [ "$(stat -c %s "$V")" -gt 95000000 ]; then
+  DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$V")
+  BR=$(python3 -c "print(int(90e6*8/$DUR/1000) - 300)")k
+  ffmpeg -loglevel error -y -i "$V" -map 0 -c:v libx264 -preset medium -b:v $BR -maxrate $BR -bufsize $BR \
+    -pix_fmt yuv420p -c:a copy -c:s copy -movflags +faststart "$V.tmp.mp4" && mv "$V.tmp.mp4" "$V"
+fi
 cp square-cube-law/brand/out/ep$N-tiktok-cover.png "$D/L3_ep$NN-tiktok-cover.png"
 cp square-cube-law/brand/out/ep$N-shorts-cover.png "$D/L3_ep$NN-shorts-cover.png"
 git add -f "$D" square-cube-law/brand/out/ep$N-*.png
