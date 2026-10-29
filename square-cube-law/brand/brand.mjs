@@ -152,7 +152,7 @@ function epTikTok(g, ep) {
   const w = 1080, h = 1920; fill(g, w, h, C.black); glowUnder(g, 540, 1080, 520, .07);
   put(g, HEROES[ep.hero](1080, 1080, true), 0, 560);
   txt(g, 'L³', 90, 360, { size: 110, col: C.white, track: -.05 });
-  txt(g, `№ ${ep.n}`, 250, 352, { size: 44, w: 600, col: C.muted, track: 0 });
+  txt(g, ep.tag ?? `№ ${ep.n}`, 250, 352, { size: 44, w: 600, col: C.muted, track: 0 });
   // кегль хука подбирается так, чтобы самая длинная строка уместилась в 900 px
   const hs = Math.min(150, ...ep.hook.map(l => 150 * 900 / measure(g, l, 150, 700, -.04)));
   txt(g, ep.hook[0], 90, 540, { size: hs, col: C.white });
@@ -165,7 +165,7 @@ function epShorts(g, ep) {
   const w = 1080, h = 1920; fill(g, w, h, C.black); glowUnder(g, 540, 1180, 520, .07);
   put(g, HEROES[ep.hero](1080, 1080, true), 0, 640);
   txt(g, 'L³', 90, 360, { size: 110, col: C.white, track: -.05 });
-  txt(g, `№ ${ep.n}`, 250, 352, { size: 44, w: 600, col: C.muted, track: 0 });
+  txt(g, ep.tag ?? `№ ${ep.n}`, 250, 352, { size: 44, w: 600, col: C.muted, track: 0 });
   const ns = Math.min(170, 900 / Math.max(1, measure(g, ep.number, 170, 700, -.045) / 170));
   txt(g, ep.number, 86, 600, { size: ns, col: ep.numberAccent === false ? C.white : ACCENT.dark, track: -.045 });
   txt(g, ep.numberLabel, 94, 680, { size: 52, w: 500, col: C.muted, track: 0 });
@@ -176,7 +176,7 @@ function epYouTube(g, ep) {
   txt(g, ep.number, 70, 330, { size: 116, col: ep.numberAccent === false ? C.white : ACCENT.dark, track: -.045 });
   txt(g, ep.numberLabel, 76, 400, { size: 40, w: 500, col: C.muted, track: 0 });
   txt(g, 'L³', 70, 660, { size: 64, col: C.white, track: -.05 });
-  txt(g, `№ ${ep.n} · ${ep.law}`, 170, 652, { size: 30, w: 600, col: C.white, track: 0 });
+  txt(g, `${ep.tag ?? '№ ' + ep.n} · ${ep.law}`, 170, 652, { size: 30, w: 600, col: C.white, track: 0 });
 }
 
 // ---------- ассеты ----------
@@ -283,8 +283,9 @@ export async function init() {
   }
 }
 function registerEpisode(ep) {
-  ASSETS[`ep${ep.n}-tiktok-cover`] = { w: 1080, h: 1920, draw(g) { epTikTok(g, ep); } };
-  ASSETS[`ep${ep.n}-shorts-cover`] = { w: 1080, h: 1920, draw(g) { epShorts(g, ep); } };
+  const id = typeof ep.n === 'number' ? `ep${ep.n}` : ep.n;   // рубрики: n = 'w1' → w1-tiktok-cover
+  ASSETS[`${id}-tiktok-cover`] = { w: 1080, h: 1920, draw(g) { epTikTok(g, ep); } };
+  ASSETS[`${id}-shorts-cover`] = { w: 1080, h: 1920, draw(g) { epShorts(g, ep); } };
 }
 for (const ep of EPISODES) {
   ASSETS[`ep${ep.n}-tiktok-cover`] = { w: 1080, h: 1920, draw(g) { epTikTok(g, ep); } };
