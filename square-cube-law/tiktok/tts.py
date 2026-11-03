@@ -15,8 +15,8 @@ SCENES = _mod.SCENES
 VOICES = {
     "ep": ("ru-RU-SvetlanaNeural", "+8%"),            # основная серия «Законы природы»
     "w":  ("ru-RU-DmitryNeural", "+6%"),              # «Что если»
-    "a":  ("en-US-AndrewMultilingualNeural", "+16%"),  # «За рулём»
-    "m":  ("en-US-EmmaMultilingualNeural", "+11%"),    # «Миф или нет»
+    "a":  ("ru-RU-DmitryNeural", "+6%"),              # «За рулём»
+    "m":  ("ru-RU-SvetlanaNeural", "+8%"),            # «Миф или нет»
 }
 _rubric = os.path.basename(HERE).rstrip("0123456789")
 VOICE, RATE = getattr(_mod, "VOICE", None) or VOICES.get(_rubric, VOICES["ep"])[0], getattr(_mod, "RATE", None) or VOICES.get(_rubric, VOICES["ep"])[1]
