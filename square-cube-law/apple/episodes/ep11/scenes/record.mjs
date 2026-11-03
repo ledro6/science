@@ -18,7 +18,7 @@ defineScene('record', {
   setup() {
     const stage = makeStage({ bg: 'black', shadow: .5 });
     const ice = makeIce(stage);
-    const sk = makeSpinner(stage, { ghosts: 4 });
+    const sk = makeSpinner(stage, { ghosts: 3 });
     stage.root.add(ice, sk);
     return { stage, T: TT(), ice, sk };
   },

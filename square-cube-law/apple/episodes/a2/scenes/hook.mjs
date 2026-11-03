@@ -72,7 +72,7 @@ defineScene('hook', {
     const tx = lerp(lerp(x[0] + .5, (x[0] + x[1]) / 2 + 6, wA), D1 + .5, wB) + Math.max(0, t - T.meet) * .3;
     const [az, el, d, fov] = keys([[0, -74, 13, 46, 17], [T.drug - .3, -76, 12, 46, 17], [T.dvad + .3, -84, 8, 90, 11], [T.meet, -76, 14, 52, 16], [10.9, -72, 15, 50, 16]], t, eInOut);
     cam.fov = fov; cam.updateProjectionMatrix();
-    frame(cam, [tx, .7, lerp(LANE[0], .6, wA)], d, az, el, 540, 1020);
+    frame(cam, [tx, .7, lerp(LANE[0], .6, wA)], d, az, el, 540, lerp(1000, 900, wA));
   },
 
   draw2d(t, s, st) {
@@ -88,7 +88,7 @@ defineScene('hook', {
     });
     // подпись линии — у её дальнего края
     const [lx, ly] = project(cam, 0, 0, LANE[0] - 2.4);
-    atext('начало торможения', lx - 16, ly + 10, T.tochk - .05, t, { size: 34, w: 500, col: sub, align: 'right', track: 0, dy: 12, out: T.tam });
+    atext('начало торможения', lx - 16, ly + 10, T.tochk - .05, t, { size: 34, w: 500, col: sub, align: 'right', track: 0, dy: 12, out: T.drug - .2 });
     // спидометры: крупно вверху (как «90 км/ч» в a1), к машинам — тонкие выноски
     const HX = [310, 770], HY = 520;
     const hud = (i, t0, val, col, o = {}) => {

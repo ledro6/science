@@ -4,12 +4,12 @@
 //      за колёсами тянутся следы, на конце следов живые счётчики «20 м» и «80 м»; камера отъезжает, чтобы влезли 80 м;
 //      на «четыре» — красное «×4», след второй делится на четыре отрезка по 20 м.
 import { defineScene, makeStage, project, atext, line, P, Wd, THREE, MAT, clamp, lerp, eApple, eInOut, eIn } from '../../../engine.mjs';
-import { ctx, makeCar, frame, keys, dim, makeRoad, bx, bv, stopDist, V60, V120, WR } from './kit.mjs';
+import { ctx, makeCar, frame, keys, makeRoad, bx, bv, stopDist, V60, V120, WR } from './kit.mjs';
 
-const LANE = [-2, 2];
+const LANE = [-2.4, 2.4];
 const D = [stopDist(V60), stopDist(V120)];             // 20,2 и 80,9 м
 const V = [V60, V120];
-const EDGE = 4.6;                                       // z линейки (за правой кромкой)
+const EDGE = 5;                                       // z линейки (за правой кромкой)
 
 function TT() {
   return {
@@ -50,10 +50,10 @@ defineScene('dist', {
     L.key.intensity = 2.0; L.hemi.intensity = 1.15;
     // камера: почти сверху, дорога по диагонали; отъезд вслед за второй машиной, чтобы влезли все 80 м
     const x2 = bx(V120, tau);
-    const k = P(t, T.shest - .2, T.vos + .9 - T.shest, eInOut);
-    const tx = lerp(9, 40, k), d = lerp(130, 420, k);
+    const kx = clamp(x2 / 80), k = kx * kx * (3 - 2 * kx);       // отъезд ведёт сама вторая машина: плавный старт и остановка
+    const tx = lerp(9, 40, k), d = lerp(130, 400, k);
     cam.fov = 20; cam.far = 2000; cam.updateProjectionMatrix();
-    frame(cam, [tx, 0, 0], d, lerp(-46, -40, k), 62, 540, lerp(980, 945, k));
+    frame(cam, [tx, 0, 0], d, lerp(-46, -40, k), 62, lerp(540, 505, k), lerp(980, 880, k));
   },
 
   draw2d(t, s, st) {
@@ -79,19 +79,21 @@ defineScene('dist', {
     // живые счётчики на концах следов
     cars.forEach((c, i) => {
       if (tau <= 0) return;
-      const x = bx(V[i], tau), [px, py] = project(cam, x + 3.2, 0, LANE[i] - 3.4);
+      const x = bx(V[i], tau), [px, py] = project(cam, x + 2.6, 0, LANE[i] - 4.6);
       const t0 = T.shest + .25;
       const big = i === 0 ? P(t, T.metr - .1, .5) : P(t, T.vos, .5);
       atext(Math.round(x) + ' м', px, py, t0, t, { size: lerp(44, 64, big), w: 600, col: ink, track: -.02, dy: 12, align: 'right' });
       atext(i ? 'со 120 км/ч' : 'с 60 км/ч', px, py + 40, i ? T.dvadc - .05 : T.shest, t, { size: 30, w: 500, col: sub, track: 0, dy: 10, align: 'right' });
     });
-    // ×4: след второй делится на четыре отрезка по 20 м
-    for (let j = 0; j < 4; j++) {
-      const a = P(t, T.chet + j * .12, .5) * (1 - P(t, s.end - .4, .3, eIn));
-      if (a <= .003) continue;
-      const [ax, ay] = project(cam, j * D[0] + .4, 0, LANE[1] + 1.5), [bx2, by] = project(cam, (j + 1) * D[0] - .4, 0, LANE[1] + 1.5);
-      dim(ax, ay, bx2, by, a, ink, 9);
-    }
+    // ×4: эталон — след первой (20 м); на «четыре» он ложится на след второй четыре раза подряд
+    const quad = (x0, x1, z, a) => {
+      if (a <= .003) return;
+      const c = [[x0, z - 1.25], [x1, z - 1.25], [x1, z + 1.25], [x0, z + 1.25]].map(([x, zz]) => project(cam, x, 0, zz));
+      g.save(); g.globalAlpha = a; g.fillStyle = ink; g.beginPath(); c.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill(); g.restore();
+    };
+    const oQ = 1 - P(t, s.end - .45, .35, eIn);
+    quad(.3, D[0] - .3, LANE[0], .2 * P(t, T.chet - .35, .4) * oQ);
+    for (let j = 0; j < 4; j++) quad(j * D[0] + .3, (j + 1) * D[0] - .3, LANE[1], .2 * P(t, T.chet + .05 + j * .14, .45) * oQ);
     atext('×4', 300, 520, T.chet, t, { size: 300, w: 700, col: stage.accent, track: -.045, blur: 22, scale0: 1.14, dur: .9 });
     atext('тормозной путь', 300, 600, T.chet + .25, t, { size: 46, w: 500, col: sub, track: -.005 });
   },

@@ -100,13 +100,14 @@ export function makeSpinner(stage, { ghosts = 3, dark = true } = {}) {
   const grp = new THREE.Group();
   const main = makeSkater();
   const mirror = new THREE.Group(); mirror.scale.y = -1;
-  const refl = makeSkater({ ghost: true });
+  // отражение и шлейф — дешёвые Lambert-материалы (их почти не видно, а clearcoat в программном рендере дорог)
+  const refl = makeSkater({ ghost: true, mat: new THREE.MeshLambertMaterial({ color: '#E6E6E4' }), boot: new THREE.MeshLambertMaterial({ color: '#141416' }), blade: new THREE.MeshLambertMaterial({ color: '#A8AAAE' }) });
   refl.traverse(o => { if (o.isMesh) o.castShadow = false; });
   mirror.add(refl);
   const gs = [];
   for (let i = 0; i < ghosts; i++) {
-    const m = new THREE.MeshPhysicalMaterial({ color: '#F2F2F0', roughness: .45, transparent: true, opacity: .2, depthWrite: false });
-    const b = new THREE.MeshPhysicalMaterial({ color: '#141416', roughness: .3, transparent: true, opacity: .2, depthWrite: false });
+    const m = new THREE.MeshLambertMaterial({ color: '#F2F2F0', transparent: true, opacity: .2, depthWrite: false });
+    const b = new THREE.MeshLambertMaterial({ color: '#141416', transparent: true, opacity: .2, depthWrite: false });
     const gk = makeSkater({ mat: m, boot: b, blade: b, ghost: true }); gk.traverse(o => { if (o.isMesh) o.renderOrder = 4; });
     gs.push({ g: gk, m, b }); grp.add(gk);
   }
