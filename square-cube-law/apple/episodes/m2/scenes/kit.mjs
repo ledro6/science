@@ -14,9 +14,9 @@ export const makeToast = o => TM.makeToast(THREE, o);
 export const makeTable = o => TM.makeTable(THREE, o);
 
 // тень ключевого света на сцену в дециметрах (стол 7,5 дм, а при «3 м» — 30 дм)
-export function wideShadow(stage, R = 14, k = 2.2) {
+export function wideShadow(stage, R = 14, k = 2.2, map = 1024) {
   const key = stage.lights.key;
-  key.position.multiplyScalar(k); key.shadow.mapSize.set(2048, 2048);
+  key.position.multiplyScalar(k); key.shadow.mapSize.set(map, map);
   const sc = key.shadow.camera; sc.left = -R; sc.right = R; sc.top = R; sc.bottom = -R; sc.near = 1; sc.far = 80;
   sc.updateProjectionMatrix();
 }

@@ -29,9 +29,9 @@ defineScene('outro', {
     const flip = P(t, T.fiz - .1, 1.4, eInOut);
     toast.position.set(0, 1.6 + .06 * Math.sin((t - s.start) * 1.3), 0);
     toast.rotation.set(.32 - .05 * flip, (t - s.start) * .22 - .5, -Math.PI * flip, 'YXZ');
-    toast.scale.setScalar(1);
+    toast.scale.setScalar(.88);
     const o2 = P(t, T.card - .2, 1.2, eInOut);
-    frame(cam, [0, 1.5, 0], lerp(9.4, 10.6, o2) - .05 * (t - s.start), -10 + (t - s.start) * 1.4, lerp(16, 20, o2), 540, lerp(1010, 880, o2));
+    frame(cam, [0, 1.5, 0], lerp(9.4, 10.6, o2) - .05 * (t - s.start), -10 + (t - s.start) * 1.4, lerp(16, 20, o2), 540, lerp(1040, 880, o2));
   },
 
   draw2d(t, s, st) {

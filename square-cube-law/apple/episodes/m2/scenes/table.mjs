@@ -26,10 +26,11 @@ const XD0 = 2.7, XD1 = 5.6;                                       // x разм�
 defineScene('table', {
   setup() {
     const stage = makeStage({ bg: 'white', shadow: .4 });
-    wideShadow(stage, 34, 4);
+    wideShadow(stage, 34, 4, 2048);
     const table = makeTable({ dark: false }), toast = makeToast();
     const gh = ghosts(stage.root, NG, .5);
-    table.children[0].castShadow = false;           // тень столешницы обрезалась бы краем карты теней
+    table.traverse(o => { o.castShadow = false; });   // тени стола обрезались бы краем карты теней (тень бутерброда остаётся)
+    [table.children[2], table.children[4]].forEach(l => { l.visible = false; });   // дальние ножки лезли в кадр клином
     stage.root.add(table, toast);
     return { stage, table, toast, gh, T: TT() };
   },

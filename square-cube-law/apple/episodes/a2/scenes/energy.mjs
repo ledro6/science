@@ -5,7 +5,7 @@
 // e2 — график скорость–путь для 120 км/ч: кривая v = v0·√(1 − x/d); маленькая машина под осью тормозит по физике,
 //      на половине пути (40 м) скорость ещё 85 км/ч: «−29 %».
 import { defineScene, makeStage, project, atext, line, P, Wd, THREE, MAT, roundedBox, shadowsOn, clamp, lerp, eApple, eInOut, eIn } from '../../../engine.mjs';
-import { ctx, bump, makeCar, frame, collectMats, setLit, polyline, brakeLights, bx, bv, vAtX, V120, WR } from './kit.mjs';
+import { ctx, bump, makeCar, frame, collectMats, setLit, polyline, brakeLights, bx, bv, vAtX, DEC, V120, WR } from './kit.mjs';
 
 const CS = .9, GAP = .06, HS = CS + GAP;
 const LX = -1.75, RX = 1.0;                                 // одиночный кубик и квадрат 2×2
@@ -23,7 +23,7 @@ function TT() {
   };
   T.cut = T.poe - .15;                                      // смена кубиков на график
   T.eat = i => T.gas + .05 + i * .42;                       // i-й кубик тает (одинаковый ритм = одинаковая сила)
-  T.go = T.pad - (V120 - Math.sqrt(V120 * V120 - 2 * (V120 * V120 / 160) * 40)) / (V120 * V120 / 160);   // старт машины: к «падает» она на 40 м
+  T.go = T.pad - (V120 - Math.sqrt(V120 * V120 - 2 * DEC * 40)) / DEC;   // старт машины: к «падает» она на 40 м
   return T;
 }
 // клетки квадрата 2×2 (порядок таяния: верхний ряд, затем нижний)
@@ -101,8 +101,8 @@ defineScene('energy', {
       // «1» и «4» над столбиками, на таянии — счётчики пути
       const [ax, ay] = project(cam, LX, CS + .15, 0), [bx2, by] = project(cam, RX, 2 * HS + .1, 0);
       const yTop = Math.min(ay, by) - 50;
-      atext('1', lx, yTop, T.en + .15, t, { size: 110, w: 700, col: ink, track: -.04, out: T.gas });
-      atext('4', rx, yTop, T.kv + .2, t, { size: 110, w: 700, col: ink, track: -.04, out: T.gas });
+      atext('1', lx, yTop, T.en + .15, t, { size: 110, w: 700, col: ink, track: -.04, out: T.gas - .2 });
+      atext('4', rx, yTop, T.kv + .2, t, { size: 110, w: 700, col: ink, track: -.04, out: T.gas - .2 });
       if (t > T.eat(0) + .15) {
         const nL = 20;
         let nR = 0; for (let i = 0; i < 4; i++) if (t >= T.eat(i) + .15) nR += 20;
