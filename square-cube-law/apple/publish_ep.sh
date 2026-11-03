@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."                       # корень репозитория
 N=$1
-declare -A SLUG=([w1]=chto-esli-luna [a1]=za-rulem-vozdukh [m1]=mif-rakovina [1]=kvadrat-kub [2]=kleiber [3]=eksponenta [4]=kepler [5]=obratnye-kvadraty [6]=reynolds [7]=benford [8]=dni-rozhdeniya [9]=ezh [10]=ferma)
+declare -A SLUG=([w1]=chto-esli-luna [w2]=chto-esli-zemlya [a2]=za-rulem-tormoz [m2]=mif-buterbrod [11]=moment-impulsa [a1]=za-rulem-vozdukh [m1]=mif-rakovina [1]=kvadrat-kub [2]=kleiber [3]=eksponenta [4]=kepler [5]=obratnye-kvadraty [6]=reynolds [7]=benford [8]=dni-rozhdeniya [9]=ezh [10]=ferma)
 # основная серия: 4 → ep04, эпизод ep4, обложки ep4-*; рубрики: w1 → w1, эпизод w1, обложки w1-*
 if [[ $N =~ ^[0-9]+$ ]]; then NN=ep$(printf %02d "$N"); EID=ep$N; else NN=$N; EID=$N; fi
 D=videos/$NN-${SLUG[$N]}; mkdir -p "$D"
