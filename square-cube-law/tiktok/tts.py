@@ -11,9 +11,23 @@ _spec = importlib.util.spec_from_file_location("script", os.path.join(HERE, "scr
 _mod = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(_mod)
 SCENES = _mod.SCENES
 
-VOICE, RATE = "ru-RU-SvetlanaNeural", "+8%"
+# у каждой рубрики свой диктор: рубрика = буква в имени папки выпуска (w1 → w, a1 → a, ep4 → основная серия)
+VOICES = {
+    "ep": ("ru-RU-SvetlanaNeural", "+8%"),            # основная серия «Законы природы»
+    "w":  ("ru-RU-DmitryNeural", "+6%"),              # «Что если»
+    "a":  ("en-US-AndrewMultilingualNeural", "+16%"),  # «За рулём»
+    "m":  ("en-US-EmmaMultilingualNeural", "+11%"),    # «Миф или нет»
+}
+_rubric = os.path.basename(HERE).rstrip("0123456789")
+VOICE, RATE = getattr(_mod, "VOICE", None) or VOICES.get(_rubric, VOICES["ep"])[0], getattr(_mod, "RATE", None) or VOICES.get(_rubric, VOICES["ep"])[1]
 OUT = os.path.join(HERE, "build", "voice")
 os.makedirs(OUT, exist_ok=True)
+# смена диктора сбрасывает кэш озвучки
+_vf = os.path.join(OUT, "_voice.txt")
+if (open(_vf).read() if os.path.exists(_vf) else "ru-RU-SvetlanaNeural +8%") != f"{VOICE} {RATE}":
+    for f in os.listdir(OUT): os.remove(os.path.join(OUT, f))
+open(_vf, "w").write(f"{VOICE} {RATE}")
+print("voice", VOICE, RATE)
 
 
 async def synth(key, text):
