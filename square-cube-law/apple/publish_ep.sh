@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Раскладывает готовый выпуск в videos/epNN-<slug>/ (ролик + обложки TikTok и Shorts + субтитры) и заливает в GitHub.
+# Раскладывает готовый выпуск в videos/epNN-<slug>/ (ролик + обложка TikTok + субтитры) и заливает в GitHub.
 #   ./publish_ep.sh 4
 set -euo pipefail
 cd "$(dirname "$0")/../.."                       # корень репозитория
@@ -26,9 +26,8 @@ if [ "$(stat -c %s "$V")" -gt 95000000 ]; then
     -pix_fmt yuv420p -c:a copy -c:s copy -movflags +faststart "$V.tmp.mp4" && mv "$V.tmp.mp4" "$V"
 fi
 cp square-cube-law/brand/out/$EID-tiktok-cover.png "$D/L3_$NN-tiktok-cover.png"
-cp square-cube-law/brand/out/$EID-shorts-cover.png "$D/L3_$NN-shorts-cover.png"
-git add -f "$D" square-cube-law/brand/out/$EID-*.png
-git commit -qm "Выпуск $N: ролик, обложки TikTok и Shorts, субтитры" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+git add -f "$D" square-cube-law/brand/out/$EID-tiktok-cover.png
+git commit -qm "Выпуск $N: ролик, обложка TikTok, субтитры" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 Claude-Session: https://claude.ai/code/session_01BZmGe7xbFacvNdXRrUeCkC"
 for i in 1 2 3 4 5; do git push -q -u origin claude/square-cube-law-video-u5qymh && break; sleep $((2**i)); done
 echo "published $D"

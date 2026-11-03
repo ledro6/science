@@ -46,7 +46,7 @@ export default function (THREE, { MAT, roundedBox, glassEdges, shadowsOn, models
   return { object, cam: { az: 35, el: 15, dist: 6, target: [0, .5, 0], fov: 24 } };   // floor: false — без пола
 }
 ```
-Проверка обложек: `cd /home/user/science/square-cube-law/brand && node capture.js ep<N>-tiktok-cover,ep<N>-shorts-cover` → `brand/out/ep<N>-*.png` (2160×3840). Герой должен быть крупным, в нижних двух третях, не налезать на текст.
+Проверка обложек: `cd /home/user/science/square-cube-law/brand && node capture.js ep<N>-tiktok-cover` → `brand/out/ep<N>-tiktok-cover.png` (2160×3840; обложку для Shorts не делаем). Герой должен быть крупным, в нижних двух третях, не налезать на текст.
 
 ## Проверка сцен
 `cd /home/user/science/square-cube-law/apple && EP=<ep> node capture.js stills 1.2,2.5,4.0 <префикс> only=<id>` → `episodes/<ep>/stills/`.
