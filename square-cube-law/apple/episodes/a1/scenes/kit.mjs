@@ -78,11 +78,11 @@ export function makeCar({ body = null, glass = null, dark = true } = {}) {
   glass = glass || MAT.ceramicBlack(); if (!arguments[0] || !arguments[0].glass) glass.color.set(dark ? '#2E2E32' : '#141416');
   const g = new THREE.Group();
   const DEPTH = 1.66;
-  const bgeo = new THREE.ExtrudeGeometry(bodyShape(), { depth: DEPTH, bevelEnabled: true, bevelThickness: .12, bevelSize: BODY_BEVEL, bevelSegments: 5, curveSegments: 18 });
+  const bgeo = new THREE.ExtrudeGeometry(bodyShape(), { depth: DEPTH, bevelEnabled: true, bevelThickness: .12, bevelSize: BODY_BEVEL, bevelSegments: 4, curveSegments: 14 });
   bgeo.translate(0, 0, -DEPTH / 2);
   const bm = new THREE.Mesh(bgeo, body);
   const CD = 1.26;
-  const cgeo = new THREE.ExtrudeGeometry(cabinShape(), { depth: CD, bevelEnabled: true, bevelThickness: .14, bevelSize: CAB_BEVEL, bevelSegments: 5, curveSegments: 18 });
+  const cgeo = new THREE.ExtrudeGeometry(cabinShape(), { depth: CD, bevelEnabled: true, bevelThickness: .14, bevelSize: CAB_BEVEL, bevelSegments: 4, curveSegments: 14 });
   cgeo.translate(0, 0, -CD / 2);
   const cm = new THREE.Mesh(cgeo, glass);
   g.add(bm, cm);
@@ -94,13 +94,13 @@ export function makeCar({ body = null, glass = null, dark = true } = {}) {
     const tl = new THREE.Mesh(new THREE.BoxGeometry(.05, .05, .5), tm); tl.position.set(-2.36, .86, sz * .5); g.add(tl);
   }
   // колёса: шина-графит, диск, 5 алюминиевых спиц на наружной стороне
-  const tyre = new THREE.MeshPhysicalMaterial({ color: '#1C1C1E', roughness: .6, clearcoat: .2 });
-  const rimM = MAT.aluminium();
+  const tyre = new THREE.MeshStandardMaterial({ color: '#1C1C1E', roughness: .6 });
+  const rimM = new THREE.MeshStandardMaterial({ color: '#C9CBCF', roughness: .3, metalness: .3 });
   const tgeo = new THREE.CylinderGeometry(WR, WR, .28, 40); tgeo.rotateX(Math.PI / 2);
   const dgeo = new THREE.CylinderGeometry(WR * .66, WR * .66, .292, 32); dgeo.rotateX(Math.PI / 2);
   const sgeo = new THREE.BoxGeometry(.05, WR * 1.2, .02);
   const hgeo = new THREE.CylinderGeometry(.05, .05, .3, 20); hgeo.rotateX(Math.PI / 2);
-  const dark2 = new THREE.MeshPhysicalMaterial({ color: '#2C2C2E', roughness: .35, metalness: .3, clearcoat: .6 });
+  const dark2 = new THREE.MeshStandardMaterial({ color: '#2C2C2E', roughness: .35, metalness: .3 });
   const wheels = [];
   for (const wx of [-WX, WX]) for (const sz of [-1, 1]) {
     const w = new THREE.Group();

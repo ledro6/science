@@ -17,17 +17,17 @@ function TT() {
 const LANES = [{ z: -2.6, v: 2.4 }, { z: 2.6, v: 4.8 }];   // 90 и 180 км/ч: условные ед/с
 const CX = -2.55, NOSE = CX + 2.45;                         // центр машины и нос (мировая X)
 const ROWS = [[.5, .06], [.9, .2], [1.3, .38]], ZS = [-.45, 0, .45];
-const SP = .36, XUP = 5.6, XEND = -6.2, LT = XUP - XEND, NS = Math.ceil(LT / SP);
+const SP = .4, XUP = 5.6, XEND = -6.2, LT = XUP - XEND, NS = Math.ceil(LT / SP);
 const CUBE = .11;
 
 defineScene('air', {
   setup() {
     const stage = makeStage({ bg: 'white', shadow: .3 });
     const T = TT();
-    const cars = LANES.map(l => { const c = makeCar({ body: MAT.aluminium(), dark: false }); c.position.set(CX, 0, l.z); stage.root.add(c); return c; });
-    const geo = roundedBoxGeo(CUBE, CUBE, CUBE, .022, 2), mat = MAT.graphite(); mat.color.set('#5A5A5F');
+    const cars = LANES.map(l => { const c = makeCar({ body: new THREE.MeshStandardMaterial({ color: '#C9CBCF', roughness: .32, metalness: .25 }), glass: new THREE.MeshStandardMaterial({ color: '#141416', roughness: .15, metalness: .2 }), dark: false }); c.position.set(CX, 0, l.z); stage.root.add(c); return c; });
+    const geo = new THREE.BoxGeometry(CUBE, CUBE, CUBE), mat = new THREE.MeshStandardMaterial({ color: '#5A5A5F', roughness: .45, metalness: .15 });
     const N = NS * ROWS.length * ZS.length;
-    const parts = LANES.map(() => { const m = new THREE.InstancedMesh(geo, mat, N); m.castShadow = true; m.frustumCulled = false; stage.root.add(m); return m; });
+    const parts = LANES.map(() => { const m = new THREE.InstancedMesh(geo, mat, N); m.castShadow = false; m.frustumCulled = false; stage.root.add(m); return m; });
     return { stage, T, cars, parts, _m: new THREE.Matrix4(), _q: new THREE.Quaternion(), _p: new THREE.Vector3(), _s: new THREE.Vector3(), _e: new THREE.Euler() };
   },
 
@@ -62,9 +62,9 @@ defineScene('air', {
     });
     // камера: профиль одной машины → выше и дальше, видны обе полосы
     const k = P(t, T.vd - .2, 1.6, eInOut);
-    const tx = lerp(-1.3, -.2, k), ty = lerp(.8, .3, k), tz = lerp(LANES[0].z, 0, k);
-    const d = lerp(32, 42, k) - .05 * (t - s.start), el = lerp(9, 34, k), az = lerp(4, 7, k) + (t - s.start) * .15;
-    frame(cam, [tx, ty, tz], d, az, el, 540, lerp(1000, 1030, k));
+    const tx = lerp(-1.3, -.75, k), ty = lerp(.8, .3, k), tz = lerp(LANES[0].z, 0, k);
+    const d = lerp(32, 44, k) - .05 * (t - s.start), el = lerp(9, 34, k), az = lerp(4, 7, k) + (t - s.start) * .15;
+    frame(cam, [tx, ty, tz], d, az, el, 540, lerp(1000, 1075, k));
   },
 
   draw2d(t, s, st) {
@@ -84,7 +84,7 @@ defineScene('air', {
     br(0, T.kol, T.sila - .2);
     // подписи скоростей над крышами
     LANES.forEach((ln, li) => {
-      const [x, y] = project(cam, CX - (li ? (1 - inB) * 9 : 0) - .4, 1.75, ln.z);
+      const [x, y] = project(cam, CX - (li ? (1 - inB) * 9 : 0) - 1.5, 1.45, ln.z);
       atext(li ? '180 км/ч' : '90 км/ч', x, y - 18, li ? T.vd + .3 : T.vd + .1, t, { size: 36, w: 600, col: sub, track: 0, dy: 12 });
     });
     // --- a2: вторая колонна вдвое длиннее ---
@@ -97,8 +97,10 @@ defineScene('air', {
     // стрелки толчка у носа: вверх, длина ∝ скорости
     const aK = P(t, T.kus, .5) * (1 - P(t, T.sila - .2, .35, eIn));
     LANES.forEach((ln, li) => {
-      const A = project(cam, NOSE + .25, 1.0, ln.z + .9), B = project(cam, NOSE + .25 - .35 * (li + 1), 1.0 + .55 * (li + 1) * P(t, T.kus + li * .6, .7, eInOut), ln.z + .9);
-      arrow(A[0], A[1], B[0], B[1], ink, aK, 3, 13);
+      // экранная стрелка над носом: длина ∝ скорости (60 и 120 px)
+      const [nx, ny] = project(cam, NOSE - .1, 1.05, ln.z);
+      const len = 62 * (li + 1) * P(t, T.kus + li * .5, .7, eInOut);
+      arrow(nx + 14, ny - 26, nx + 14 - len * .42, ny - 26 - len, ink, aK, 4, 15);
     });
     // --- a3: сила сопротивления ×4 ---
     atext('F ∝ v²', 540, 330, T.sila - .05, t, { size: 110, w: 600, col: ink, track: -.02 });
@@ -106,9 +108,11 @@ defineScene('air', {
     atext('сила сопротивления', 540, 640, T.chet + .2, t, { size: 48, w: 500, col: sub, track: -.005 });
     const aF = P(t, T.sopr, .5);
     LANES.forEach((ln, li) => {
-      const len = (li ? 4 : 1) * .55 * P(t, T.sopr + (li ? .5 : 0), .9, eInOut);
-      const A = project(cam, CX - 1.0, .7, ln.z + 1.0), B = project(cam, CX - 1.0 - len, .7, ln.z + 1.0);
-      arrow(A[0], A[1], B[0], B[1], ink, aF, 4, 15);
+      // стрелка силы сопротивления над крышей, против движения: 1 и 4
+      const [rx, ry] = project(cam, CX + 1.2, 2.55, ln.z);
+      const len = (li ? 4 : 1) * 62 * P(t, T.sopr + (li ? .45 : 0), .9, eInOut);
+      arrow(rx, ry, rx - len, ry, ink, aF, 5, 17);
+      atext(li ? '4F' : 'F', rx + 16, ry + 13, T.sopr + (li ? .6 : .15), t, { size: 38, w: 600, col: ink, align: 'left', track: 0, dy: 10 });
     });
   },
 

@@ -38,7 +38,7 @@ defineScene('hook', {
     L.key.intensity = 2.6 * lit; L.hemi.intensity = .55 * lit; L.rimL.intensity = 3.2 * P(t, 0, 1.0); L.rimR.intensity = 2.4 * P(t, .1, 1.0);
     water.scale.y = depthAt(t);
     water.mat.uniforms.uOp.value = P(t, .2, 1.0);
-    const [d, el, sy] = keys([[0, 11.6, 34, 1000], [T.yuzh, 11.2, 36, 1030], [T.eto, 10.8, 40, 1060], [s.end, 10.2, 42, 1080]], t, eInOut);
+    const [d, el, sy] = keys([[0, 11.6, 34, 950], [T.yuzh, 11.2, 36, 975], [T.eto, 10.8, 40, 995], [s.end, 10.2, 42, 1005]], t, eInOut);
     frame(cam, [0, .4, 0], d, -18 + t * 2.0, el, 540, sy);
     // глобус: над раковиной, южное полушарие развёрнуто к зрителю
     const gp = P(t, T.yuzh - .1, .9), go = P(t, T.eto - .1, .5, eIn);
@@ -46,7 +46,7 @@ defineScene('hook', {
     globe.position.set(0, dy + (1 - gp) * -.12, -GD);
     globe.rotation.set(lerp(-.15, -.62, P(t, T.yuzh, 1.4, eInOut)), t * .35 - 1.2, 0, 'XYZ');
     globe.scale.setScalar(lerp(.92, 1, gp));
-    globe.visible = gp * (1 - go) > .01;
+    globe.visible = gp * (1 - go) > .01 && !globalThis.NOTR;
     globe.material.transparent = true; globe.material.opacity = gp * (1 - go);
   },
 
