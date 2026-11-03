@@ -46,7 +46,7 @@ defineScene('hook', {
     globe.position.set(0, dy + (1 - gp) * -.12, -GD);
     globe.rotation.set(lerp(-.15, -.62, P(t, T.yuzh, 1.4, eInOut)), t * .35 - 1.2, 0, 'XYZ');
     globe.scale.setScalar(lerp(.92, 1, gp));
-    globe.visible = gp * (1 - go) > .01 && !globalThis.NOTR;
+    globe.visible = gp * (1 - go) > .01;
     globe.material.transparent = true; globe.material.opacity = gp * (1 - go);
   },
 
