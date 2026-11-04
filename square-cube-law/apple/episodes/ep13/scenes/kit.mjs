@@ -363,9 +363,10 @@ export function makeBlade({ deckMat = null, pierMat = null, cableMat = null, dam
   // берега-площадки
   for (const sx of [-1, 1]) { const b = new THREE.Mesh(rbox(2.4, MB.Y, 3.4, .04), MAT.ceramicWhite()); b.position.set(sx * (L / 2 + 1.2), MB.Y / 2, 0); g.add(b); }
   // гасители: 8 цилиндров под настилом (появляются k: выезжают снизу)
-  const DX = [-5.6, -4.2, -1.5, -.5, .5, 1.5, 4.2, 5.6];
-  const damp = new THREE.InstancedMesh(new THREE.CylinderGeometry(.055, .055, .62, 20), damperMat, DX.length);
-  const dampC = new THREE.InstancedMesh(new THREE.CylinderGeometry(.03, .03, .9, 12), deckMat, DX.length);
+  // гасители: по 2 на каждой из 8 поперечин — графитовый корпус-капсула + алюминиевый шток, сбоку под настилом
+  const DX = [-6.1, -4.6, -1.7, -.6, .6, 1.7, 4.6, 6.1];
+  const damp = new THREE.InstancedMesh(new THREE.CapsuleGeometry(.075, .34, 6, 18), damperMat, DX.length * 2);
+  const dampC = new THREE.InstancedMesh(new THREE.CylinderGeometry(.028, .028, .78, 12), deckMat, DX.length * 2);
   for (const m of [damp, dampC]) { m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); m.frustumCulled = false; m.castShadow = true; g.add(m); }
   const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), Pv = new THREE.Vector3(), Sv = new THREE.Vector3(1, 1, 1), E = new THREE.Euler();
   const zc = W / 2 + .2;
@@ -390,10 +391,12 @@ export function makeBlade({ deckMat = null, pierMat = null, cableMat = null, dam
       M.compose(Pv.set(x, bladeY(x) - .1, z), Q.identity(), Sv); arms.setMatrixAt(k, M);
     }
     DX.forEach((x, k) => {
-      const kk = smooth((damperK - k * .05) / .7), z = bladeZ(x, o);
-      E.set(Math.PI / 2, 0, 0); Q.setFromEuler(E);
-      M.compose(Pv.set(x, bladeY(x) - .2 - (1 - kk) * .5, z), Q, Sv.set(kk, kk, kk)); damp.setMatrixAt(k, M);
-      M.compose(Pv.set(x, bladeY(x) - .2 - (1 - kk) * .5, z), Q, Sv.set(kk, kk, kk)); dampC.setMatrixAt(k, M);
+      const kk = smooth((damperK - k * .06) / .6), z = bladeZ(x, o);
+      E.set(0, 0, Math.PI / 2); Q.setFromEuler(E);
+      for (const sd of [0, 1]) {
+        const zz = z + (sd ? 1 : -1) * (W / 2 + .26), yy = bladeY(x) - .17 - (1 - kk) * .7;
+        M.compose(Pv.set(x, yy, zz), Q, Sv.set(Math.max(kk, 1e-4), Math.max(kk, 1e-4), Math.max(kk, 1e-4))); damp.setMatrixAt(k * 2 + sd, M); dampC.setMatrixAt(k * 2 + sd, M);
+      }
       Sv.set(1, 1, 1);
     });
     damp.visible = dampC.visible = damperK > .003;

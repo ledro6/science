@@ -1,7 +1,7 @@
 // WORDS (18,6 – 29,1 с), чёрный фон.
-// u1 — та же лестница с номерами; на «первое» места 4–10 уходят в тень; кубик первого места поворачивается
-//      на 90° и показывает «и», второго — «в», третьего — «не»; сверху крупно само слово и серая подпись
-//      (союз, предлог, частица), каждое сменяет предыдущее.
+// u1 — та же лестница с номерами; на «первые» места 4–10 уходят в тень; кубик первого места поворачивается
+//      на 90° и показывает «и», второго — «в», третьего — «не»; сверху эти слова встают в ряд, каждое на своё слово;
+//      на «неточно» — серая оговорка «на верхних местах закон неточен».
 // u2 — лестница уходит в пол, камера поднимается над «страницей текста» из плашек-слов; на «сто самых частых слов»
 //      ровно половина плашек (в основном короткие) белеет, остальные темнеют: «100 слов» → «≈ 50 %» любого текста.
 import { defineScene, makeStage, project, atext, P, Wd, clamp, lerp, eApple, eIn, eInOut, eSpring } from '../../../engine.mjs';
@@ -9,13 +9,13 @@ import { makeStair, makePage, frame, keys, lights, glow, NB, G } from './kit.mjs
 
 function TT() {
   return {
-    perv: Wd('u1', 'первое'), soyuz: Wd('u1', 'союза'), i: Wd('u1', 'и'), pred: Wd('u1', 'предлог'), v: Wd('u1', 'в', 1),
-    chas: Wd('u1', 'частица'), ne: Wd('u1', 'не'),
+    perv: Wd('u1', 'первые'), i: Wd('u1', 'и'), v: Wd('u1', 'в', 1), ne: Wd('u1', 'не'),
+    verh: Wd('u1', 'верху'), net: Wd('u1', 'неточно'),
     a: Wd('u2', 'А'), ang: Wd('u2', 'английском'), sto: Wd('u2', 'сто'), slov: Wd('u2', 'слов'), okolo: Wd('u2', 'около'),
     pol: Wd('u2', 'половины'), teksta: Wd('u2', 'текста'),
   };
 }
-const turnAt = (i, T) => [T.soyuz - .05, T.pred - .05, T.chas - .1][i];
+const turnAt = (i, T) => [T.i - .55, T.v - .5, T.ne - .5][i];
 const WORD = [G.i, G.v, G.ne];
 
 defineScene('words', {
@@ -69,15 +69,15 @@ defineScene('words', {
     const ink = stage.ink, sub = stage.sub;
     const [fx, fy] = project(cam, 0, 0, 0);
     glow(fx, fy + 30, 520, .05 * P(t, s.start + .2, 1));
-    // u1: слово крупно + часть речи
+    // u1: слова крупно
     const big = { size: 260, w: 700, col: ink, track: -.04, blur: 20, scale0: 1.1, dur: .9 };
     const lab = { size: 50, w: 500, col: sub, track: -.005 };
-    atext('и', 540, 470, T.i - .05, t, { ...big, out: T.v - .35 });
-    atext('союз', 540, 550, T.i + .25, t, { ...lab, out: T.v - .35 });
-    atext('в', 540, 470, T.v - .05, t, { ...big, out: T.ne - .35 });
-    atext('предлог', 540, 550, T.v + .25, t, { ...lab, out: T.ne - .35 });
-    atext('не', 540, 470, T.ne - .05, t, { ...big, out: T.a - .2 });
-    atext('частица', 540, 550, T.ne + .25, t, { ...lab, out: T.a - .2 });
+    // три слова встают в ряд, каждое на своё слово диктора; на «неточно» — серая оговорка
+    const o1 = T.a - .2, row = { ...big, size: 210, out: o1 };
+    atext('и', 410, 470, T.i - .05, t, row);
+    atext('в', 575, 470, T.v - .05, t, row);
+    atext('не', 780, 470, T.ne - .05, t, row);
+    atext('на верхних местах закон неточен', 540, 560, T.net - .1, t, { ...lab, out: o1 });
     // u2
     atext('100 слов', 540, 450, T.sto - .05, t, { size: 140, w: 600, col: ink, track: -.035, out: T.pol - .35 });
     atext('самых частых в английском', 540, 530, T.sto + .35, t, { ...lab, out: T.pol - .35 });
@@ -89,7 +89,7 @@ defineScene('words', {
     const T = TT();
     add(s.start + .2, 'swell', .22, .7);
     for (let i = 0; i < 3; i++) add(turnAt(i, T) + .7, 'click', .2, .9 + i * .05);
-    add(T.i, 'chime', .18, .9); add(T.v, 'chime', .18, 1.0); add(T.ne, 'chime', .18, 1.1);
+    add(T.i, 'chime', .18, .9); add(T.v, 'chime', .18, 1.0); add(T.ne, 'chime', .18, 1.1); add(T.net, 'tick', .14, .9);
     add(T.a, 'whoosh', .25, .8);
     add(T.ang, 'shimmer', .16);
     add(T.sto, 'bloom', .24, .9);

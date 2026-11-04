@@ -25,7 +25,7 @@ const LINES = [.14, .27, .33, .52, .61, .7];      // доли ширины: «л
 const SHIFT = .12;
 
 // масштаб расширения: медленный дрейф с «чем», сильнее на «Вселенная расширяется»
-const scaleAt = (t, T) => 1 + .05 * Math.max(0, t - T.chem) + .32 * P(t, T.vsel - .2, 2.4, eInOut);
+const scaleAt = (t, T) => 1 + .04 * Math.max(0, t - T.chem) + .2 * P(t, T.vsel - .2, 2.4, eInOut);
 
 defineScene('space', {
   setup() {
@@ -58,7 +58,7 @@ defineScene('space', {
       g.userData.p.material.opacity = ap * P(t, s.start + .1 + i * .08, 1.2);
     });
     us.rotation.y = -u * .1; us.material.opacity = ap;
-    const [d, az, el, sy] = keys([[s.start, 31, -10, 16, 990], [T.svet, 29, -4, 18, 990], [T.edv, 29, 2, 20, 1000], [T.vsel, 30, 6, 22, 1000], [s.end, 33, 9, 22, 1000]], t, eInOut);
+    const [d, az, el, sy] = keys([[s.start, 31, -10, 16, 990], [T.svet, 29, -4, 18, 990], [T.edv, 29, 2, 20, 1000], [T.vsel, 30, 6, 22, 1000], [s.end, 35, 9, 22, 1010]], t, eInOut);
     frame(cam, [0, 0, 0], d, az, el, 540, sy);
   },
 
