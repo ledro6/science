@@ -64,7 +64,7 @@ defineScene('hook', {
         const fp = falls ? fallPose(t, tf, x, z, τ => stAt(τ, T), r) : null;
         if (fp) {
           sold.set(i, fp.p, { s: COL.s, rx: fp.rx, rz: fp.rz, ph: .3, sw: .2, bob: 0 });
-          if (splashes.length < 12 && i % 5 === 0) splashes.push([fp.landP[0], fp.landP[1], fp.land]);
+          if (splashes.length < 8 && i % 5 === 0) splashes.push([fp.landP[0], fp.landP[1], fp.land]);
         } else {
           const marching = t < T.ruh;
           sold.set(i, [x, deckY(x, o), z], { s: COL.s, ph: marching ? Math.PI * F * t : Math.PI * F * T.ruh, sw: marching ? .42 : .2, bob: marching ? .02 : 0 });

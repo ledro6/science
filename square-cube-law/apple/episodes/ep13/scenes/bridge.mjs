@@ -64,7 +64,7 @@ defineScene('bridge', {
       if (lit < .003) { sold.hide(i); continue; }
       if (fp) {
         sold.set(i, fp.p, { s: COL.s, rx: fp.rx, rz: fp.rz, ph: .3, sw: .2, bob: 0, c: lit });
-        if (splashes.length < 12 && i % 4 === 1) splashes.push([fp.landP[0], fp.landP[1], fp.land]);
+        if (splashes.length < 8 && i % 4 === 1) splashes.push([fp.landP[0], fp.landP[1], fp.land]);
       } else {
         const m = t < T.obor;
         sold.set(i, [x, deckY(x, o), z], { s: COL.s, ph: Math.PI * F * Math.min(t, T.obor), sw: m ? .42 : .2, bob: m ? .02 : 0, c: lit });

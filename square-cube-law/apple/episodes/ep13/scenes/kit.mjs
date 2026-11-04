@@ -6,6 +6,7 @@
 // Не сцена: импортируется сценами выпуска и обложкой (hero.mjs). Часть помощников — из ep11/ep12 (kit.mjs).
 import * as ENG from '../../../engine.mjs';
 import { THREE, clamp, lerp, rng, FONT, atext, MAT } from '../../../engine.mjs';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 export const ctx = () => ENG.g;
 export const TAU = Math.PI * 2;
@@ -74,28 +75,32 @@ function segMesh(n, r, mat, radial = 8) {
 }
 
 // ---------- солдатики ----------
-// Рост ≈ 1.2 в локальных единицах (ступни на y = 0, лицом в +X). Шаг: ph — фаза ноги (рад), ноги и руки качаются в противофазе.
+// Рост ≈ 1.2 в локальных единицах (ступни на y = 0, лицом в +X). Шаг: ph — фаза ноги (рад), руки вдоль тела (строй).
 export function makeSoldiers(n, { mat = null, hatMat = null, shadow = true } = {}) {
   // MeshStandard вместо Physical+clearcoat: 74 фигурки × 7 частей — главный расход кадра в программном рендере
   mat = mat || new THREE.MeshStandardMaterial({ color: '#F2F2F0', roughness: .42 });
   hatMat = hatMat || new THREE.MeshStandardMaterial({ color: '#141416', roughness: .3 });
   const grp = new THREE.Group();
   const capsule = (r, len, cap = 6, rad = 14) => new THREE.CapsuleGeometry(r, len, cap, rad);
-  const torsoG = capsule(.105, .27, 4, 12); torsoG.scale(1, 1, .78);
+  // туловище, голова и руки (вдоль тела, «с ружьём на плече» не нужно) — одна геометрия: меньше вызовов отрисовки
+  const torsoG = capsule(.105, .27, 4, 12); torsoG.scale(1, 1, .78); torsoG.translate(0, .735, 0);
+  const headG = new THREE.SphereGeometry(.078, 14, 10); headG.translate(0, 1.03, 0);
+  const arm = side => { const g = capsule(.034, .3, 3, 7); g.translate(0, -.184, 0); g.rotateX(side * .07); g.translate(0, .9, side * .135); return g; };
+  const bodyG = mergeGeometries([torsoG, headG, arm(1), arm(-1)]);
   const legG = capsule(.052, .4, 3, 8); legG.translate(0, -.252, 0);
-  const armG = capsule(.034, .3, 3, 7); armG.translate(0, -.184, 0);
-  const headG = new THREE.SphereGeometry(.078, 14, 10);
   const hatG = new THREE.CylinderGeometry(.064, .07, .13, 12);
   const mk = (geo, m) => {
     const im = new THREE.InstancedMesh(geo, m, n);
     im.instanceMatrix.setUsage(THREE.DynamicDrawUsage); im.frustumCulled = false;
-    im.castShadow = shadow; im.receiveShadow = false;
+    im.castShadow = false; im.receiveShadow = false;
     im.setColorAt(0, new THREE.Color(1, 1, 1));
     grp.add(im); return im;
   };
-  const torso = mk(torsoG, mat), head = mk(headG, mat), hat = mk(hatG, hatMat);
-  const legL = mk(legG, mat), legR = mk(legG, mat), armL = mk(armG, mat), armR = mk(armG, mat);
-  const all = [torso, head, hat, legL, legR, armL, armR];
+  const body = mk(bodyG, mat), hat = mk(hatG, hatMat);
+  const legL = mk(legG, mat), legR = mk(legG, mat);
+  // тень отбрасывает только тело: тени от всех частей × 74 в программном рендере стоят ~0,3 с на кадр
+  body.castShadow = shadow;
+  const all = [body, hat, legL, legR];
   const B = new THREE.Matrix4(), L = new THREE.Matrix4(), M = new THREE.Matrix4(), R = new THREE.Matrix4(), E = new THREE.Euler(), Q = new THREE.Quaternion(),
     Pv = new THREE.Vector3(), Sv = new THREE.Vector3(), Cc = new THREE.Color(), Z = new THREE.Vector3(0, 0, 1);
   const part = (im, i, px, py, pz, rz = 0) => {
@@ -111,9 +116,8 @@ export function makeSoldiers(n, { mat = null, hatMat = null, shadow = true } = {
       E.set(rx, ry, rz, 'YXZ'); Q.setFromEuler(E);
       B.compose(Pv.set(p[0], p[1], p[2]), Q, Sv.set(s, s, s));
       L.makeTranslation(0, by, 0); B.multiply(L);
-      part(torso, i, 0, .735, 0); part(head, i, 0, 1.03, 0); part(hat, i, 0, 1.135, 0);
+      part(body, i, 0, 0, 0); part(hat, i, 0, 1.135, 0);
       part(legL, i, 0, .52, .058, a); part(legR, i, 0, .52, -.058, -a);
-      part(armL, i, 0, .9, .135, -a * .8); part(armR, i, 0, .9, -.135, a * .8);
       Cc.setRGB(c, c, c); for (const im of all) im.setColorAt(i, Cc);
     },
     hide(i) { M.makeScale(1e-5, 1e-5, 1e-5); for (const im of all) im.setMatrixAt(i, M); },
@@ -227,17 +231,17 @@ export const COL = { n: 74, rows: 37, dx: .205, dz: .17, s: .3 };
 // x головы колонны → позиции солдат (i: ряд = i>>1, сторона = i&1)
 export function colPos(i, xf) { const r = i >> 1, s = i & 1; return [xf - r * COL.dx, (s ? 1 : -1) * COL.dz]; }
 
-// ---------- река: шейдер-поверхность, круги от падений (до 12 источников) ----------
-export function makeRiver(w, d, { col = '#FFFFFF', base = .012, fres = .07, spec = .7, seg = [84, 70] } = {}) {
+// ---------- река: шейдер-поверхность, круги от падений (до 8 источников) ----------
+export function makeRiver(w, d, { col = '#FFFFFF', base = .012, fres = .07, spec = .7, seg = [64, 52] } = {}) {
   const geo = new THREE.PlaneGeometry(w, d, seg[0], seg[1]); geo.rotateX(-Math.PI / 2);
-  const spl = []; for (let i = 0; i < 12; i++) spl.push(new THREE.Vector3(0, 0, -99));
+  const spl = []; for (let i = 0; i < 8; i++) spl.push(new THREE.Vector3(0, 0, -99));
   const mat = new THREE.ShaderMaterial({
     uniforms: { uT: { value: 0 }, uSpl: { value: spl }, uCol: { value: new THREE.Color(col) }, uBase: { value: base }, uFres: { value: fres }, uSpec: { value: spec }, uOp: { value: 1 },
       uL: { value: new THREE.Vector3(.35, 1, .5).normalize() } },
-    vertexShader: `uniform float uT; uniform vec3 uSpl[12]; varying vec3 vN; varying vec3 vW;
+    vertexShader: `uniform float uT; uniform vec3 uSpl[8]; varying vec3 vN; varying vec3 vW;
       float hgt(vec2 p){
         float h = .0025*sin(p.x*6.3+uT*1.1) + .002*sin(p.y*7.1-uT*.9) + .0015*sin((p.x-p.y)*11.+uT*1.6);
-        for (int i = 0; i < 12; i++) { float dt = uT - uSpl[i].z;
+        for (int i = 0; i < 8; i++) { float dt = uT - uSpl[i].z;
           if (dt > 0. && dt < 5.) { float r = length(p - uSpl[i].xy), c = .1 + .9*dt; h += .045*exp(-dt*1.1)*exp(-pow((r-c)*2.4, 2.))*sin((r-c)*14.); } }
         return h; }
       void main(){
@@ -261,7 +265,7 @@ export function makeRiver(w, d, { col = '#FFFFFF', base = .012, fres = .07, spec
   const m = new THREE.Mesh(geo, mat); m.renderOrder = 4; m.position.y = .025;
   m.set = (t, splashes = [], a = 1) => {
     mat.uniforms.uT.value = t; mat.uniforms.uOp.value = a;
-    for (let i = 0; i < 12; i++) { const s = splashes[i]; if (s) spl[i].set(s[0], s[1], s[2]); else spl[i].set(0, 0, -99); }
+    for (let i = 0; i < 8; i++) { const s = splashes[i]; if (s) spl[i].set(s[0], s[1], s[2]); else spl[i].set(0, 0, -99); }
     m.visible = a > .003;
   };
   return m;
