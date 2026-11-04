@@ -17,6 +17,7 @@ VOICES = {
     "w":  ("ru-RU-DmitryNeural", "+6%"),              # «Что если»
     "a":  ("ru-RU-DmitryNeural", "+6%"),              # «За рулём»
     "m":  ("ru-RU-SvetlanaNeural", "+8%"),            # «Миф или нет»
+    "g":  ("ru-RU-DmitryNeural", "+6%"),              # «Геоэкономика»
 }
 _rubric = os.path.basename(HERE).rstrip("0123456789")
 VOICE, RATE = getattr(_mod, "VOICE", None) or VOICES.get(_rubric, VOICES["ep"])[0], getattr(_mod, "RATE", None) or VOICES.get(_rubric, VOICES["ep"])[1]
