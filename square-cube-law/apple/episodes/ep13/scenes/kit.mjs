@@ -139,7 +139,7 @@ function cableSpanY(x, o) {
   // оборванная цепь ложится на опавший настил
   return lerp(y0, deckY(x, o) + .07, k * smooth((u - .15) / .8));
 }
-export function makeSuspension({ deckMat = null, towerMat = null, chainMat = null, bankMat = null, banks = true } = {}) {
+export function makeSuspension({ deckMat = null, towerMat = null, chainMat = null, bankMat = null, banks = true, bankZ = 9, bankX = BR.BANK } = {}) {
   const { L, W, Y, TH, N, BANK } = BR;
   deckMat = deckMat || MAT.aluminium();
   towerMat = towerMat || MAT.ceramicWhite();
@@ -160,7 +160,7 @@ export function makeSuspension({ deckMat = null, towerMat = null, chainMat = nul
     }
     const lin = new THREE.Mesh(rbox(.24, .2, 2 * zt + .1, .035), towerMat); lin.position.set(sx * (L / 2 + .1), Y + TH - .32, 0); g.add(lin);
     if (banks) {
-      const b = new THREE.Mesh(rbox(BANK, Y, 9, .04), bankMat); b.position.set(sx * (L / 2 + BANK / 2), Y / 2, 0); g.add(b);
+      const b = new THREE.Mesh(rbox(bankX, Y, bankZ, .04), bankMat); b.position.set(sx * (L / 2 + bankX / 2), Y / 2, 0); g.add(b);
     }
   }
   // цепи: 2 стороны × (оттяжка 6 + пролёт 36 + оттяжка 6) сегментов; подвески у каждой доски
@@ -184,9 +184,9 @@ export function makeSuspension({ deckMat = null, towerMat = null, chainMat = nul
     [-1, 1].forEach((sz, side) => {
       const z = sz * zt, pts = [];
       const [xl, yt] = top(-1), [xr] = top(1);
-      for (let j = 0; j <= NB; j++) pts.push([lerp(-L / 2 - BANK + .35, xl, j / NB), lerp(Y + .02, yt, Math.pow(j / NB, .9)), z]);
+      for (let j = 0; j <= NB; j++) pts.push([lerp(-L / 2 - bankX + .35, xl, j / NB), lerp(Y + .02, yt, Math.pow(j / NB, .9)), z]);
       for (let j = 1; j <= NS; j++) { const x = lerp(-L / 2, L / 2, j / NS); pts.push([x, j === NS ? yt : cableSpanY(x, o), z]); }
-      for (let j = 1; j <= NB; j++) pts.push([lerp(xr, L / 2 + BANK - .35, j / NB), lerp(yt, Y + .02, Math.pow(j / NB, 1.1)), z]);
+      for (let j = 1; j <= NB; j++) pts.push([lerp(xr, L / 2 + bankX - .35, j / NB), lerp(yt, Y + .02, Math.pow(j / NB, 1.1)), z]);
       // обрыв: звенья дальше XB — обрывок висит с портала (поворачивается вниз)
       const jb = NB + Math.round((XB + L / 2) / L * NS);
       for (let j = 0; j < pts.length - 1; j++) {
@@ -361,7 +361,7 @@ export function makeBlade({ deckMat = null, pierMat = null, cableMat = null, dam
     mk([px, .42, 0], [px, MB.Y + .05, W / 2 + .3], .07); mk([px, .42, 0], [px, MB.Y + .05, -W / 2 - .3], .07);
   });
   // берега-площадки
-  for (const sx of [-1, 1]) { const b = new THREE.Mesh(rbox(2.4, MB.Y, 3.4, .04), MAT.ceramicWhite()); b.position.set(sx * (L / 2 + 1.2), MB.Y / 2, 0); g.add(b); }
+  for (const sx of [-1, 1]) { const b = new THREE.Mesh(rbox(1.6, MB.Y, 2.2, .04), MAT.ceramicWhite()); b.position.set(sx * (L / 2 + .8), MB.Y / 2, 0); g.add(b); }
   // гасители: 8 цилиндров под настилом (появляются k: выезжают снизу)
   // гасители: по 2 на каждой из 8 поперечин — графитовый корпус-капсула + алюминиевый шток, сбоку под настилом
   const DX = [-6.1, -4.6, -1.7, -.6, .6, 1.7, 4.6, 6.1];

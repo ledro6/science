@@ -3,7 +3,7 @@
 //      к краю «красный», стрелка сдвига; на «красного» — «красное смещение» (единственный красный акцент сцены).
 // s2 — «Хаббл, 1929»; на «чем дальше» от каждой галактики стрелка скорости, длина ∝ расстоянию; «дальше → быстрее»;
 //      на «Вселенная расширяется» всё поле разлетается.
-import { defineScene, makeStage, project, atext, line, dot, P, Wd, THREE, clamp, lerp, rng, eApple, eIn, eInOut } from '../../../engine.mjs';
+import { defineScene, makeStage, project, atext, line, dot, callout, P, Wd, THREE, clamp, lerp, rng, eApple, eIn, eInOut } from '../../../engine.mjs';
 import { makeGalaxy, frame, keys, arrow, wordsAt, ctx } from './kit.mjs';
 
 function TT() {
@@ -69,6 +69,15 @@ defineScene('space', {
     // мы
     const [ux, uy] = project(cam, 0, 0, 0);
     atext('мы', ux, uy + 52, s.start + .9, t, { size: 34, w: 500, col: sub, track: 0, dy: 10, out: T.edv - .3 });
+    // далёкая галактика: выноска
+    {
+      const gg = gals[4], [gx, gy] = project(cam, gg.position.x, gg.position.y, gg.position.z);
+      const aG = 1 - P(t, T.edv - .3, .35, eIn);
+      if (t > T.dal - .1 && aG > .003) {
+        callout(gx, gy + 42, gx, gy + 74, T.dal - .1, t, ink, aG);
+        atext('далёкая галактика', Math.min(gx + 150, 930), gy + 112, T.dal, t, { size: 38, w: 500, col: ink, a: aG, align: 'right', track: -.005, dy: 12 });
+      }
+    }
     // ---------- s1: спектр ----------
     const oS = T.edv - .35;
     const aB = P(t, T.svetom - .1, .7) * (1 - P(t, oS, .35, eIn));

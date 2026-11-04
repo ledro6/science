@@ -16,7 +16,7 @@ function TT() {
   };
 }
 const OM = TAU * .95;                 // боковая частота настила ≈ 1 Гц
-const NW = 110;
+const NW = 90;
 const R = rng(2000), WK = [];
 for (let i = 0; i < NW; i++) WK.push({ x0: R() * MB.L, dir: R() < .5 ? -1 : 1, v: .22 + R() * .22, z: (R() - .5) * (MB.W - .22), d: R() * TAU, s: .9 + R() * .2 });
 const sync = (t, T) => smooth((t - T.lyudi) / (T.rask - T.lyudi + .5));
@@ -52,8 +52,8 @@ defineScene('millennium', {
     });
     walk.commit();
     const [tx, ty, d, az, el, sy2] = keys([
-      [s.start, 0, 1.0, 36, 64, 16, 880], [T.zakr, 0, 1.0, 34, 70, 15, 880], [T.on, .6, 1.0, 31, 80, 13, 880],
-      [T.sil + .5, .8, 1.0, 29, 82, 12, 880], [T.gas + .4, .8, .9, 29, 78, 9, 880], [s.end, .8, .9, 29.5, 76, 9, 880],
+      [s.start, 0, 1.0, 52, 60, 24, 930], [T.zakr, 0, 1.0, 53, 64, 25, 950], [T.on, .4, 1.0, 54, 80, 30, 900],
+      [T.sil + .5, .4, 1.0, 52, 83, 31, 860], [T.gas + .4, .4, .9, 50, 79, 26, 860], [s.end, .4, .9, 50.5, 77, 25, 860],
     ], t, eInOut);
     frame(cam, [tx, ty, 0], d, az, el, 540, sy2);
   },
@@ -70,9 +70,9 @@ defineScene('millennium', {
     const amp = ampAt(t, T);
     const aa = P(t, T.kach, .5) * (1 - P(t, s.end - .5, .3, eIn));
     if (aa > .003) {
-      const y = bladeY(0) + .55, A = Math.max(.06, amp * 2.2);
-      const [x1, y1] = project(cam, 0, y, -A), [x2, y2] = project(cam, 0, y, A);
-      arrow(x1, y1, x2, y2, ink, aa, 3, 16, true);
+      // экранная длина ∝ размаху (в мировых единицах её почти не видно)
+      const [cx, cy] = project(cam, 0, bladeY(0) + .3, 0), hl = 46 + 620 * amp;
+      arrow(cx - hl, cy, cx + hl, cy, ink, aa, 4, 18, true);
     }
     atext('качка в сторону', 540, 410, T.kach - .05, t, { size: 92, w: 600, col: ink, track: -.03, out: T.lyudi - .1 });
     wordsAt(['шаг', 'под', 'качку'], [T.shag - .05, T.kachku - .15, T.kachku - .05], 540, 410, t, { size: 110, w: 600, col: ink, track: -.035, out: T.pom - .3 });

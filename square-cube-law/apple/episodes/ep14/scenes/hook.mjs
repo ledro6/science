@@ -37,7 +37,7 @@ defineScene('hook', {
 
   update(t, s, st) {
     const { stage, T, car, field } = st, cam = stage.camera, L = stage.lights;
-    const lr = P(t, 0, 1.0), lk = P(t, .2, 1.4);
+    const lr = P(t, 0, .6), lk = P(t, .1, 1.0);
     const x = carX(t, T);
     L.key.position.set(x * .5 + lerp(-3, 5, clamp(t / 8)), 9, 7); L.key.target.position.set(x * .5, 0, 0); L.key.target.updateMatrixWorld();
     L.key.intensity = 2.2 * lk; L.hemi.intensity = .35 * lk;
@@ -49,7 +49,7 @@ defineScene('hook', {
     const R = rings(t, τ => carX(τ, T) - .45, { dt: .3, c: CS, maxAge: 2.7, a: lr * .9 });
     field.set(R, 1, lerp(0, x, .5), 0);
     // камера: держит наблюдателя, мягко ведёт машину; на заголовке чуть отходит и поднимается
-    const [tx, d, az, el, sy] = keys([[0, -1.6, 46, 22, 27, 1000], [passT(T), .2, 44, 18, 25, 1000], [T.eto, 1.6, 46, 14, 28, 1040], [s.end, 2.0, 48, 12, 30, 1050]], t, eInOut);
+    const [tx, d, az, el, sy] = keys([[0, -1.6, 46, 22, 27, 1000], [passT(T), .2, 44, 18, 25, 1000], [T.eto, 3.2, 46, 14, 28, 1040], [s.end, 4.6, 48, 12, 30, 1050]], t, eInOut);
     frame(cam, [tx, .7, -.6], d, az, el, 540, sy);
   },
 

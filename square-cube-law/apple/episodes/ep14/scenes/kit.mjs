@@ -352,16 +352,22 @@ export function makeWaveField(size = 40, { col = '#FFFFFF', lw = 1.6, fade = .45
     fragmentShader: `uniform vec4 R[${MAXR}]; uniform int N; uniform vec3 col; uniform float A; uniform float lw; uniform vec2 ctr; uniform float rad;
       varying vec2 vP;
       void main(){
+        float e = 1.0 - smoothstep(rad * .55, rad, length(vP - ctr));
+        if (e <= 0.0 || A <= 0.0) discard;
         float a = 0.0;
+        vec2 px = dFdx(vP), py = dFdy(vP);
         for (int i = 0; i < ${MAXR}; i++) {
           if (i >= N) break;
           vec4 r = R[i];
-          float L = length(vP - r.xy);
-          float w = max(fwidth(L), 1e-5);
+          vec2 q = vP - r.xy;
+          float L = length(q);
+          if (abs(L - r.z) > lw * 4.0 * (abs(px.x) + abs(px.y) + abs(py.x) + abs(py.y)) + .001) continue;
+          vec2 n = q / max(L, 1e-5);
+          float w = max(abs(dot(n, px)) + abs(dot(n, py)), 1e-5);
           float d = abs(L - r.z) / w;
           a = max(a, r.w * (1.0 - smoothstep(lw * .5 - .5, lw * .5 + .7, d)));
         }
-        float e = 1.0 - smoothstep(rad * .55, rad, length(vP - ctr));
+        if (a <= 0.0) discard;
         gl_FragColor = vec4(col, a * A * e);
       }`,
   });

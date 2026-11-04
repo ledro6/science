@@ -74,7 +74,7 @@ defineScene('bridge', {
     river.set(t, splashes, lr);
     // камера: общий план сбоку (видна мода) → на обрыв → к реке
     const [tx, ty, d, az, el, sy] = keys([
-      [s.start, 0, 1.7, 31, 33, 13, 830], [T.brot, 0, 1.7, 29.5, 31, 13, 850], [T.obor - .4, .5, 1.5, 26, 36, 15, 860],
+      [s.start, 0, 1.7, 31, 33, 13, 830], [T.brot, 0, 1.7, 29.5, 31, 13, 850], [T.obor - .4, .9, 1.5, 22.5, 40, 16, 900],
       [T.upali + .3, 1.7, .8, 17.5, 46, 22, 1010], [s.end, 1.8, .7, 17, 50, 24, 1010],
     ], t, eInOut);
     frame(cam, [tx, ty, 0], d, az, el, 540, sy);
@@ -89,7 +89,7 @@ defineScene('bridge', {
     const tA = T.most - .2, tB = T.obor + .05;
     const X = τ => lerp(GX0, GX1, (τ - tA) / (tB - tA));
     const Yv = τ => { const o = stAt(τ, T); return GY - GK * o.amp * Math.sin(o.ph); };
-    const ga = P(t, tA, .6) * (1 - P(t, T.upali + .2, .4, eIn));
+    const ga = P(t, tA, .6) * (1 - P(t, T.obor + .75, .35, eIn));
     if (ga > .003) {
       line(GX0, GY, lerp(GX0, GX1, P(t, tA, 1.2, eApple)), GY, sub, ga * .4, 2);
       const tEnd = Math.min(t, tB), pts = [];
