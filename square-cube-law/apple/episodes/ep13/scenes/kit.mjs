@@ -76,19 +76,20 @@ function segMesh(n, r, mat, radial = 8) {
 // ---------- солдатики ----------
 // Рост ≈ 1.2 в локальных единицах (ступни на y = 0, лицом в +X). Шаг: ph — фаза ноги (рад), ноги и руки качаются в противофазе.
 export function makeSoldiers(n, { mat = null, hatMat = null, shadow = true } = {}) {
-  mat = mat || MAT.ceramicWhite();
-  hatMat = hatMat || MAT.ceramicBlack();
+  // MeshStandard вместо Physical+clearcoat: 74 фигурки × 7 частей — главный расход кадра в программном рендере
+  mat = mat || new THREE.MeshStandardMaterial({ color: '#F2F2F0', roughness: .42 });
+  hatMat = hatMat || new THREE.MeshStandardMaterial({ color: '#141416', roughness: .3 });
   const grp = new THREE.Group();
   const capsule = (r, len, cap = 6, rad = 14) => new THREE.CapsuleGeometry(r, len, cap, rad);
-  const torsoG = capsule(.105, .27, 6, 18); torsoG.scale(1, 1, .78);
-  const legG = capsule(.052, .4, 4, 12); legG.translate(0, -.252, 0);
-  const armG = capsule(.034, .3, 4, 10); armG.translate(0, -.184, 0);
-  const headG = new THREE.SphereGeometry(.078, 20, 14);
-  const hatG = new THREE.CylinderGeometry(.064, .07, .13, 18);
+  const torsoG = capsule(.105, .27, 4, 12); torsoG.scale(1, 1, .78);
+  const legG = capsule(.052, .4, 3, 8); legG.translate(0, -.252, 0);
+  const armG = capsule(.034, .3, 3, 7); armG.translate(0, -.184, 0);
+  const headG = new THREE.SphereGeometry(.078, 14, 10);
+  const hatG = new THREE.CylinderGeometry(.064, .07, .13, 12);
   const mk = (geo, m) => {
     const im = new THREE.InstancedMesh(geo, m, n);
     im.instanceMatrix.setUsage(THREE.DynamicDrawUsage); im.frustumCulled = false;
-    im.castShadow = shadow; im.receiveShadow = shadow;
+    im.castShadow = shadow; im.receiveShadow = false;
     im.setColorAt(0, new THREE.Color(1, 1, 1));
     grp.add(im); return im;
   };
@@ -141,9 +142,10 @@ function cableSpanY(x, o) {
 }
 export function makeSuspension({ deckMat = null, towerMat = null, chainMat = null, bankMat = null, banks = true, bankZ = 9, bankX = BR.BANK } = {}) {
   const { L, W, Y, TH, N, BANK } = BR;
-  deckMat = deckMat || MAT.aluminium();
-  towerMat = towerMat || MAT.ceramicWhite();
-  chainMat = chainMat || new THREE.MeshPhysicalMaterial({ color: '#D9DADC', roughness: .28, metalness: .5, clearcoat: .7 });
+  // MeshStandard (без clearcoat) — дешевле в программном рендере; форму лепят ключ и контровые
+  deckMat = deckMat || new THREE.MeshStandardMaterial({ color: '#C9CBCF', roughness: .38, metalness: .25 });
+  towerMat = towerMat || new THREE.MeshStandardMaterial({ color: '#F2F2F0', roughness: .45 });
+  chainMat = chainMat || new THREE.MeshStandardMaterial({ color: '#D9DADC', roughness: .3, metalness: .5 });
   bankMat = bankMat || new THREE.MeshLambertMaterial({ color: '#202022' });
   const g = new THREE.Group();
   // доски настила и продольные балки
@@ -167,6 +169,7 @@ export function makeSuspension({ deckMat = null, towerMat = null, chainMat = nul
   const NS = 36, NB = 6, NC = NS + 2 * NB;
   const chains = segMesh(NC * 2, .03, chainMat, 10);
   const hangers = segMesh(N * 2, .0085, chainMat, 6);
+  hangers.castShadow = false; hangers.receiveShadow = false; chains.receiveShadow = false;
   g.add(chains, hangers);
   const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), Pv = new THREE.Vector3(), Sv = new THREE.Vector3(1, 1, 1), E = new THREE.Euler();
   const top = (sx) => [sx * (L / 2 + .1), Y + TH + .05];
@@ -225,7 +228,7 @@ export const COL = { n: 74, rows: 37, dx: .205, dz: .17, s: .3 };
 export function colPos(i, xf) { const r = i >> 1, s = i & 1; return [xf - r * COL.dx, (s ? 1 : -1) * COL.dz]; }
 
 // ---------- река: шейдер-поверхность, круги от падений (до 12 источников) ----------
-export function makeRiver(w, d, { col = '#FFFFFF', base = .012, fres = .07, spec = .7, seg = [120, 100] } = {}) {
+export function makeRiver(w, d, { col = '#FFFFFF', base = .012, fres = .07, spec = .7, seg = [84, 70] } = {}) {
   const geo = new THREE.PlaneGeometry(w, d, seg[0], seg[1]); geo.rotateX(-Math.PI / 2);
   const spl = []; for (let i = 0; i < 12; i++) spl.push(new THREE.Vector3(0, 0, -99));
   const mat = new THREE.ShaderMaterial({
