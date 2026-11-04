@@ -134,8 +134,8 @@ defineScene('bone', {
       st.ring2.visible = rq > .003; st.ring2.material.opacity = .55 * rq; st.ring2.position.y = H_CUT + .004;
       // камера: общий план → макро над срезом → чуть выше, чтобы уместились 2×2 плитки
       const K = [
-        [s.start, 16, 1.5, -24, 8, 900], [T.pl + .6, 16, 1.5, -14, 8, 900], [T.pl + 2.2, 4.8, H_CUT, 18, 68, 880],
-        [T.kv - .25, 4.5, H_CUT, 30, 72, 880], [T.kv + 1.0, 7.6, H_CUT + .1, 38, 58, 940], [T.cutB, 7.9, H_CUT + .1, 44, 56, 940],
+        [s.start, 16, 1.5, -24, 8, 900], [T.pl + .6, 16, 1.5, -14, 8, 900], [T.pl + 2.2, 4.8, H_CUT, 18, 80, 800],
+        [T.kv - .25, 4.5, H_CUT, 30, 82, 800], [T.kv + 1.0, 7.4, H_CUT + .1, 38, 76, 860], [T.cutB, 7.7, H_CUT + .1, 44, 75, 860],
       ];
       const [d, ty, az, el, sy] = keys(K, t, eInOut);
       frame(cam, [0, ty, 0], d, az, el, 540, sy);
@@ -147,11 +147,11 @@ defineScene('bone', {
       st.cubesB.forEach(c => {
         const t0 = c.ord === 0 ? T.kazh - .25 : T.kost - .2 + (c.ord - 1) * .09;
         const f = P(t, t0, .5, eIn);
-        c.m.visible = t > t0; c.m.position.set(c.p[0], c.p[1] + (1 - f) * 2.2, c.p[2]);
+        c.m.visible = t > t0; c.m.position.set(c.p[0], c.p[1] + (1 - f) * .8, c.p[2]);
         c.m.rotation.y = (1 - f) * .4;
       });
       const k = clamp((t - T.cutB) / (T.cutC - T.cutB));
-      frame(cam, [-.35, .45, 0], lerp(12.4, 11.6, eInOut(k)), lerp(18, 30, k), lerp(26, 22, k), 540, 960);
+      frame(cam, [-.2, .5, 0], lerp(15.4, 14.6, eInOut(k)), lerp(14, 24, k), lerp(26, 22, k), 540, 985);
     } else {
       lk = P(t, T.cutC, .6, eEase);
       // груз ложится на кость, на «Шаг» и «прыжок» — удары; кость пружинит
@@ -164,7 +164,7 @@ defineScene('bone', {
       st.upper.position.set(br * .05, -br * .03, 0); st.upper.rotation.z = -br * .035;
       const k = clamp((t - T.cutC) / (s.end - T.cutC));
       const shk = Math.exp(-Math.max(0, t - T.per) * 6) * (t > T.per ? .05 : 0) * Math.sin((t - T.per) * 70);
-      frame(cam, [0, 1.95 + sh * .3 + shk, 0], lerp(22.5, 21.5, eInOut(k)), lerp(-16, -8, k), 8, 540 + shk * 80, 905);
+      frame(cam, [0, 2.0 + sh * .3 + shk, 0], lerp(18.8, 18.2, eInOut(k)), lerp(-16, -8, k), 8, 540 + shk * 80, 870);
     }
     L.key.intensity = 2.6 * lk; L.rimL.intensity = 3.2 * lk; L.rimR.intensity = 2.4 * lk; L.hemi.intensity = .55 * lk;
     stage.floor.material.opacity = .5 * lk;
@@ -200,8 +200,8 @@ defineScene('bone', {
       atext('вдвое выше', rx, ry + 62, T.kost + .3, t, { size: 38, w: 500, col: sub, track: 0, dy: 12, out: oB });
     } else {
       const oW = T.per - .25;
-      wordsAt(['Шаг,', 'прыжок'], [T.shag - .05, T.pry - .05], 540, 400, t, { size: 110, w: 600, col: ink, track: -.03, blur: 16, dur: .8, out: oW, outDur: .3 });
-      atext('Перелом', 540, 400, T.per + .05, t, { size: 110, w: 600, col: ink, track: -.03, blur: 16, dur: .8 });
+      wordsAt(['Шаг,', 'прыжок'], [T.shag - .05, T.pry - .05], 540, 330, t, { size: 110, w: 600, col: ink, track: -.03, blur: 16, dur: .8, out: oW, outDur: .3 });
+      atext('Перелом', 540, 330, T.per + .05, t, { size: 110, w: 600, col: ink, track: -.03, blur: 16, dur: .8 });
       // красная трещина поперёк диафиза (единственный акцент кадра)
       const dt = t - T.per;
       if (dt > -.02) {
@@ -212,7 +212,7 @@ defineScene('bone', {
         g.save(); g.globalAlpha = .45 * fl;
         const gr = g.createRadialGradient(cx, cy, 0, cx, cy, half * 1.5); gr.addColorStop(0, stage.accent); gr.addColorStop(1, 'rgba(255,69,58,0)');
         g.fillStyle = gr; g.fillRect(cx - half * 1.6, cy - half * 1.6, half * 3.2, half * 3.2); g.restore();
-        g.save(); g.strokeStyle = stage.accent; g.lineWidth = 4; g.lineJoin = 'round'; g.lineCap = 'round';
+        g.save(); g.strokeStyle = stage.accent; g.lineWidth = 5; g.lineJoin = 'round'; g.lineCap = 'round';
         g.beginPath(); const nn = Math.max(1, Math.round(N * grow));
         // трещина растёт от центра к краям
         const mid = N / 2;

@@ -20,7 +20,7 @@ function TT() {
 }
 const accel = (t, s) => A_CAR * P(t, s.start - .5, 1.2, eInOut);
 // облако частиц: u ∈ [0,1] вдоль салона (0 — заднее стекло); сжатие f(u) = u − c·u(1 − u) → у заднего стекла гуще
-const KC = .55;
+const KC = .68;
 
 defineScene('air', {
   setup(s) {
@@ -29,6 +29,7 @@ defineScene('air', {
     const road = makeRoad({ x0: -40, x1: 400, lanes: [0, 3.8], dark: false });
     road.line(0);
     const car = makeCutCar({ dark: false });
+    const bm = MAT.ceramicBlack(); bm.color.set('#2C2C2E'); car.balloon.ball.material = bm; car.balloon.children[2].material = bm;
     stage.root.add(road, car);
     const drive = makeDrive(t => accel(t, s), s.start - 1, s.end + 1, 4);
     const r = rng(731), pts = [];
@@ -45,7 +46,6 @@ defineScene('air', {
     const pb = P(t, T.eta - .05, .7);
     car.balloon.visible = pb > .003;
     car.balloon.scale.setScalar(Math.max(1e-3, lerp(.85, 1, pb)));
-    car.balloon.ball.material.opacity = 1;
     car.balloon.pose(THETA * P(t, T.tolk - .05, 1.0, eInOut));
     L.key.position.set(x + 3, 9, 7); L.key.target.position.set(x, 0, 0); L.key.target.updateMatrixWorld();
     L.key.intensity = 2.0; L.hemi.intensity = 1.15;

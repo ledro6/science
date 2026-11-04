@@ -15,7 +15,7 @@ function TT() {
     eff: Wd('s2', 'эффект'), naz: Wd('s2', 'назвали'), imen: Wd('s2', 'именем'),
   };
 }
-const CX = .78;
+const CX = .72;
 
 // лист статьи: белая плита с напечатанной полосой (заголовок, строки, маленький график остывания)
 function makeSheet() {
@@ -42,7 +42,7 @@ function makeSheet() {
     x.stroke();
   });
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
-  const body = new THREE.Mesh(slab(THREE, W, .03, Hh, .012, 1), new THREE.MeshPhysicalMaterial({ color: '#FFFFFF', roughness: .6 }));
+  const body = new THREE.Mesh(slab(W, .03, Hh, .012, 1), new THREE.MeshPhysicalMaterial({ color: '#FFFFFF', roughness: .6 }));
   const face = new THREE.Mesh(new THREE.PlaneGeometry(W * .985, Hh * .985), new THREE.MeshStandardMaterial({ map: tex, roughness: .7 }));
   face.rotation.x = -Math.PI / 2; face.position.y = .0155;
   g.add(body, face);
@@ -57,10 +57,11 @@ defineScene('story', {
     const cups = new THREE.Group();
     const hot = makeCup(), cold = makeCup();
     hot.position.x = -CX; cold.position.x = CX;
-    const steam = makeSteam({ n: 16, color: '#8E8E93', op: .32, height: 1.2, spread: .16, seed: 8 });
+    const steam = makeSteam({ n: 22, color: '#B8B8BD', op: .26, height: 1.1, spread: .14, seed: 8 });
     steam.position.set(-CX, hot.top, 0);
     cups.add(hot, cold, steam);
     const sheet = makeSheet();
+    sheet.scale.setScalar(.82);
     stage.root.add(cups, sheet);
     return { stage, cups, hot, cold, steam, sheet, T: TT() };
   },
@@ -73,11 +74,11 @@ defineScene('story', {
     // «лента»: формочки уезжают влево, лист приезжает справа
     const push = P(t, T.cher - .05, 1.3, eInOut);
     cups.position.x = -6 * push;
-    sheet.position.set(lerp(6, 0, push), .5 + .05 * Math.sin((t - s.start) * 1.1), -.2);
-    sheet.rotation.set(-1.05 + .05 * Math.sin((t - s.start) * .7), lerp(.5, -.12, push) - .02 * (t - T.cher), .05, 'YXZ');
+    sheet.position.set(lerp(6, 0, push), .35 + .05 * Math.sin((t - s.start) * 1.1), -.2);
+    sheet.rotation.set(1.0 + .05 * Math.sin((t - s.start) * .7), lerp(.5, -.12, push) - .02 * (t - T.cher), .05, 'YXZ');
     sheet.visible = push > .001;
     cups.visible = push < .999;
-    const [d, el, sy] = keys([[s.start, 13.4, 28, 1060], [T.cher, 12.8, 25, 1050], [T.stat, 13.0, 20, 1010], [s.end, 12.6, 20, 1010]], t, eInOut);
+    const [d, el, sy] = keys([[s.start, 12.4, 28, 1040], [T.cher, 12.0, 25, 1040], [T.stat, 12.6, 18, 1090], [s.end, 12.2, 18, 1090]], t, eInOut);
     frame(cam, [0, .35, 0], d, -8 + (t - s.start) * .9, el, 540, sy);
   },
 

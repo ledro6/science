@@ -394,7 +394,7 @@ export function makeCutCar({ dark = true } = {}) {
   car.edges = [eb, ecab]; car.edgeBase = [eb.opacity, ecab.opacity]; car.shell = [shellM, domeM];
   // салон
   const seatM = dark ? MAT.graphite() : new THREE.MeshPhysicalMaterial({ color: '#8E8E93', roughness: .45, clearcoat: .3 });
-  const floorM = dark ? new THREE.MeshStandardMaterial({ color: '#161618', roughness: .8 }) : new THREE.MeshPhysicalMaterial({ color: '#B8B8BE', roughness: .5 });
+  const floorM = dark ? new THREE.MeshBasicMaterial({ color: '#141416' }) : new THREE.MeshPhysicalMaterial({ color: '#B8B8BE', roughness: .5 });
   const inner = new THREE.Group();
   const floor = new THREE.Mesh(roundedBoxGeo(3.3, .03, 1.5, .012, 2), floorM); floor.position.set(-.25, .5, 0); inner.add(floor);
   const seat = (x, w, back, z) => {

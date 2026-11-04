@@ -223,12 +223,12 @@ export function makeCup(THREE) {
   const ribs = new THREE.InstancedMesh(new THREE.CylinderGeometry(.012, .012, Hh - .08, 6), cer, 36);
   const M = new THREE.Matrix4();
   for (let i = 0; i < 36; i++) { const a = i / 36 * Math.PI * 2; M.makeTranslation(Math.cos(a) * (R + .004), Hh / 2, Math.sin(a) * (R + .004)); ribs.setMatrixAt(i, M); }
-  const mixMat = new THREE.MeshPhysicalMaterial({ color: '#D9D6CF', roughness: .14, clearcoat: 1, clearcoatRoughness: .05 });
+  const mixMat = new THREE.MeshPhysicalMaterial({ color: '#C4BFB5', roughness: .14, clearcoat: 1, clearcoatRoughness: .05 });
   const mix = new THREE.Mesh(new THREE.CylinderGeometry(R - .055, R - .058, .26, 64), mixMat); mix.position.y = .06 + .13;
   const frost = new THREE.Mesh(new THREE.CircleGeometry(R - .056, 64), new THREE.MeshStandardMaterial({ color: '#FFFFFF', map: frostTex(THREE), transparent: true, opacity: 0, depthWrite: false, roughness: .9 }));
   frost.rotation.x = -Math.PI / 2; frost.position.y = .06 + .262; frost.renderOrder = 5;
   g.add(cup, ribs, mix, frost);
-  const LIQ = new THREE.Color('#D9D6CF'), ICE = new THREE.Color('#FBFBFA');
+  const LIQ = new THREE.Color('#C4BFB5'), ICE = new THREE.Color('#FBFBFA');
   g.setIce = f => { mixMat.color.copy(LIQ).lerp(ICE, f); mixMat.roughness = lerp(.14, .75, f); mixMat.clearcoat = lerp(1, 0, f); frost.material.opacity = f * .9; frost.visible = f > .003; };
   g.setIce(0);
   g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });

@@ -54,8 +54,8 @@ defineScene('hook', {
     glow(gx, gy, 520 * b.scale.x / 2 + 120, .055 * P(t, T.chel, 1.2));
     // --- h1: заголовок ---
     const oT = T.rost - .25;
-    wordsAt(['Что', 'если'], [T.chto - .05, T.esli - .05], 540, 470, t, { size: 150, w: 600, col: ink, track: -.035, blur: 16, dur: .8, out: oT });
-    atext('те же пропорции', 540, 560, T.sohr - .05, t, { size: 50, w: 500, col: sub, track: -.005, out: oT });
+    wordsAt(['Что', 'если'], [T.chto - .05, T.esli - .05], 540, 430, t, { size: 150, w: 600, col: ink, track: -.035, blur: 16, dur: .8, out: oT });
+    atext('те же пропорции', 540, 510, T.sohr - .05, t, { size: 50, w: 500, col: sub, track: -.005, out: oT });
     // --- h2: размерные линии роста ---
     const oD = T.ves - .3, dA = 1 - P(t, oD, .4, eIn);
     const xa = a.position.x - .42, xb = b.position.x + .38 * b.scale.x;
