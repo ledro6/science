@@ -27,7 +27,7 @@ defineScene('why', {
     const stage = makeStage({ bg: 'black', shadow: .5 });
     wideShadow(stage, 6, 1.4);
     const gl = XS.map(x => { const g = makeGlass(); g.position.x = x; stage.root.add(g); return g; });
-    const steam = makeSteam({ n: 18, op: .5, height: .95, spread: .14, seed: 4 });
+    const steam = makeSteam({ n: 26, op: .5, height: .95, spread: .14, seed: 4 });
     steam.position.set(XS[0], GLASS.h - .12, 0);
     const bub = makeBubbles({ n: 56, seed: 9 }); bub.position.x = XS[1];
     const th = makeThermo({ L: 1.2 }); th.position.set(XS[2] + .1, GLASS.bt + .22, -.05); th.rotation.z = -.12;

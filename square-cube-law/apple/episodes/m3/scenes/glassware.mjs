@@ -66,7 +66,7 @@ export function makeGlass(THREE, { paper = false } = {}) {
   const { r0, r1, h, bt } = GLASS;
   const g = new THREE.Group();
   const prof = [[0, 0], [r0 - .03, 0], [r0, .03], [r1, h - .01], [r1 - .004, h], [r1 - .02, h], [r0 - .028, bt + .02], [r0 - .05, bt], [0, bt]].map(([x, y]) => new THREE.Vector2(x, y));
-  const glassMat = new THREE.MeshPhysicalMaterial({ color: '#FFFFFF', roughness: .05, transparent: true, opacity: paper ? .22 : .16, depthWrite: false, clearcoat: 1, clearcoatRoughness: .04, side: THREE.DoubleSide });
+  const glassMat = new THREE.MeshStandardMaterial({ color: '#FFFFFF', roughness: .06, transparent: true, opacity: paper ? .22 : .16, depthWrite: false, side: THREE.DoubleSide });
   const shell = new THREE.Mesh(new THREE.LatheGeometry(prof, 64), glassMat);
   shell.renderOrder = 3;
   // кромка и дно — светлые кольца (читаются как рёбра стекла)
@@ -74,7 +74,7 @@ export function makeGlass(THREE, { paper = false } = {}) {
   const rim = new THREE.Mesh(new THREE.TorusGeometry(r1 - .011, .009, 8, 96), edgeMat); rim.rotation.x = Math.PI / 2; rim.position.y = h - .004; rim.renderOrder = 4;
   const foot = new THREE.Mesh(new THREE.TorusGeometry(r0 - .012, .012, 8, 96), edgeMat); foot.rotation.x = Math.PI / 2; foot.position.y = .015; foot.renderOrder = 4;
   // толстое дно — чуть плотнее стенок
-  const baseMat = new THREE.MeshPhysicalMaterial({ color: '#FFFFFF', roughness: .1, transparent: true, opacity: paper ? .3 : .22, depthWrite: false, clearcoat: 1 });
+  const baseMat = new THREE.MeshStandardMaterial({ color: '#FFFFFF', roughness: .1, transparent: true, opacity: paper ? .3 : .22, depthWrite: false });
   const base = new THREE.Mesh(new THREE.CylinderGeometry(r0 - .03, r0 - .035, bt - .01, 64), baseMat); base.position.y = bt / 2; base.renderOrder = 2;
   // вода: цилиндр, верхние вершины которого переставляются на уровень
   const wGeo = new THREE.CylinderGeometry(1, 1, 1, 64, 1, false);
@@ -128,8 +128,8 @@ export function makeSteam(THREE, { n = 16, color = '#FFFFFF', op = .3, seed = 3,
       const u = frac(t * p.sp + p.off);
       const sway = Math.sin(u * 3.4 + p.ph + t * .6) * spread * (.3 + u);
       p.s.position.set(p.x0 * (1 - u * .4) + sway, .05 + u * height, p.z0 + Math.cos(u * 2.7 + p.ph) * spread * .5 * u);
-      const sc = (.22 + u * .62) * p.k;
-      p.s.scale.set(sc * .85, sc * 1.25, 1);
+      const sc = (.13 + u * .45) * p.k;
+      p.s.scale.set(sc * .7, sc * 1.35, 1);
       p.s.material.opacity = a * op * Math.sin(Math.PI * Math.min(1, u * 1.15)) ** 1.4;
       p.s.visible = p.s.material.opacity > .003;
     }
@@ -141,7 +141,7 @@ export function makeSteam(THREE, { n = 16, color = '#FFFFFF', op = .3, seed = 3,
 // Пузырьки растворённого газа внутри стакана. .set(t, amount 0..1, level)
 export function makeBubbles(THREE, { n = 46, seed = 5, color = '#FFFFFF' } = {}) {
   const geo = new THREE.SphereGeometry(1, 12, 8);
-  const mat = new THREE.MeshPhysicalMaterial({ color, roughness: .1, clearcoat: 1, transparent: true, opacity: .75, depthWrite: false });
+  const mat = new THREE.MeshStandardMaterial({ color, roughness: .1, transparent: true, opacity: .75, depthWrite: false });
   const im = new THREE.InstancedMesh(geo, mat, n); im.renderOrder = 2; im.frustumCulled = false;
   const R = mulberry(seed), B = [];
   for (let i = 0; i < n; i++) B.push({ a: R() * 6.283, r: Math.sqrt(R()) * .8, sp: .25 + R() * .3, off: R(), s: .012 + R() * .018, rank: R() });
@@ -163,7 +163,7 @@ export function makeBubbles(THREE, { n = 46, seed = 5, color = '#FFFFFF' } = {})
 // Термометр: стеклянная трубка, графитовый столбик и колба; начало координат — центр колбы.
 export function makeThermo(THREE, { L = 1.55, paper = false } = {}) {
   const g = new THREE.Group();
-  const tube = new THREE.Mesh(new THREE.CylinderGeometry(.028, .028, L, 20), new THREE.MeshPhysicalMaterial({ color: '#FFFFFF', roughness: .05, clearcoat: 1, transparent: true, opacity: paper ? .45 : .3, depthWrite: false }));
+  const tube = new THREE.Mesh(new THREE.CylinderGeometry(.028, .028, L, 20), new THREE.MeshStandardMaterial({ color: '#FFFFFF', roughness: .05, transparent: true, opacity: paper ? .45 : .3, depthWrite: false }));
   tube.position.y = L / 2; tube.renderOrder = 4;
   const ink = new THREE.MeshPhysicalMaterial({ color: paper ? '#2C2C2E' : '#D8D8DC', roughness: .25, clearcoat: 1 });
   const col = new THREE.Mesh(new THREE.CylinderGeometry(.011, .011, 1, 10), ink); col.renderOrder = 3;

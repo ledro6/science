@@ -107,7 +107,6 @@ defineScene('story', {
 
   sfx(add) {
     const T = TT();
-    add(T.tys - 1.5 > 6.9 ? T.tys - 1.5 : 6.95, 'riser', .14);
     add(T.tys, 'impact', .3, .95);
     add(T.era, 'tick', .12);
     add(T.gor, 'whoosh', .14, 1.3);

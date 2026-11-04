@@ -23,7 +23,7 @@ defineScene('hook', {
     const hot = makeGlass(), cold = makeGlass();
     const y0 = fr.floorY;
     hot.position.set(-GX, y0, GZ); cold.position.set(GX, y0, GZ);
-    const steam = makeSteam({ n: 18, op: .5, height: .62, spread: .12 });
+    const steam = makeSteam({ n: 26, op: .5, height: .62, spread: .12 });
     steam.position.set(-GX, y0 + GLASS.h - .1, GZ);
     stage.root.add(fr, hot, cold, steam);
     return { stage, fr, hot, cold, steam, T: TT() };
