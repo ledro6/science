@@ -38,11 +38,11 @@ defineScene('stars', {
     sir.position.set(B.x, 0, 0); sir.scale.setScalar(B.r); sir.rotation.y = 1 + t * .05; sir.visible = B.r > .01;
     sun.set({ heat: 0, t }); sir.set({ heat: B.heat, t });
     // 24 копии выходят из Солнца (оно — центральная клетка)
-    const t0 = T.ok - .1;
+    const t0 = T.vm + .55;
     for (let i = 0; i < 25; i++) {
       const m = mini[i];
       if (i === 12) { m.visible = false; continue; }
-      const p = eInOut(clamp((t - t0 - ORDER[i] * .034) / .55));
+      const p = eInOut(clamp((t - t0 - ORDER[i] * .045) / .55));
       m.visible = p > .002;
       const [cx, cy] = cell(i);
       m.position.set(lerp(S.x, cx, p), lerp(S.y, cy, p), -.05);
@@ -50,7 +50,7 @@ defineScene('stars', {
     }
     const [tx, dist, sy] = keys([
       [s.start, .6, 24, 960], [T.sir - .1, .6, 24, 960], [T.sir + 1.0, .2, 29, 990], [T.od2, .2, 29, 990], [T.kr + .2, -.1, 34, 1000],
-      [T.vm + .1, -.1, 34.5, 1000], [T.ok + .2, .55, 40.5, 900], [s.end, .55, 41, 900],
+      [T.vm, -.1, 34.5, 1000], [T.vm + 1.0, .55, 40.5, 900], [s.end, .55, 41, 900],
     ], t, eInOut);
     frame(cam, [tx, 0, 0], dist, -2 + (t - s.start) * .5, 2, 540, sy);
   },
@@ -109,19 +109,19 @@ defineScene('stars', {
     add(T.gor, 'shimmer', .2);
     add(T.od2 - .05, 'swell', .25, .8);
     add(T.kr, 'thud', .25, .9);
-    add(T.ok - .1, 'whoosh', .22, 1.1);
+    add(T.vm + .5, 'whoosh', .22, 1.1);
     add(T.dv - .05, 'chime', .26, .95);
   },
 });
 
 // Солнце: в центре → вправо (на «Сириуса») → в центр сетки, уменьшаясь (на «около»)
 function sunPose(t, T) {
-  const m1 = P(t, T.sir - .2, 1.1, eInOut), m2 = P(t, T.vm + .2, .9, eInOut);
+  const m1 = P(t, T.sir - .2, 1.1, eInOut), m2 = P(t, T.vm - .05, .8, eInOut);
   const on = P(t, T.pov - .5, .9, eApple);
   return { x: lerp(lerp(0, 2.15, m1), GX, m2), y: 0, r: lerp(RS, GR, m2) * lerp(.85, 1, on) };
 }
 // Сириус: выходит слева тем же размером; белеет на «горячее»; растёт до 1,7 на «один … крупнее»; на t2 сдвигается влево
 function sirPose(t, T) {
-  const on = P(t, T.sir - .1, .9, eApple), gr = P(t, T.od2 - .05, T.kr + .3 - T.od2, eInOut), m2 = P(t, T.vm + .2, .9, eInOut);
+  const on = P(t, T.sir - .1, .9, eApple), gr = P(t, T.od2 - .05, T.kr + .3 - T.od2, eInOut), m2 = P(t, T.vm - .05, .8, eInOut);
   return { x: lerp(lerp(-1.55, -1.8, gr), -2.45, m2), r: lerp(RS, RB, gr) * on, heat: P(t, T.od, 1.2, eApple) };
 }

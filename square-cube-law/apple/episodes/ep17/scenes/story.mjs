@@ -37,8 +37,8 @@ defineScene('story', {
     page.position.set(PX, 0, PZ + (1 - pin) * 1.2);
     letters.set(i => clamp((t - fallAt(i, T)) / .55));
     const [tx, tz, dist, az, el, sy] = keys([
-      [s.start, -.6, 0, 19.5, 8, 56, 960], [T.otv - .3, -.6, 0, 18.5, 4, 54, 960], [T.pri + .2, -.1, .1, 19, 2, 46, 990],
-      [T.des + .8, .2, .3, 19.5, -6, 40, 1040], [s.end, .22, .3, 19.5, -9, 38, 1040],
+      [s.start, -.6, 0, 19.5, 8, 56, 960], [T.otv - .3, -.6, 0, 18.5, 4, 54, 960], [T.pri + .2, -.25, .1, 19.5, 2, 46, 990],
+      [T.des + .8, -.05, .3, 20, -6, 40, 1040], [s.end, -.05, .3, 20, -9, 38, 1040],
     ], t, eInOut);
     frame(cam, [tx, 0, tz], dist, az, el, 540, sy);
   },
