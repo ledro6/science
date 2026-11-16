@@ -7,7 +7,7 @@
 
 ## Прочитай перед работой
 1. `/home/user/science/CLAUDE.md` — правила канала (акцент, текст, разрешение). Они обязательны.
-2. `/home/user/science/square-cube-law/apple/BRIEF.md` — API движка, безопасные зоны, бюджет скорости, проверка.
+2. [BRIEF.md](../BRIEF.md) — API движка, безопасные зоны, правила анимации и смаза, проверка и рендер.
 3. `/home/user/science/square-cube-law/tiktok/APPLE_STYLE.md` — визуальный язык Apple.
 4. `engine.mjs` и `models.mjs` в `square-cube-law/apple/` — целиком.
 5. Эталон качества — сцены пилота `square-cube-law/apple/scenes/*.mjs` (особенно `hook.mjs`, `cube.mjs`, `strength.mjs`). Твой выпуск должен быть не хуже.
@@ -52,5 +52,6 @@ export default function (THREE, { MAT, roundedBox, glassEdges, shadowsOn, models
 
 ## Проверка сцен
 `cd /home/user/science/square-cube-law/apple && EP=<ep> node capture.js stills 1.2,2.5,4.0 <префикс> only=<id>` → `episodes/<ep>/stills/`.
-Смотри кадры каждые ~0,7 с (контакт-листы через Pillow), исправляй до чистого результата. Ошибок `PAGE ERROR`/`CONSOLE`/`RENDER ERROR` быть не должно.
-Видео не рендерь. В конце — краткий отчёт: что сделано, 4–5 лучших кадров (пути), спорные места.
+Собери один контакт-лист изменённых сцен. Камеру, смаз и склейки проверяй на коротких отрезках по
+[правилам рендера](../BRIEF.md#рендер-и-проверка). Ошибок `PAGE ERROR` / `CONSOLE` / `RENDER ERROR` быть не должно.
+Финальную сборку оставь координатору. В отчёте укажи изменения, пути к контрольным кадрам и спорные места.

@@ -1,0 +1,114 @@
+[
+  {
+    "path": "16-nov/L3_ep19-cikady.mp4",
+    "original_bytes": 57763010,
+    "bytes": 10081766,
+    "ssim": 0.99824,
+    "duration": 51.1,
+    "sha256": "cd84dc783a496278692c0e80a36d763d281fa7fb04bf30c391caac56b5ff0751"
+  },
+  {
+    "path": "16-nov/L3_g2-ormuzskiy-proliv.mp4",
+    "original_bytes": 70838992,
+    "bytes": 12584841,
+    "ssim": 0.998446,
+    "duration": 49.883333,
+    "sha256": "ad70cb37d1e6752327037020576988e6e521b795c8ccd1be93ac7b9b88a8030b"
+  },
+  {
+    "path": "17-nov/L3_a4-39-metrov.mp4",
+    "original_bytes": 66785330,
+    "bytes": 13645068,
+    "ssim": 0.998267,
+    "duration": 51.966667,
+    "sha256": "c159611d9bff6aace44e65aff8b9b55b94fa8a3572ed07a4a87c0b565a870c42"
+  },
+  {
+    "path": "17-nov/L3_ep20-beregovaya-liniya.mp4",
+    "original_bytes": 50563352,
+    "bytes": 8619403,
+    "ssim": 0.998347,
+    "duration": 51.516667,
+    "sha256": "4dde76c5d21bf25832e5990ad5e61bb2cdbca683882a97525f7ced83e2931359"
+  },
+  {
+    "path": "18-nov/L3_ep21.mp4",
+    "original_bytes": 80801559,
+    "bytes": 16071548,
+    "ssim": 0.998404,
+    "duration": 57.783333,
+    "sha256": "ed04573418837ea5eeeb2293c633bd2fd468dd750cff340459fe6d023fc0dd9a"
+  },
+  {
+    "path": "18-nov/L3_w4.mp4",
+    "original_bytes": 53549845,
+    "bytes": 9137596,
+    "ssim": 0.99856,
+    "duration": 56.5,
+    "sha256": "7bfe4c8d53728d978b788267adc6827453f46f1478b3e7bce28fbe7c9b2ba3b5"
+  },
+  {
+    "path": "19-nov/L3_ep22.mp4",
+    "original_bytes": 101584564,
+    "bytes": 29097698,
+    "ssim": 0.99705,
+    "duration": 59.25,
+    "sha256": "ac382ed7a57e8869a5323cbdd66748eade666a28cc1972b5597eaf38e922b994"
+  },
+  {
+    "path": "19-nov/L3_m4.mp4",
+    "original_bytes": 63404154,
+    "bytes": 10042390,
+    "ssim": 0.998451,
+    "duration": 55.483333,
+    "sha256": "766cc8e2b9089e54189ef5a41ebdaf14cd78fd2f0cdd923d9addba56f657e580"
+  },
+  {
+    "path": "20-nov/L3_ep23.mp4",
+    "original_bytes": 81561242,
+    "bytes": 12814044,
+    "ssim": 0.998051,
+    "duration": 58.716667,
+    "sha256": "068df3dfe512888e00aa6358b3111fedd6e3471e6fa10ce5c1a0d7c8d941a2df"
+  },
+  {
+    "path": "20-nov/L3_g3.mp4",
+    "original_bytes": 47791154,
+    "bytes": 8392416,
+    "ssim": 0.998594,
+    "duration": 59.566667,
+    "sha256": "439d9ba26e8229c721c93c571a9df5253a7ad47a82fc129f75c5f1f900efba6a"
+  },
+  {
+    "path": "21-nov/L3_a5.mp4",
+    "original_bytes": 76651158,
+    "bytes": 14407592,
+    "ssim": 0.998182,
+    "duration": 53.483333,
+    "sha256": "b7e40a507ff8524697ed6db7a3391ae0b9390bc67886b758f04b7609200d36bd"
+  },
+  {
+    "path": "21-nov/L3_ep24.mp4",
+    "original_bytes": 72499972,
+    "bytes": 11052127,
+    "ssim": 0.998406,
+    "duration": 57.2,
+    "sha256": "0a2a4caffb5151f0a93a023b7bec7bfc2b7b408ac86dc3ca2291bb9c4580d3ae"
+  },
+  {
+    "path": "22-nov/L3_ep25.mp4",
+    "original_bytes": 36883879,
+    "bytes": 7288125,
+    "ssim": 0.998865,
+    "duration": 53.216667,
+    "sha256": "c745e82c287f8abbff36133a2d21dc31f2b625477d6b6be80c0091011d65b957"
+  },
+  {
+    "path": "22-nov/L3_w5.mp4",
+    "original_bytes": 53014048,
+    "bytes": 8743299,
+    "ssim": 0.998554,
+    "duration": 57.283333,
+    "sha256": "02ab9259039b094eac22dd8638d385c6bd2d1cd810e089b59fc6a497c86cbe7f"
+  }
+]

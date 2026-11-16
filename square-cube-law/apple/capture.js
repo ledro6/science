@@ -4,6 +4,9 @@
 //   node capture.js sfx                                             → build/sfx.json
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');
+const { once } = require('events');
+const { Readable } = require('stream');
+const { pipeline } = require('stream/promises');
 const http = require('http'), fs = require('fs'), path = require('path');
 const ROOT = __dirname;
 // EP=ep2 — выпуск из episodes/ep2 (sfx.json и stills/ пишутся туда); без EP — пилот
@@ -44,13 +47,35 @@ server.listen(0, '127.0.0.1', async () => {
     const fps = +mode, from = +args[0], to = +args[1], out = args[2];
     const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'mjpeg', '-i', '-',
       '-c:v', 'libx264', '-preset', 'fast', '-crf', '16', '-pix_fmt', 'yuv420p', '-r', String(fps), out], { stdio: ['pipe', 'inherit', 'inherit'] });
-    const done = new Promise(r => ff.on('close', r));
-    for (let i = from; i < to; i++) {
-      const buf = Buffer.from(await frame(i / fps, 'image/jpeg', .95), 'base64');
-      if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
-      if (i % 120 === 0) console.log(out, i);
+    const done = once(ff, 'close');
+    async function* frames() {
+      // Bound the browser response while amortizing Playwright calls.
+      const batchSize = 8;
+      for (let start = from; start < to; start += batchSize) {
+        const batch = await page.evaluate(([start, end, fps]) => {
+          const canvas = document.getElementById('c');
+          const images = [];
+          for (let i = start; i < end; i++) {
+            render(i / fps);
+            images.push(canvas.toDataURL('image/jpeg', .95).split(',')[1]);
+          }
+          return images;
+        }, [start, Math.min(start + batchSize, to), fps]);
+        for (const [offset, jpeg] of batch.entries()) {
+          yield Buffer.from(jpeg, 'base64');
+          if ((start + offset) % 120 === 0) console.log(out, start + offset);
+        }
+      }
     }
-    ff.stdin.end(); await done;
+    try {
+      const [[code, signal]] = await Promise.all([done, pipeline(Readable.from(frames()), ff.stdin)]);
+      if (code !== 0) throw new Error(`ffmpeg failed (${signal || code}) for ${out}`);
+    } catch (error) {
+      ff.kill();
+      await browser.close();
+      server.close();
+      throw error;
+    }
   }
   await browser.close(); server.close();
 });
