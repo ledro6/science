@@ -1,0 +1,110 @@
+[
+  {
+    "id": "ep26",
+    "day": 1,
+    "title": "Почему Луна показывает одну сторону",
+    "duration": 56.75,
+    "video": "L3_ep26.mp4",
+    "cover": "ep26-tiktok-cover.png",
+    "subtitles": "L3_ep26.srt",
+    "size": [
+      1440,
+      2560
+    ],
+    "fps": "60/1",
+    "frames": 3405,
+    "audio": "aac",
+    "audio_peak_dbfs": -2.5,
+    "full_decode": "passed"
+  },
+  {
+    "id": "ep27",
+    "day": 1,
+    "title": "Парадокс Симпсона",
+    "duration": 51.316667,
+    "video": "L3_ep27.mp4",
+    "cover": "ep27-tiktok-cover.png",
+    "subtitles": "L3_ep27.srt",
+    "size": [
+      1440,
+      2560
+    ],
+    "fps": "60/1",
+    "frames": 3079,
+    "audio": "aac",
+    "audio_peak_dbfs": -3.6,
+    "full_decode": "passed"
+  },
+  {
+    "id": "ep28",
+    "day": 2,
+    "title": "Правило 72",
+    "duration": 55.933333,
+    "video": "L3_ep28.mp4",
+    "cover": "ep28-tiktok-cover.png",
+    "subtitles": "L3_ep28.srt",
+    "size": [
+      1440,
+      2560
+    ],
+    "fps": "60/1",
+    "frames": 3356,
+    "audio": "aac",
+    "audio_peak_dbfs": -3.3,
+    "full_decode": "passed"
+  },
+  {
+    "id": "ep29",
+    "day": 2,
+    "title": "Парадокс дружбы",
+    "duration": 57.183333,
+    "video": "L3_ep29.mp4",
+    "cover": "ep29-tiktok-cover.png",
+    "subtitles": "L3_ep29.srt",
+    "size": [
+      1440,
+      2560
+    ],
+    "fps": "60/1",
+    "frames": 3431,
+    "audio": "aac",
+    "audio_peak_dbfs": -3.5,
+    "full_decode": "passed"
+  },
+  {
+    "id": "ep30",
+    "day": 3,
+    "title": "Как работает шумоподавление",
+    "duration": 59.683333,
+    "video": "L3_ep30.mp4",
+    "cover": "ep30-tiktok-cover.png",
+    "subtitles": "L3_ep30.srt",
+    "size": [
+      1440,
+      2560
+    ],
+    "fps": "60/1",
+    "frames": 3581,
+    "audio": "aac",
+    "audio_peak_dbfs": -3.4,
+    "full_decode": "passed"
+  },
+  {
+    "id": "ep31",
+    "day": 3,
+    "title": "Парадокс близнецов",
+    "duration": 58.616667,
+    "video": "L3_ep31.mp4",
+    "cover": "ep31-tiktok-cover.png",
+    "subtitles": "L3_ep31.srt",
+    "size": [
+      1440,
+      2560
+    ],
+    "fps": "60/1",
+    "frames": 3517,
+    "audio": "aac",
+    "audio_peak_dbfs": -2.4,
+    "full_decode": "passed"
+  }
+]
