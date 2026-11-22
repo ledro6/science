@@ -289,7 +289,13 @@ export function render(t) {
     def.update && def.update(t, s, st);
     renderer.render(st.stage.scene, st.stage.camera);
     lctx.setTransform(S, 0, 0, S, 0, 0); lctx.globalAlpha = 1; lctx.filter = 'none';
-    lctx.drawImage(glCanvas, 0, 0, W, H);
+    if (def.composite3d) {
+      lctx.save();
+      def.composite3d(t, s, st, lctx, glCanvas);
+      lctx.restore();
+    } else {
+      lctx.drawImage(glCanvas, 0, 0, W, H);
+    }
     ACCENT = st.stage.accent;
     g = lctx; def.draw2d && def.draw2d(t, s, st); g = null;
     octx.save(); octx.globalAlpha = a;

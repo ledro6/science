@@ -4,12 +4,12 @@
 
 Озвучка сделана голосом ru-RU-DmitryNeural в темпе −4%. В `build/voice/` сохранены оригинальные MP3 и словесные тайминги. Стандартный `tiktok/tts.py` собирает из них WAV и таймлайн.
 
-Для звука h1 использует `mix.py`. Он сохраняет обработку голоса и эффектов L³, а вместо обычной музыки добавляет оригинальный фон на основе гула лифта. Из папки `apple/`:
+Для звука h1 использует `mix.py`. Он сводит голос, эффекты и оригинальную музыку. Нижние ноты и диссонанс нарастают от сцены к сцене, удар совпадает с закрытием створок. Покадровое движение и 27 планов заданы в `scenes/cinematography.mjs`. Референсы и решения описаны в `REFERENCES.md`. Из папки `apple/`:
 
 ```bash
 python3 ../tiktok/tts.py episodes/h1
 EP=h1 node capture.js sfx
-python3 episodes/h1/mix.py --build episodes/h1/build --duck -19
+python3 episodes/h1/mix.py --build episodes/h1/build --duck -12
 python3 ../tiktok/srt.py episodes/h1
 EP=h1 SCALE=1.3333333 node capture.js 60 0 6590 episodes/h1/build/part0.mp4
 ffmpeg -i episodes/h1/build/part0.mp4 -i episodes/h1/build/mix.wav \
