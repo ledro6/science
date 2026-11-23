@@ -63,11 +63,11 @@ def horror_score(timeline, samples):
         if idx<5:
             add(a+.12,1.05,hit,.096 if idx<3 else .145)
 
-    slam=next(w['t'] for w in lines['e02']['words'] if w['w'].startswith('закрытия'))+1.65
+    slam=next(w['t'] for w in lines['e02']['words'] if w['w'].startswith('закрытия'))+2.35
     add(slam-.78,.78,lambda x:bowed(x,261.63)*(x/.78)**2,.27)
     add(slam,1.55,hit,.43)
     # Give the reveal a pocket of silence before the last two notes.
-    final=lines['o01']['words'][-3]['t']
+    final=lines['o32']['words'][-3]['t']
     add(final-.63,2.3,lambda x:keys(x,130.81)+.62*keys(x,138.59),.17)
     add(final+.27,2.5,hit,.13)
     end=np.minimum((t[-1]-t)/.5,1)
