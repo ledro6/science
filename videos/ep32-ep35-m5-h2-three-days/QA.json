@@ -1,0 +1,74 @@
+[
+  {
+    "episode": "ep32",
+    "day": 1,
+    "title": "Что значит положительный тест",
+    "duration": 57.35,
+    "width": 1440,
+    "height": 2560,
+    "fps": 60,
+    "frames": 3441,
+    "audio_peak_dbfs": -3.6,
+    "full_decode": "passed"
+  },
+  {
+    "episode": "h2",
+    "day": 1,
+    "title": "Шестой этаж · серия 2",
+    "duration": 118.883333,
+    "width": 1440,
+    "height": 2560,
+    "fps": 60,
+    "frames": 7133,
+    "audio_peak_dbfs": -1.3,
+    "full_decode": "passed"
+  },
+  {
+    "episode": "ep33",
+    "day": 2,
+    "title": "Игра с бесконечным средним выигрышем",
+    "duration": 57.7,
+    "width": 1440,
+    "height": 2560,
+    "fps": 60,
+    "frames": 3462,
+    "audio_peak_dbfs": -2.6,
+    "full_decode": "passed"
+  },
+  {
+    "episode": "m5",
+    "day": 2,
+    "title": "Почему большой выбор иногда мешает",
+    "duration": 54.583333,
+    "width": 1440,
+    "height": 2560,
+    "fps": 60,
+    "frames": 3275,
+    "audio_peak_dbfs": -2.4,
+    "full_decode": "passed"
+  },
+  {
+    "episode": "ep34",
+    "day": 3,
+    "title": "Почему рекорд трудно повторить",
+    "duration": 58.2,
+    "width": 1440,
+    "height": 2560,
+    "fps": 60,
+    "frames": 3492,
+    "audio_peak_dbfs": -2.7,
+    "full_decode": "passed"
+  },
+  {
+    "episode": "ep35",
+    "day": 3,
+    "title": "Почему спагетти ломаются не пополам",
+    "duration": 52.183333,
+    "width": 1440,
+    "height": 2560,
+    "fps": 60,
+    "frames": 3131,
+    "audio_peak_dbfs": -2.4,
+    "full_decode": "passed"
+  }
+]

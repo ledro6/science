@@ -1,0 +1,8 @@
+import {defineScene,makeStage,Wd,P,THREE,MAT,atext,glassEdges,roundedBox} from '../../../engine.mjs';
+import {studio,camera,coin,txt} from './objects.mjs';
+defineScene('limit',{
+ setup(){const stage=makeStage({bg:'black'});studio(stage);const hero=coin(.6);stage.root.add(hero);const columns=[0,1,2,3].map(i=>{const m=new THREE.Mesh(roundedBox(1,.04,2),MAT.aluminium());stage.root.add(m);return m});const roof=glassEdges(new THREE.BoxGeometry(3.0,.07,.8),'#fff',.8);stage.root.add(roof);return{stage,hero,columns,roof}},
+ update(t,s,st){const ceiling=t>=Wd('l2','реальности');st.hero.visible=!ceiling;st.hero.position.set(0,.28,0);st.hero.rotation.set(.12,.24,-.12);st.hero.scale.setScalar(1);st.columns.forEach((m,i)=>{const h=Math.min(.27*2**i,1.08)*P(t,Wd('l2','выплат'),1.1);m.visible=ceiling;m.position.set((i-1.5)*.67,-.3+h/2,0);m.rotation.set(0,-.1,0);m.scale.set(.46,Math.max(.001,h),.3)});st.roof.visible=ceiling;st.roof.position.set(0,.82,0);st.roof.rotation.set(0,-.1,0);st.roof.scale.setScalar(1);camera(st.stage);st.stage.scene.userData.staticKey=ceiling&&t>Wd('l2','выплат')+1.1?'limit-ceiling':!ceiling?'limit-single':null},
+ draw2d(t,s,st){const cap=Wd('l2','реальности'),util=Wd('l2','ценность');txt('Не гарантия богатства',350,Wd('l1','гарантия'),t,st,78,{out:cap-.4});atext('50%',500,650,Wd('l1','половине'),t,{size:180,col:st.stage.ink,out:cap-.4});txt('Всего 2 ₽',790,Wd('l1','два'),t,st,72,{out:cap-.4});txt('до платы за вход',1280,Wd('l1','платы'),t,st,36,{col:st.stage.sub,out:cap-.4});txt('Есть потолок выплат',350,cap,t,st,76,{out:util-.4});txt('Деньги ≠ их ценность',350,util,t,st,72);txt('Личная полезность',1280,util,t,st,41,{col:st.stage.sub})},
+ sfx(add){add(Wd('l2','потолок'),'click',.1,.7)}
+});

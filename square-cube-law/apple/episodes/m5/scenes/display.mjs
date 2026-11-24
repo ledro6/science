@@ -1,0 +1,8 @@
+import {defineScene,makeStage,THREE,atext,P,Wd,lerp} from '../../../engine.mjs';
+import {makeDisplay,frame,settle} from './kit.mjs';
+defineScene('display',{
+ setup(){const stage=makeStage({bg:'white',shadow:.22}),big=makeDisplay(THREE,24),small=makeDisplay(THREE,6);stage.root.add(big,small);return{stage,big,small}},
+ update(t,s,st){const p=P(t,s.start+.1,1.0);st.big.position.set(-1.1,lerp(-.1,.1,p),0);st.small.position.set(1.15,.1,0);st.big.scale.setScalar(.86);st.small.scale.setScalar(.86*P(t,Wd('d1','шесть')-.4,.8));frame(st.stage.camera,[0,1.15,0],19.5,0,10,510,935);settle(st.stage,t,Wd('d1','шесть')-.4,.8,'display-hold')},
+ draw2d(t,s,st){const c=st.stage.ink,sub=st.stage.sub,att=Wd('d1','остановились'),a=P(t,att,.5);atext('Опыт с джемом',510,300,s.start+.35,t,{size:89,col:c,out:att-.25});atext('Остановились из прохожих',510,300,att,t,{size:64,col:c});atext('24',285,520,Wd('d1','двадцать'),t,{size:150,col:c,out:att-.18});atext('6',740,520,Wd('d1','шесть'),t,{size:150,col:c,out:att-.18});atext('60%',285,520,Wd('d1','шестьдесят'),t,{size:139,col:c});atext('40%',740,520,Wd('d1','сорока'),t,{size:139,col:c});atext('24 сорта',285,605,Wd('d1','двадцать'),t,{size:39,w:500,col:sub});atext('6 сортов',740,605,Wd('d1','шесть'),t,{size:39,w:500,col:sub});atext('145 / 242',285,1220,Wd('d1','шестьдесят'),t,{size:42,w:500,col:sub});atext('104 / 260',740,1220,Wd('d1','сорока'),t,{size:42,w:500,col:sub});atext('Iyengar & Lepper, 2000 · дегустационная стойка',510,1270,s.start+.5,t,{size:25,w:400,col:sub})},
+ sfx(add){add(Wd('d1','двадцать'),'click',.13);add(Wd('d1','шесть'),'click',.13);add(Wd('d1','шестьдесят'),'chime',.16,.9);add(Wd('d1','сорока'),'chime',.16,.85)}
+});

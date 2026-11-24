@@ -1,0 +1,8 @@
+import {defineScene,makeStage,Wd,P,atext,accent,THREE,MAT,roundedBox} from '../../../engine.mjs';
+import {studio,camera,bars,txt} from './objects.mjs';
+defineScene('sum',{
+ setup(){const stage=makeStage({bg:'white'});studio(stage);const tiles=[];for(let i=0;i<8;i++){const m=new THREE.Mesh(roundedBox(.36,.025,2),MAT.aluminium());stage.root.add(m);tiles.push(m)}return{stage,bar:bars(stage),tiles}},
+ update(t,s,st){const infinite=Wd('s2','без'),q=P(t,Wd('s1','Получаем'),.8),r=P(t,infinite,.9);st.bar.pose(t,s.start,q);st.bar.items.forEach(m=>m.visible=t<infinite);st.tiles.forEach((m,i)=>{m.visible=t>=infinite;m.position.set((i-3.5)*.38,-.08,-i*.03);m.rotation.set(.1,-.12,0);m.scale.setScalar(Math.max(.001,P(t,infinite+i*.09,.7)))});camera(st.stage);st.stage.scene.userData.staticKey=t>infinite+1.8?'sum-infinity':t>Wd('s1','Получаем')+.8&&t<infinite?'sum-equal':null},
+ draw2d(t,s,st){const q=Wd('s1','Получаем'),inf=Wd('s2','без');txt('Приз × вероятность',355,Wd('s1','Умножаем'),t,st,75,{out:inf-.4});['2 × ½','4 × ¼','8 × ⅛'].forEach((str,i)=>{const x=220+i*280;atext(str,x,670,Wd('s1','приз')+i*.15,t,{size:51,col:st.stage.ink,out:inf-.4});atext('= 1',x,785,[Wd('s1','рубль'),Wd('s1','рубль',1),Wd('s1','рубль',2)][i],t,{size:84,col:st.stage.ink,out:inf-.4})});txt('Каждый вклад равен 1 ₽',1280,q,t,st,42,{col:st.stage.sub,out:inf-.4});txt('1 + 1 + 1 + ⋯',400,inf,t,st,78);atext('∞',500,790,Wd('s2','бесконечно'),t,{size:300,col:accent()});txt('математическое ожидание',1280,Wd('s2','математическое'),t,st,42,{col:st.stage.sub})},
+ sfx(add){add(Wd('s1','Получаем'),'click',.12,.8);add(Wd('s2','бесконечно'),'bloom',.13,.7)}
+});

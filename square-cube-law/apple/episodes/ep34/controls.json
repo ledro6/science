@@ -1,0 +1,10 @@
+{
+  "episode":"ep34",
+  "plan":{"sheet":"План v2","row":31,"topic":"Неудачная неделя после удачной"},
+  "voice":"ru-RU-SvetlanaNeural",
+  "rate":"+8%",
+  "model":{"baseline":60,"noise":"independent, zero-mean, stable distribution","selection":"first score > 80","illustrative_first":[85,88,90,83,86,89],"illustrative_repeat":[60,64,58,90,56,66],"units":"arbitrary, not observed athlete data"},
+  "claims":{"conditional_on_extreme_selection":true,"mean_not_every_individual":true,"stable_baseline_assumption_explicit":true,"not_inevitable_drop":true,"not_causal_claim":true},
+  "outputs":{"width":1440,"height":2560,"fps":60,"cover_width":2160,"cover_height":3840},
+  "handoff":"Coordinator performs final render, cover, index and GitHub upload"
+}
